@@ -21,6 +21,26 @@ namespace EFLibrary.Models
         public bool Suspended { get; set; } = false;
         public bool Active { get; set; } = true;
         public int Strikes { get; set; } = 0;
-        //public List<Order> Orders { get; set; } = [];
+        public List<Order> Orders { get; set; } = [];
+
+        public static User Copy(User user)
+        {
+            User copy = new()
+            {
+                UserId = user.UserId,
+                Role = user.Role,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Address = user.Address,
+                Email = user.Email,
+                Password = user.Password,
+                Birthdate = user.Birthdate,
+                RegisterDate = user.RegisterDate,
+                Suspended = user.Suspended,
+                Active = user.Active,
+                Strikes = user.Strikes,
+            };
+            return copy;
+        }
     }
 }
