@@ -13,43 +13,60 @@ namespace EFLibrary.Utils
 {
     public class UserUtils
     {
-        public static (bool success, string message) AddUser(/*LibraryContext context,*/ string firstName, string lastName, string email, string password,  DateTime dataNascimento,string? morada = null, Role? role = null)
+        //public static (bool success, string message) AddUser(/*LibraryContext context,*/ string firstName, string lastName, string email, string password,  DateTime dataNascimento,string? morada = null, Role? role = null)
+        //{
+        //    try
+        //    {
+        //        using (var context = new LibraryContext())
+        //        {
+        //            //regex to check if email follows "word@word.word" else returns invalid email exception
+        //            if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+        //            {
+        //                return (false, "Invalid email format");
+        //                //throw new Exception("Invalid email");
+        //            }
+        //            //check password Length, will do regex checks later
+        //            if (password.Length < 8)
+        //            {
+        //                return (false, "Password should have 8 characters or more");
+        //            //throw new Exception("Password too small");
+        //            }
+        //            //check for valid role or no role passed defaults to User
+        //            if (!context.Roles.Any(r => r == role) && role != null)
+        //            {
+        //                return (false, "Role doesn't exist");
+        //                //throw new Exception("Role doesn't exist");
+        //            }
+        //            else role ??= context.Roles.FirstOrDefault(r => r.RoleName == "User");
+        //            PasswordHasher<User> pwHasher = new();
+        //            User leitor = new User { FirstName = firstName, LastName = lastName, Email = email, Address = morada, Role = role, RegisterDate = DateTime.Now, Birthdate = dataNascimento };
+        //            password = pwHasher.HashPassword(leitor, password);
+        //            leitor.Password = password;
+        //            context.Users.Add(leitor);
+        //            context.SaveChanges();
+        //            return (true, "Success creating user");
+        //        }
+        //    }catch(Exception e) {
+        //        return (false, $"Error creating user: {e}");
+        //        //throw new Exception($"Error adding user: {e}");
+        //    }
+        //}
+
+        public static User AddUser( User user)
         {
             try
             {
-                using (var context = new LibraryContext())
+                using (LibraryContext context = new())
                 {
-                    //regex to check if email follows "word@word.word" else returns invalid email exception
-                    if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-                    {
-                        return (false, "Invalid email format");
-                        //throw new Exception("Invalid email");
-                    }
-                    //check password Length, will do regex checks later
-                    if (password.Length < 8)
-                    {
-                        return (false, "Password should have 8 characters or more");
-                    //throw new Exception("Password too small");
-                    }
-                    //check for valid role or no role passed defaults to User
-                    if (!context.Roles.Any(r => r == role) && role != null)
-                    {
-                        return (false, "Role doesn't exist");
-                        //throw new Exception("Role doesn't exist");
-                    }
-                    else role ??= context.Roles.FirstOrDefault(r => r.RoleName == "User");
-                   PasswordHasher<User> pwHasher = new();
-                    User leitor = new User { FirstName = firstName, LastName = lastName, Email = email, Address = morada, Role = role, RegisterDate = DateTime.Now, Birthdate = dataNascimento };
-                    password = pwHasher.HashPassword(leitor, password);
-                    leitor.Password = password;
-                    context.Users.Add(leitor);
+                context.Users.Add(user);
                     context.SaveChanges();
-                    return (true, "Success creating user");
+                    return user;
                 }
-            }catch(Exception e) {
-                return (false, $"Error creating user: {e}");
-                //throw new Exception($"Error adding user: {e}");
+            }catch(Exception e)
+            {
+                throw e;
             }
+
         }
 
         public static (bool success,string message) Login(/*LibraryContext context,*/ string email, string password)
@@ -147,30 +164,33 @@ namespace EFLibrary.Utils
             }
         }
 
-        public static (bool success, string message) DeleteUser(string email)
+        public static User DeleteUser(string email)
         {
-            using(LibraryContext context = new())
+            try
             {
-                var user = context.Users.FirstOrDefault(u => u.Email == email);
-                //var user = context.Users.Include(u => u.Orders).FirstOrDefault(u => u.Email == email);
-                if (user != null)
+                using (LibraryContext context = new())
                 {
-                    /*foreach(Order order in user.Orders.ToList())
+                    var user = context.Users.FirstOrDefault(u => u.Email == email);
+                    //var user = context.Users.Include(u => u.Orders).FirstOrDefault(u => u.Email == email);
+                    if (user != null)
                     {
-                       remove Order function
+                        /*foreach(Order order in user.Orders.ToList())
+                        {
+                           remove Order function
+                        }
+                        ou
+                        var orders = context.Orders.Where(o => o.userID == user.UserID);
+                        foreach(Order order in orders){
+                            remove Order function
+                        }
+                         */
+                        context.Users.Remove(user);
+                        context.SaveChanges();
+                        return user;
                     }
-                    ou
-                    var orders = context.Orders.Where(o => o.userID == user.UserID);
-                    foreach(Order order in orders){
-                        remove Order function
-                    }
-                     */
-                    context.Users.Remove(user);
-                    context.SaveChanges();
-                    return (true, $"User with email: {email} deleted successfully");
+                    throw new Exception($"User with email: {email} not found");
                 }
-                return (false, $"User with email: {email} not found");
-            }
+            }catch(Exception e) { throw e; };
         }
     }
 }
