@@ -14,16 +14,14 @@ namespace LibLibrary
 
         // Só para administradores
         // rever a função para com as verificações adequadas
-        public static Author AddAuthor(string author)
+        public static Author AddAuthor(Author author)
         {
             using (LibraryContext context = new LibraryContext())
             {
-                Author newAuthor = new Author
-                {
-                    AuthorName = author,
-                };
+                context.Add(author);
+                context.SaveChanges();
 
-                return newAuthor;
+                return author;
             }
         }
 
