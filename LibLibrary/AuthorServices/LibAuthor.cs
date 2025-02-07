@@ -96,17 +96,5 @@ namespace LibLibrary.AuthorServices
             }
         }
 
-        // Só para administradores
-        public static Author? AuthorFinder(string name)
-        {
-            using (LibraryContext context = new LibraryContext())
-            {
-
-                Author? authorsList = context.Authors.FirstOrDefault(e => e.AuthorName == name);
-
-                return authorsList;
-            }
-        }
-
     }
 }
