@@ -90,9 +90,9 @@ namespace LibLibrary.AuthorServices
         {
             using (LibraryContext context = new LibraryContext())
             {
-                var authors = context.Authors.Where(a => a.AuthorName == name);
+                var authors = context.Authors.FirstOrDefault(a => a.AuthorName == name, null);
 
-                return !authors.IsNullOrEmpty();
+                return !(authors is null);
             }
         }
 
