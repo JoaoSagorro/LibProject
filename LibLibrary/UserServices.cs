@@ -107,7 +107,10 @@ namespace LibLibrary
             {
                 var user = context.Users.FirstOrDefault(u => u.Email == email);
 
-                if (user == null)
+
+                try
+                {
+                 if (user == null)
                 {
                     throw new Exception($"User with {email} not found");
                 }
@@ -116,17 +119,16 @@ namespace LibLibrary
                 {
                     throw new Exception($"User {email} is already suspended");
                 }
-
-                try
-                {
-                    user.Suspended = true;
+                   user.Suspended = true;
                     user.Active = false;
                     context.SaveChanges();
                     return user;
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Error suspending user", ex);
+                    Console.WriteLine($"Error Suspending user: {ex}");
+                    return user;
+                    //throw new Exception($"Error suspending user", ex);
                 }
             }
         }
