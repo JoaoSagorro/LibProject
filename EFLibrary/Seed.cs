@@ -115,9 +115,23 @@ namespace EFLibrary
             }
         }
 
-        public static void SeedAll()
+        public static void Copies(LibraryContext context)
         {
-            using LibraryContext context = new();
+            var book = context.Books.FirstOrDefault(b => b.Title == "Test Book");
+            var library1 = context.Libraries.FirstOrDefault(l => l.LibraryName == "Lisboa XPTO");
+            var library2 = context.Libraries.FirstOrDefault(l => l.LibraryName == "Porto XPTO");
+
+            context.Copies.AddRange(new List<Copie>
+            {
+                new() { Book = book, Library = library1, NumberOfCopies = 5 },
+                new() { Book = book, Library = library2, NumberOfCopies = 5 },
+            });
+
+            context.SaveChanges();
+        }
+
+        public static void SeedAll(LibraryContext context)
+        {
             try
             {
                 Roles(context);
@@ -127,6 +141,7 @@ namespace EFLibrary
                 States(context);
                 Books(context);
                 Libraries(context);
+                Copies(context);
             }
             catch (Exception e) { Console.WriteLine($"Error seeding database {e}"); };
         }
