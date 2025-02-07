@@ -7,7 +7,7 @@ using EFLibrary;
 using EFLibrary.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace LibLibrary
+namespace LibLibrary.AuthorServices
 {
     public class LibAuthor
     {
