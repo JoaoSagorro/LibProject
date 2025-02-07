@@ -65,6 +65,35 @@ namespace LibLibrary.AuthorServices
             return author;
         }
 
+        // Author parameter must contain the id of the author to be updated and the new values;
+        public static Author UpdateAuthor(Author author)
+        {
+            Author updatedAuthor;
+
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    updatedAuthor = context
+                        .Authors
+                        .FirstOrDefault(atr => atr.AuthorId == author.AuthorId, null);
+
+                    if (updatedAuthor is null) throw new Exception("Author not found.");
+                    
+                    string newName = author.AuthorName.ToString();
+
+                    updatedAuthor.AuthorName = newName;
+                    context.SaveChanges();
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+            return updatedAuthor;
+        }
+
         public static Author DeleteAuthorById(int id)
         {
             Author delAuthor;
