@@ -7,14 +7,13 @@ using EFLibrary;
 using EFLibrary.Models;
 using LibLibrary.AuthorServices;
 
-namespace LibLibrary
+namespace LibLibrary.BookServices
 {
     public class LibBooks
     {
-
-        // Adicionar obra
-        // Só para administradores
-        // Falta subject e cover (na tabela assuntos_obras) e copies (na tabela exemplares) 
+        // Add book
+        // Just for admins
+        // It's missing subject, cover and copies logic
         public static Book AddBook(Book newBook)
         {
             Author bookAuthor = newBook.Author;
@@ -26,29 +25,23 @@ namespace LibLibrary
             {
                 using (LibraryContext context = new LibraryContext())
                 {
+
                     if (BookExists(newBook.Title))
                     {
                         throw new Exception("The book already exists.");
                     }
 
-                    if (LibAuthor.AuthorExists(bookAuthor.AuthorName) && LibAuthor.AuthorFinder(bookAuthor.AuthorName) != null)
+                    if (LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        if (!BookExists(newBook.Title))
-                        {
-                            context.Books.Add(newBook);
-                            context.SaveChanges();
-                        }
+                        context.Books.Add(newBook);
+                        context.SaveChanges();
                     }
 
                     if (!LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        if (!BookExists(newBook.Title))
-                        {
-                            Author newAuthor = LibAuthor.AddAuthor(bookAuthor.AuthorName);
-
-                            context.Books.Add(newBook);
-                            context.SaveChanges();
-                        }
+                        Author newAuthor = LibAuthor.AddAuthor(bookAuthor);
+                        context.Books.Add(newBook);
+                        context.SaveChanges();
                     }
                 }
             }
@@ -59,14 +52,19 @@ namespace LibLibrary
             return newBook;
         }
 
-        public static Book Copie(Book book)
+        public static Book CopieBook(Book book)
         {
             Book newBook = new Book
             {
                 BookId = book.BookId,
                 Title = book.Title,
+                Edition = book.Edition,
                 Year = book.Year,
-
+                Quantity = book.Quantity,
+                Author = book.Author,
+                Cover = book.Cover,
+                Subjects = book.Subjects,
+                Copies = book.Copies
             };
 
             return newBook;
@@ -120,10 +118,10 @@ namespace LibLibrary
         }
 
 
-        
 
 
-        
+
+
 
         private static bool BookExists(string s)
         {

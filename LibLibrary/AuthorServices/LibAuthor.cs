@@ -45,8 +45,7 @@ namespace LibLibrary.AuthorServices
             return newAuthor;
         }
 
-        // Só para administradores
-        // rever a função para com as verificações adequadas
+        // Just for admins
         public static Author AddAuthor(Author author)
         {
             try
