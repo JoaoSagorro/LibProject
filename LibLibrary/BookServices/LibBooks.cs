@@ -14,7 +14,7 @@ namespace LibLibrary.BookServices
         // Add book
         // Just for admins
         // It's missing subject, cover and copies logic
-        public static Book AddBook(Book newBook)
+        public static void AddBook(Book newBook)
         {
             Author bookAuthor = newBook.Author;
             List<Subject> bookSubject = newBook.Subjects.ToList();
@@ -49,7 +49,6 @@ namespace LibLibrary.BookServices
             {
                 throw e;
             }
-            return newBook;
         }
 
         public static Book CopieBook(Book book)
