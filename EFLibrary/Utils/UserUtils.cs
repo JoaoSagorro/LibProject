@@ -52,16 +52,14 @@ namespace EFLibrary.Utils
         //    }
         //}
 
-        public static User AddUser( User user)
+        public static User AddUser( LibraryContext context,User user)
         {
             try
             {
-                using (LibraryContext context = new())
-                {
                 context.Users.Add(user);
                     context.SaveChanges();
                     return user;
-                }
+                
             }catch(Exception e)
             {
                 throw e;
