@@ -36,6 +36,27 @@ namespace LibLibrary.BookServices
             return allBooks;
         }
 
+        public static Book GetBookById(int bookId)
+        {
+            Book book;
+
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    book = context.Books.FirstOrDefault(bk => bk.BookId == bookId, null);
+
+                    if (book is null) throw new Exception("The book does not exist.");
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+            return book;
+        }
+
         // Add book
         // Just for admins
         // It's missing subject, cover and copies logic
