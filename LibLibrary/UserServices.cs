@@ -26,12 +26,13 @@ namespace LibLibrary
             } catch (Exception e){ throw new Exception($"Error getting users", e); } 
         }
 
-        public static User AddUser(string firstName, string lastName, string email, string password, DateTime dataNascimento, string? morada = null, Role? role = null)
+        public static User AddUser(string firstName, string lastName, string email, string password, DateTime dataNascimento, string? morada = null, string role = "User")
         {
             try
             {
                 using (var context = new LibraryContext())
                 {
+                    Role roleToAdd;
                     //regex to check if email follows "word@word.word" else returns invalid email exception
                     if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
                     {
@@ -43,17 +44,17 @@ namespace LibLibrary
                         throw new Exception("Password too small");
                     }
                     //check for valid role or no role passed defaults to User
-                    if (!context.Roles.Any(r => r == role) && role != null)
+                    if (!context.Roles.Any(r => r.RoleName == role))
                     {
                         throw new Exception("Role doesn't exist");
                     }
-                    else role ??= context.Roles.FirstOrDefault(r => r.RoleName == "User");
+                    else roleToAdd = context.Roles.FirstOrDefault(r => r.RoleName == role);
                     PasswordHasher<User> pwHasher = new();
-                    User leitor = new User { FirstName = firstName, LastName = lastName, Email = email, Address = morada, Role = role, RegisterDate = DateTime.Now, Birthdate = dataNascimento };
+                    User leitor = new User { FirstName = firstName, LastName = lastName, Email = email, Address = morada, Role = roleToAdd, RegisterDate = DateTime.Now, Birthdate = dataNascimento };
                     password = pwHasher.HashPassword(leitor, password);
                     leitor.Password = password;
-                    UserUtils.AddUser(leitor);
-                    return leitor;
+                    var leitor1 = UserUtils.AddUser(context,leitor);
+                    return leitor1;
                 }
             }
             catch (Exception e)
