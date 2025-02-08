@@ -6,11 +6,36 @@ using System.Threading.Tasks;
 using EFLibrary;
 using EFLibrary.Models;
 using LibLibrary.AuthorServices;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LibLibrary.BookServices
 {
     public class LibBooks
     {
+
+        public static List<Book> GetAllBooks()
+        {
+            List<Book> allBooks;
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    allBooks = context.Books.Select(bk => bk).ToList();
+
+                    if(allBooks.IsNullOrEmpty())
+                    {
+                        throw new Exception("There are no books in our database");
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+            return allBooks;
+        }
+
         // Add book
         // Just for admins
         // It's missing subject, cover and copies logic
@@ -80,7 +105,7 @@ namespace LibLibrary.BookServices
             {
                 bookToDel = context.Books.First(b => b.BookId == bookId);
 
-                deleted = Copie(bookToDel);
+                deleted = CopieBook(bookToDel);
 
                 context.Remove(bookToDel);
                 context.SaveChanges();
@@ -115,12 +140,6 @@ namespace LibLibrary.BookServices
 
             return (success, message);
         }
-
-
-
-
-
-
 
         private static bool BookExists(string s)
         {
