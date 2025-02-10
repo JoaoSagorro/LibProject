@@ -54,9 +54,12 @@ namespace LibLibrary.AuthorServices
         {
             try
             {
+                // check if this verification makes sense.
                 using (LibraryContext context = new LibraryContext())
                 {
-                    context.Add(author);
+                    if (author.AuthorId != 0 || author.AuthorId != null || AuthorExists(author.AuthorName)) throw new Exception("The Id is autommaticaly assigned.");
+
+                    context.Add(author.AuthorName);
                     context.SaveChanges();
                 }
             }
