@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using EFLibrary.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace EFLibrary
 {
     public class LibraryContext : DbContext
     {
-        private string CnString { get; set; } = "";  
+        private string CnString { get; set; } = "";
 
-        public LibraryContext()
+        // Constructor for dependency injection (used in production)
+        public LibraryContext(DbContextOptions<LibraryContext> options)
+            : base(options)
         {
-
         }
 
+        // Constructor for manual instantiation (used in testing or other scenarios)
         public LibraryContext(string cnString)
         {
             this.CnString = cnString;
@@ -24,7 +21,20 @@ namespace EFLibrary
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(CnString);
+            // Only configure the connection if no options were provided (e.g., in testing)
+            if (!optionsBuilder.IsConfigured)
+            {
+                if (string.IsNullOrEmpty(CnString))
+                {
+                    // Use in-memory database for testing
+                    optionsBuilder.UseInMemoryDatabase("InMemoryDatabase");
+                }
+                else
+                {
+                    // Use a real database for production
+                    optionsBuilder.UseSqlServer(CnString);
+                }
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -43,6 +53,5 @@ namespace EFLibrary
         public DbSet<State> States { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<User> Users { get; set; }
-
     }
 }

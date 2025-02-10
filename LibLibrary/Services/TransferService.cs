@@ -5,10 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using EFLibrary.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 
 namespace EFLibrary.Services
 {
+    public static class DbContextExtensions
+    {
+        public static bool IsInMemory(this DatabaseFacade database)
+        {
+            return database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
+        }
+    }
     public class TransferService
     {
         private readonly LibraryContext _context;
@@ -24,41 +32,52 @@ namespace EFLibrary.Services
         {
             var trackedSourceCopie = ValidateTransfer(sourceCopie, destinationLibraryId, quantity);
 
-            using (var transaction = _context.Database.BeginTransaction(System.Data.IsolationLevel.Serializable))
+            // Skip transactions for in-memory database
+            if (!_context.Database.IsInMemory())
             {
-                try
+                using (var transaction = _context.Database.BeginTransaction(System.Data.IsolationLevel.Serializable))
                 {
-                    var destinationCopie = _context.Copies
-                        .SingleOrDefault(c => c.BookId == sourceCopie.BookId && c.LibraryId == destinationLibraryId);
-
-                    if (destinationCopie == null)
+                    try
                     {
-                        destinationCopie = new Copie
-                        {
-                            BookId = sourceCopie.BookId,
-                            LibraryId = destinationLibraryId,
-                            NumberOfCopies = quantity,
-                        };
-                        _context.Copies.Add(destinationCopie);
+                        return PerformTransfer(trackedSourceCopie, destinationLibraryId, quantity);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        destinationCopie.NumberOfCopies += quantity;
+                        _logger.LogError(ex, "Error transferring copies.");
+                        throw;
                     }
-
-                    trackedSourceCopie.NumberOfCopies -= quantity;
-
-                    _context.SaveChanges();
-                    transaction.Commit();
-
-                    return destinationCopie;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error transferring copies.");
-                    throw;
                 }
             }
+            else
+            {
+                return PerformTransfer(trackedSourceCopie, destinationLibraryId, quantity);
+            }
+        }
+
+        private Copie PerformTransfer(Copie trackedSourceCopie, int destinationLibraryId, int quantity)
+        {
+            var destinationCopie = _context.Copies
+                .SingleOrDefault(c => c.BookId == trackedSourceCopie.BookId && c.LibraryId == destinationLibraryId);
+
+            if (destinationCopie == null)
+            {
+                destinationCopie = new Copie
+                {
+                    BookId = trackedSourceCopie.BookId,
+                    LibraryId = destinationLibraryId,
+                    NumberOfCopies = quantity,
+                };
+                _context.Copies.Add(destinationCopie);
+            }
+            else
+            {
+                destinationCopie.NumberOfCopies += quantity;
+            }
+
+            trackedSourceCopie.NumberOfCopies -= quantity;
+
+            _context.SaveChanges();
+            return destinationCopie;
         }
 
         private Copie ValidateTransfer(Copie sourceCopie, int destinationLibraryId, int quantity)
