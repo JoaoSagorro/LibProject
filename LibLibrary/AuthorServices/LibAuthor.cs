@@ -11,7 +11,11 @@ namespace LibLibrary.AuthorServices
 {
     public class LibAuthor
     {
-
+        public static Author CreateAuthor(string authorName)
+        {
+            return new Author { AuthorName = authorName };
+        }
+        
         public static Author GetAuthorById(int authorId)
         {
             Author author;
