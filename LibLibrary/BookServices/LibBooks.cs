@@ -85,7 +85,7 @@ namespace LibLibrary.BookServices
 
                     if (!LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        Author newAuthor = LibAuthor.AddAuthor(bookAuthor);
+                        //Author newAuthor = LibAuthor.AddAuthor(bookAuthor);
                         context.Books.Add(newBook);
                         context.SaveChanges();
                     }
