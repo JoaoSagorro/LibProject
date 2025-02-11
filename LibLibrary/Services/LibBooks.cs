@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using EFLibrary;
 using EFLibrary.Models;
-using LibLibrary.AuthorServices;
 using Microsoft.IdentityModel.Tokens;
 
-namespace LibLibrary.BookServices
+namespace LibLibrary.Services
 {
     public class LibBooks
     {
@@ -18,17 +17,17 @@ namespace LibLibrary.BookServices
             List<Book> allBooks;
             try
             {
-                using(LibraryContext context = new LibraryContext())
+                using (LibraryContext context = new LibraryContext())
                 {
                     allBooks = context.Books.Select(bk => bk).ToList();
 
-                    if(allBooks.IsNullOrEmpty())
+                    if (allBooks.IsNullOrEmpty())
                     {
                         throw new Exception("There are no books in our database");
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
@@ -42,14 +41,14 @@ namespace LibLibrary.BookServices
 
             try
             {
-                using(LibraryContext context = new LibraryContext())
+                using (LibraryContext context = new LibraryContext())
                 {
                     book = context.Books.FirstOrDefault(bk => bk.BookId == bookId, null);
 
                     if (book is null) throw new Exception("The book does not exist.");
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
