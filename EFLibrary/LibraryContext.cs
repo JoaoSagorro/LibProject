@@ -33,7 +33,7 @@ namespace EFLibrary
             modelBuilder.Entity<Copie>().HasIndex(e => new { e.BookId, e.LibraryId }).IsUnique();
 
             modelBuilder.Entity<Role>().HasIndex(r => r.RoleName).IsUnique();
-            modelBuilder.Entity<Book>().HasIndex(o => o.Title).IsUnique();
+            modelBuilder.Entity<Book>().HasIndex(o => new { o.Title, o.Edition }).IsUnique();
             modelBuilder.Entity<Subject>().HasIndex(a => a.SubjectName).IsUnique();
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<Author>().HasIndex(a => a.AuthorName).IsUnique();
