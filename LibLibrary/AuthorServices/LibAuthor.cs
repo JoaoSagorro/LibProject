@@ -116,7 +116,7 @@ namespace LibLibrary.AuthorServices
         }
 
 
-        private static bool AuthorExists(string name)
+        public static bool AuthorExists(string name)
         {
             using (LibraryContext context = new LibraryContext())
             {
