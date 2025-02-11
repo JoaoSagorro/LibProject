@@ -27,7 +27,7 @@ namespace LibLibrary
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return allOrders;
@@ -48,23 +48,42 @@ namespace LibLibrary
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
-            
+
             return order;
         }
 
 
         public List<Order> GetOrderByUserId(int userId)
         {
-            List<Order> orders;
+            List<Order> orders = new List<Order>();
 
-            using(LibraryContext context = new LibraryContext())
+            try
             {
-                orders = context.Orders.Where(ord => ord.User.UserId == userId).ToList();
+                using (LibraryContext context = new LibraryContext())
+                {
+                    var orderList = context.Orders.Where(ord => ord.User.UserId == userId);
+
+                    orders.AddRange(orderList);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return orders;
+        }
+
+        public void GetOrderByBook()
+        {
+            // TODO
+        }
+
+        public void GetOrderByLibrary()
+        {
+            // TODO
         }
     }
 }
