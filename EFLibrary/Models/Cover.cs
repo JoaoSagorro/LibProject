@@ -11,6 +11,7 @@ namespace EFLibrary.Models
     public class Cover
     {
         [Key, ForeignKey("Book")]
+        // Change CoverId to BookId(?)
         public int CoverId { get; set; }
         public byte[] CoverImage { get; set; }
 

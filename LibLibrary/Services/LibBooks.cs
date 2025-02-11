@@ -29,7 +29,7 @@ namespace LibLibrary.Services
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return allBooks;
@@ -50,7 +50,7 @@ namespace LibLibrary.Services
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return book;
@@ -66,14 +66,13 @@ namespace LibLibrary.Services
             // ICollection of Copies
             // Cover object
             Author bookAuthor = book.Author;
-            List<Subject> bookSubject = book.Subjects.ToList();
-            List<Copie> bookCopies = book.Copies.ToList();
             Cover bookCover = book.Cover;
 
             try
             {
                 using (LibraryContext context = new LibraryContext())
                 {
+                    // LibCover.AddCover(bookCover);
 
                     if (BookExists(book.Title, book.Edition))
                     {
@@ -88,7 +87,7 @@ namespace LibLibrary.Services
 
                     if (!LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        Author newAuthor = LibAuthor.AddAuthor(bookAuthor);
+                        LibAuthor.AddAuthor(bookAuthor);
                         context.Books.Add(book);
                         context.SaveChanges();
                     }
@@ -96,7 +95,7 @@ namespace LibLibrary.Services
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
         }
 
