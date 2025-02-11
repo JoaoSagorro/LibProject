@@ -7,7 +7,6 @@ using EFLibrary.Models;
 using EFLibrary.Utils;
 using EFLibrary;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibLibrary
@@ -49,11 +48,41 @@ namespace LibLibrary
                         throw new Exception("Role doesn't exist");
                     }
                     else roleToAdd = context.Roles.FirstOrDefault(r => r.RoleName == role);
-                    PasswordHasher<User> pwHasher = new();
-                    User leitor = new User { FirstName = firstName, LastName = lastName, Email = email, Address = morada, Role = roleToAdd, RegisterDate = DateTime.Now, Birthdate = dataNascimento };
-                    password = pwHasher.HashPassword(leitor, password);
-                    leitor.Password = password;
+                    User leitor = new User { FirstName = firstName, LastName = lastName,Password = password, Email = email, Address = morada, Role = roleToAdd, RegisterDate = DateTime.Now, Birthdate = dataNascimento };
                     var leitor1 = UserUtils.AddUser(context,leitor);
+                    return leitor1;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error adding user: {e}");
+            }
+        }
+        public static User AddUser(User user)
+        {
+            try
+            {
+                using (var context = new LibraryContext())
+                {
+                    Role roleToAdd;
+                    //regex to check if email follows "word@word.word" else returns invalid email exception
+                    if (!Regex.IsMatch(user.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                    {
+                        throw new Exception("Invalid email");
+                    }
+                    //check password Length, will do regex checks later
+                    if (user.Password.Length < 8)
+                    {
+                        throw new Exception("Password too small");
+                    }
+                    //check for valid role or no role passed defaults to User
+                    if (!context.Roles.Any(r => r.RoleName == user.Role.RoleName))
+                    {
+                        throw new Exception("Role doesn't exist");
+                    }
+                    else roleToAdd = context.Roles.FirstOrDefault(r => r.RoleName == "User");
+                    user.Role = roleToAdd;
+                    var leitor1 = UserUtils.AddUser(context,user);
                     return leitor1;
                 }
             }
