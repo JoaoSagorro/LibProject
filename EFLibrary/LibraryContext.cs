@@ -5,7 +5,7 @@ namespace EFLibrary
 {
     public class LibraryContext : DbContext
     {
-        private string CnString { get; set; } = "";
+        private string CnString { get; set; } = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";  
 
         // Constructor for dependency injection (used in production)
         public LibraryContext(DbContextOptions<LibraryContext> options)
