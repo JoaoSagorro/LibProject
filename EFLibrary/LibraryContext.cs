@@ -13,6 +13,11 @@ namespace EFLibrary
         {
         }
 
+        public LibraryContext()
+        {
+
+        }
+
         // Constructor for manual instantiation (used in testing or other scenarios)
         public LibraryContext(string cnString)
         {
