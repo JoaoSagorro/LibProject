@@ -118,21 +118,26 @@ namespace LibLibrary.BookServices
             return newBook;
         }
 
-        // Eliminar obra
-        // Rever verificações e o que retornar nesta função
-        // Só para administradores
+        // Deleted Book
         public Book DeleteBookById(int bookId)
         {
-            Book bookToDel;
-            Book deleted;
-            using (LibraryContext context = new LibraryContext())
+            Book bookToDel = null;
+            Book deleted = null;
+            try
             {
-                bookToDel = context.Books.First(b => b.BookId == bookId);
+                using (LibraryContext context = new LibraryContext())
+                {
+                    bookToDel = context.Books.FirstOrDefault(b => b.BookId == bookId, null);
 
-                deleted = CopieBook(bookToDel);
+                    deleted = CopieBook(bookToDel);
 
-                context.Remove(bookToDel);
-                context.SaveChanges();
+                    context.Remove(bookToDel);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return deleted;
