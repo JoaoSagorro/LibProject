@@ -137,31 +137,21 @@ namespace LibLibrary.Services
             return deleted;
         }
 
-        // Método para fazer update da obra
-        // MÉTODO AINDA NÃO ESTÁ COMPLETO
-        // Só para administradores
-        public static (bool success, string message) UpdateBook
-            (string title,
-            string edition,
-            int year,
-            int quantity,
-            string author)
+        // Verification for empty camps of the Book object
+        public static void UpdateBook(Book book)
         {
-            bool success = false;
-            string message = "";
-
-            using (LibraryContext context = new LibraryContext())
+            try
             {
-                Book book = BookFinder(title);
-
-                book.Title = title;
-                book.Edition = edition;
-                book.Year = year;
-                book.Quantity = quantity;
-
+                using (LibraryContext context = new LibraryContext())
+                {
+                    context.Books.Update(book);
+                    context.SaveChanges();
+                }
             }
-
-            return (success, message);
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
         }
 
         private static bool BookExists(string book, string edition)
