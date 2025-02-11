@@ -114,5 +114,26 @@ namespace LibLibrary
 
             return orders;
         }
+
+        public List<Order> GetOrdersByDate(DateTime orderDate)
+        {
+            List<Order> orders = new List<Order>();
+
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    var ordersByDate = context.Orders.Where(ord => ord.OrderDate == orderDate);
+
+                    orders.AddRange(ordersByDate);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return orders;
+        }
     }
 }
