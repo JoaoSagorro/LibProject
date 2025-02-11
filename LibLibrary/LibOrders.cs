@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EFLibrary;
 using EFLibrary.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LibLibrary
 {
@@ -13,11 +14,20 @@ namespace LibLibrary
 
         public List<Order> GetAllOrders()
         {
-            List<Order> allOrders;
+            List<Order> allOrders = new List<Order>();
 
-            using(LibraryContext context = new LibraryContext())
+            try
             {
-                allOrders = context.Orders.Select(ord => ord).ToList();
+                using (LibraryContext context = new LibraryContext())
+                {
+                    allOrders = context.Orders.Select(ord => ord).ToList();
+
+                    if (allOrders.IsNullOrEmpty()) throw new Exception("There are still no orders that have been placed.");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
 
             return allOrders;
