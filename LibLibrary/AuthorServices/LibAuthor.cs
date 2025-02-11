@@ -10,12 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace LibLibrary.AuthorServices
 {
     public class LibAuthor
-    {
-        public static Author CreateAuthor(string authorName)
-        {
-            return new Author { AuthorName = authorName };
-        }
-        
+    {       
         public static Author GetAuthorById(int authorId)
         {
             Author author;
@@ -57,9 +52,9 @@ namespace LibLibrary.AuthorServices
                 // check if this verification makes sense.
                 using (LibraryContext context = new LibraryContext())
                 {
-                    if (author.AuthorId != 0 || author.AuthorId != null || AuthorExists(author.AuthorName)) throw new Exception("The Id is autommaticaly assigned.");
+                    if (AuthorExists(author.AuthorName)) throw new Exception("The Id is autommaticaly assigned.");
 
-                    context.Add(author.AuthorName);
+                    context.Add(author);
                     context.SaveChanges();
                 }
             }
@@ -125,9 +120,9 @@ namespace LibLibrary.AuthorServices
         {
             using (LibraryContext context = new LibraryContext())
             {
-                var authors = context.Authors.FirstOrDefault(a => a.AuthorName == name, null);
+                List<Author> authors = context.Authors.Where(a => a.AuthorName == name).ToList();
 
-                return !(authors is null);
+                return !authors.IsNullOrEmpty();
             }
         }
 
