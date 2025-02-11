@@ -5,16 +5,62 @@ using System.Text;
 using System.Threading.Tasks;
 using EFLibrary;
 using EFLibrary.Models;
+using LibLibrary.AuthorServices;
+using Microsoft.IdentityModel.Tokens;
 
-namespace LibLibrary
+namespace LibLibrary.BookServices
 {
     public class LibBooks
     {
 
-        // Adicionar obra
-        // Só para administradores
-        // Falta subject e cover (na tabela assuntos_obras) e copies (na tabela exemplares) 
-        public static Book AddBook(Book newBook)
+        public static List<Book> GetAllBooks()
+        {
+            List<Book> allBooks;
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    allBooks = context.Books.Select(bk => bk).ToList();
+
+                    if(allBooks.IsNullOrEmpty())
+                    {
+                        throw new Exception("There are no books in our database");
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+            return allBooks;
+        }
+
+        public static Book GetBookById(int bookId)
+        {
+            Book book;
+
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    book = context.Books.FirstOrDefault(bk => bk.BookId == bookId, null);
+
+                    if (book is null) throw new Exception("The book does not exist.");
+                }
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+            return book;
+        }
+
+        // Add book
+        // Just for admins
+        // It's missing subject, cover and copies logic
+        public static void AddBook(Book newBook)
         {
             Author bookAuthor = newBook.Author;
             List<Subject> bookSubject = newBook.Subjects.ToList();
@@ -25,29 +71,23 @@ namespace LibLibrary
             {
                 using (LibraryContext context = new LibraryContext())
                 {
+
                     if (BookExists(newBook.Title))
                     {
                         throw new Exception("The book already exists.");
                     }
 
-                    if (LibAuthor.AuthorExists(bookAuthor.AuthorName) && LibAuthor.AuthorFinder(bookAuthor.AuthorName) != null)
+                    if (LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        if (!BookExists(newBook.Title))
-                        {
-                            context.Books.Add(newBook);
-                            context.SaveChanges();
-                        }
+                        context.Books.Add(newBook);
+                        context.SaveChanges();
                     }
 
                     if (!LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        if (!BookExists(newBook.Title))
-                        {
-                            Author newAuthor = LibAuthor.AddAuthor(bookAuthor.AuthorName);
-
-                            context.Books.Add(newBook);
-                            context.SaveChanges();
-                        }
+                        //Author newAuthor = LibAuthor.AddAuthor(bookAuthor);
+                        context.Books.Add(newBook);
+                        context.SaveChanges();
                     }
                 }
             }
@@ -55,17 +95,21 @@ namespace LibLibrary
             {
                 throw e;
             }
-            return newBook;
         }
 
-        public static Book Copie(Book book)
+        public static Book CopieBook(Book book)
         {
             Book newBook = new Book
             {
                 BookId = book.BookId,
                 Title = book.Title,
+                Edition = book.Edition,
                 Year = book.Year,
-
+                Quantity = book.Quantity,
+                Author = book.Author,
+                Cover = book.Cover,
+                Subjects = book.Subjects,
+                Copies = book.Copies
             };
 
             return newBook;
@@ -82,7 +126,7 @@ namespace LibLibrary
             {
                 bookToDel = context.Books.First(b => b.BookId == bookId);
 
-                deleted = Copie(bookToDel);
+                deleted = CopieBook(bookToDel);
 
                 context.Remove(bookToDel);
                 context.SaveChanges();
@@ -117,12 +161,6 @@ namespace LibLibrary
 
             return (success, message);
         }
-
-
-        
-
-
-        
 
         private static bool BookExists(string s)
         {
