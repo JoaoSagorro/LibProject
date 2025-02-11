@@ -24,3 +24,4 @@ WebAPI/WebAPI/WeatherForecast.cs
 WebAPI/appsettings.Development.json
 WebAPI/appsettings.json
 WebAPI/WebAPI.sln
+/WebAPI/.vs/WebAPI/DesignTimeBuild
