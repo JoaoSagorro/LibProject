@@ -1,9 +1,12 @@
 /ADOLib/obj
+/ADOLib/bin
 /EFLibrary/Migrations
 /EFLibrary/obj/Debug/net8.0
 /EFLibrary/obj
+/EFLibrary/bin
 /LibLibrary/obj/Debug/net8.0
 /LibLibrary/obj
+/LibLibrary/bin
 /.vs/Projeto/v17
 /.vs/Projeto/CopilotIndices/17.12.31.40377
 /.vs/Projeto/DesignTimeBuild
