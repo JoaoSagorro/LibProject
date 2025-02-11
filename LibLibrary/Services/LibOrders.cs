@@ -8,7 +8,7 @@ using EFLibrary;
 using EFLibrary.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace LibLibrary
+namespace LibLibrary.Services
 {
     public class LibOrders
     {
@@ -79,7 +79,7 @@ namespace LibLibrary
 
             try
             {
-                using(LibraryContext context = new LibraryContext())
+                using (LibraryContext context = new LibraryContext())
                 {
                     var bookOrders = context.Orders.Where(ord => ord.Book.BookId == bookId);
 
@@ -121,7 +121,7 @@ namespace LibLibrary
 
             try
             {
-                using(LibraryContext context = new LibraryContext())
+                using (LibraryContext context = new LibraryContext())
                 {
                     var ordersByDate = context.Orders.Where(ord => ord.OrderDate == orderDate);
 
