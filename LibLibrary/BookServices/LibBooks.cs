@@ -60,33 +60,37 @@ namespace LibLibrary.BookServices
         // Add book
         // Just for admins
         // It's missing subject, cover and copies logic
-        public static void AddBook(Book newBook)
+        public static void AddBook(Book book)
         {
-            Author bookAuthor = newBook.Author;
-            List<Subject> bookSubject = newBook.Subjects.ToList();
-            List<Copie> bookCopies = newBook.Copies.ToList();
-            Cover bookCover = newBook.Cover;
+            // Author object
+            // ICollection of Subjects
+            // ICollection of Copies
+            // Cover object
+            Author bookAuthor = book.Author;
+            List<Subject> bookSubject = book.Subjects.ToList();
+            List<Copie> bookCopies = book.Copies.ToList();
+            Cover bookCover = book.Cover;
 
             try
             {
                 using (LibraryContext context = new LibraryContext())
                 {
 
-                    if (BookExists(newBook.Title))
+                    if (BookExists(book.Title, book.Edition))
                     {
                         throw new Exception("The book already exists.");
                     }
 
                     if (LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        context.Books.Add(newBook);
+                        context.Books.Add(book);
                         context.SaveChanges();
                     }
 
                     if (!LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        //Author newAuthor = LibAuthor.AddAuthor(bookAuthor);
-                        context.Books.Add(newBook);
+                        Author newAuthor = LibAuthor.AddAuthor(bookAuthor);
+                        context.Books.Add(book);
                         context.SaveChanges();
                     }
                 }
@@ -162,7 +166,7 @@ namespace LibLibrary.BookServices
             return (success, message);
         }
 
-        private static bool BookExists(string s)
+        private static bool BookExists(string book, string edition)
         {
             bool success = false;
 
@@ -170,7 +174,7 @@ namespace LibLibrary.BookServices
             {
                 foreach (Book b in context.Books)
                 {
-                    if (b.Title == s)
+                    if (b.Title == book && b.Edition == edition)
                     {
                         success = true;
                     }

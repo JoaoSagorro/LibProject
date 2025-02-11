@@ -45,7 +45,7 @@ namespace LibLibrary.AuthorServices
         }
 
         // Just for admins
-        public static Author AddAuthor(Author author)
+        public static void AddAuthor(Author author)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace LibLibrary.AuthorServices
         }
 
 
-        private static bool AuthorExists(string name)
+        public static bool AuthorExists(string name)
         {
             using (LibraryContext context = new LibraryContext())
             {
