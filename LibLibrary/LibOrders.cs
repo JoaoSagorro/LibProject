@@ -37,11 +37,20 @@ namespace LibLibrary
         {
             Order order;
 
-            using(LibraryContext context = new LibraryContext())
+            try
             {
-                order = context.Orders.First(ord => ord.OrderId == id);
-            }
+                using (LibraryContext context = new LibraryContext())
+                {
+                    order = context.Orders.FirstOrDefault(ord => ord.OrderId == id, null);
 
+                    if (order is null) throw new Exception("There's no order with the passed id.");
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            
             return order;
         }
 
