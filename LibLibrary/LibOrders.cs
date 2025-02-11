@@ -21,8 +21,6 @@ namespace LibLibrary
                 using (LibraryContext context = new LibraryContext())
                 {
                     allOrders = context.Orders.Select(ord => ord).ToList();
-
-                    if (allOrders.IsNullOrEmpty()) throw new Exception("There are still no orders that have been placed.");
                 }
             }
             catch (Exception e)
@@ -42,8 +40,6 @@ namespace LibLibrary
                 using (LibraryContext context = new LibraryContext())
                 {
                     order = context.Orders.FirstOrDefault(ord => ord.OrderId == id, null);
-
-                    if (order is null) throw new Exception("There's no order with the passed id.");
                 }
             }
             catch (Exception e)
@@ -76,12 +72,26 @@ namespace LibLibrary
             return orders;
         }
 
-        public void GetOrderByBook()
+        public List<Order> GetOrdersByBook(int bookId)
         {
-            // TODO
+            List<Order> orders = new List<Order>();
+
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    var bookOrders = context.Orders.Where(ord => ord.Book.BookId == bookId);
+
+                    orders.AddRange(bookOrders);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
         }
 
-        public void GetOrderByLibrary()
+        public void GetOrdersByLibrary()
         {
             // TODO
         }
