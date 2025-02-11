@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using EFLibrary;
@@ -89,11 +90,29 @@ namespace LibLibrary
             {
                 throw new Exception(e.Message, e.InnerException);
             }
+
+            return orders;
         }
 
-        public void GetOrdersByLibrary()
+        public List<Order> GetOrdersByLibrary(int libraryId)
         {
-            // TODO
+            List<Order> orders = new List<Order>();
+
+            try
+            {
+                using (LibraryContext context = new LibraryContext())
+                {
+                    var libraryOrders = context.Orders.Where(ord => ord.Library.LibraryId == libraryId);
+
+                    orders.AddRange(libraryOrders);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return orders;
         }
     }
 }
