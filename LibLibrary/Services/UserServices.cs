@@ -236,6 +236,6 @@ namespace LibLibrary.Services
         private bool UserHasActiveOrders(LibraryContext context, User user)
         {
             return context.Orders.Any(o => o.User.UserId == user.UserId && o.ReturnDate == null);
-        }
+        }     
     }
 }
