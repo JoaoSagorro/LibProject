@@ -7,6 +7,7 @@ using EFLibrary;
 using EFLibrary.Models;
 using Microsoft.IdentityModel.Tokens;
 
+
 namespace LibLibrary.Services
 {
     public class LibAuthor
@@ -17,6 +18,7 @@ namespace LibLibrary.Services
 
             try
             {
+
                 using (LibraryContext context = new LibraryContext())
                 {
                     author = context.Authors.FirstOrDefault(atr => atr.AuthorId == authorId, null);
@@ -26,6 +28,7 @@ namespace LibLibrary.Services
 
             }
             catch (Exception e)
+
             {
                 throw e;
             }
@@ -46,7 +49,8 @@ namespace LibLibrary.Services
         }
 
         // Just for admins
-        public static Author AddAuthor(Author author)
+
+        public static void AddAuthor(Author author)
         {
             try
             {
@@ -64,6 +68,7 @@ namespace LibLibrary.Services
                 throw e;
             }
 
+                     
             return author;
         }
 
@@ -74,6 +79,7 @@ namespace LibLibrary.Services
 
             try
             {
+
                 using (LibraryContext context = new LibraryContext())
                 {
                     updatedAuthor = context
@@ -88,6 +94,7 @@ namespace LibLibrary.Services
                     context.SaveChanges();
                 }
             }
+
             catch (Exception e)
             {
                 throw e;
@@ -102,6 +109,7 @@ namespace LibLibrary.Services
 
             try
             {
+
                 using (LibraryContext context = new LibraryContext())
                 {
                     Author author = GetAuthorById(id);
@@ -117,7 +125,8 @@ namespace LibLibrary.Services
         }
 
 
-        private static bool AuthorExists(string name)
+
+        public static bool AuthorExists(string name)
         {
             using (LibraryContext context = new LibraryContext())
             {

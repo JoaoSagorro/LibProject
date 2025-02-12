@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using EFLibrary;
 using EFLibrary.Models;
+using LibLibrary.AuthorServices;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace LibLibrary.Services
@@ -29,7 +31,8 @@ namespace LibLibrary.Services
             }
             catch (Exception e)
             {
-                throw e;
+
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return allBooks;
@@ -50,49 +53,53 @@ namespace LibLibrary.Services
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return book;
         }
 
         // Add book
-        // Just for admins
+        // Just for administrator
         // It's missing subject, cover and copies logic
-        public static void AddBook(Book newBook)
+        public static void AddBook(Book book)
         {
-            Author bookAuthor = newBook.Author;
-            List<Subject> bookSubject = newBook.Subjects.ToList();
-            List<Copie> bookCopies = newBook.Copies.ToList();
-            Cover bookCover = newBook.Cover;
+            // Author object
+            // ICollection of Subjects
+            // ICollection of Copies
+            // Cover object
+            Author bookAuthor = book.Author;
+            Cover bookCover = book.Cover;
 
             try
             {
                 using (LibraryContext context = new LibraryContext())
                 {
+                    // LibCover.AddCover(bookCover);
 
-                    if (BookExists(newBook.Title))
+                    if (BookExists(book.Title, book.Edition))
                     {
                         throw new Exception("The book already exists.");
                     }
 
                     if (LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        context.Books.Add(newBook);
+                        context.Books.Add(book);
                         context.SaveChanges();
                     }
 
                     if (!LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-                        //Author newAuthor = LibAuthor.AddAuthor(bookAuthor);
-                        context.Books.Add(newBook);
+
+                        LibAuthor.AddAuthor(bookAuthor);
+                        context.Books.Add(book);
                         context.SaveChanges();
                     }
                 }
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
         }
 
@@ -114,54 +121,51 @@ namespace LibLibrary.Services
             return newBook;
         }
 
-        // Eliminar obra
-        // Rever verificações e o que retornar nesta função
-        // Só para administradores
+        // Deleted Book
+        // Still need to delete every regist of books -> when deleting book, delete from the other tables as well
+        // By default EFCore has "On delete cascade"
         public Book DeleteBookById(int bookId)
         {
-            Book bookToDel;
-            Book deleted;
-            using (LibraryContext context = new LibraryContext())
+            Book bookToDel = null;
+            Book deleted = null;
+
+            try
             {
-                bookToDel = context.Books.First(b => b.BookId == bookId);
+                using (LibraryContext context = new LibraryContext())
+                {
+                    bookToDel = context.Books.FirstOrDefault(b => b.BookId == bookId, null);
 
-                deleted = CopieBook(bookToDel);
-
-                context.Remove(bookToDel);
-                context.SaveChanges();
+                    deleted = CopieBook(bookToDel);
+                    context.Remove(bookToDel);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return deleted;
         }
 
-        // Método para fazer update da obra
-        // MÉTODO AINDA NÃO ESTÁ COMPLETO
-        // Só para administradores
-        public static (bool success, string message) UpdateBook
-            (string title,
-            string edition,
-            int year,
-            int quantity,
-            string author)
+        // Verification for empty camps of the Book object
+        public static void UpdateBook(Book book)
         {
-            bool success = false;
-            string message = "";
-
-            using (LibraryContext context = new LibraryContext())
+            try
             {
-                Book book = BookFinder(title);
-
-                book.Title = title;
-                book.Edition = edition;
-                book.Year = year;
-                book.Quantity = quantity;
-
+                using (LibraryContext context = new LibraryContext())
+                {
+                    context.Books.Update(book);
+                    context.SaveChanges();
+                }
             }
-
-            return (success, message);
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
         }
 
-        private static bool BookExists(string s)
+        private static bool BookExists(string book, string edition)
         {
             bool success = false;
 
@@ -169,7 +173,9 @@ namespace LibLibrary.Services
             {
                 foreach (Book b in context.Books)
                 {
-                    if (b.Title == s)
+
+                    if (b.Title == book && b.Edition == edition)
+
                     {
                         success = true;
                     }
