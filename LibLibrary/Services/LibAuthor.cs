@@ -7,24 +7,28 @@ using EFLibrary;
 using EFLibrary.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace LibLibrary.AuthorServices
+
+namespace LibLibrary.Services
 {
     public class LibAuthor
-    {       
+    {
         public static Author GetAuthorById(int authorId)
         {
             Author author;
 
             try
             {
-                using(LibraryContext context = new LibraryContext())
+
+                using (LibraryContext context = new LibraryContext())
                 {
                     author = context.Authors.FirstOrDefault(atr => atr.AuthorId == authorId, null);
 
-                    if (author is null) throw new Exception("Couldn't find author with the designated id."); 
+                    if (author is null) throw new Exception("Couldn't find author with the designated id.");
                 }
 
-            } catch(Exception e)
+            }
+            catch (Exception e)
+
             {
                 throw e;
             }
@@ -45,6 +49,7 @@ namespace LibLibrary.AuthorServices
         }
 
         // Just for admins
+
         public static void AddAuthor(Author author)
         {
             try
@@ -62,7 +67,8 @@ namespace LibLibrary.AuthorServices
             {
                 throw e;
             }
-                        
+
+                     
             return author;
         }
 
@@ -73,21 +79,23 @@ namespace LibLibrary.AuthorServices
 
             try
             {
-                using(LibraryContext context = new LibraryContext())
+
+                using (LibraryContext context = new LibraryContext())
                 {
                     updatedAuthor = context
                         .Authors
                         .FirstOrDefault(atr => atr.AuthorId == author.AuthorId, null);
 
                     if (updatedAuthor is null) throw new Exception("Author not found.");
-                    
+
                     string newName = author.AuthorName.ToString();
 
                     updatedAuthor.AuthorName = newName;
                     context.SaveChanges();
                 }
             }
-            catch(Exception e)
+
+            catch (Exception e)
             {
                 throw e;
             }
@@ -101,19 +109,21 @@ namespace LibLibrary.AuthorServices
 
             try
             {
-                using(LibraryContext context = new LibraryContext())
+
+                using (LibraryContext context = new LibraryContext())
                 {
                     Author author = GetAuthorById(id);
                     delAuthor = CopieAuthor(author);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
 
             return delAuthor;
         }
+
 
 
         public static bool AuthorExists(string name)

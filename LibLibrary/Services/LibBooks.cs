@@ -31,6 +31,7 @@ namespace LibLibrary.Services
             }
             catch (Exception e)
             {
+
                 throw new Exception(e.Message, e.InnerException);
             }
 
@@ -89,6 +90,7 @@ namespace LibLibrary.Services
 
                     if (!LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
+
                         LibAuthor.AddAuthor(bookAuthor);
                         context.Books.Add(book);
                         context.SaveChanges();
@@ -171,7 +173,9 @@ namespace LibLibrary.Services
             {
                 foreach (Book b in context.Books)
                 {
+
                     if (b.Title == book && b.Edition == edition)
+
                     {
                         success = true;
                     }
