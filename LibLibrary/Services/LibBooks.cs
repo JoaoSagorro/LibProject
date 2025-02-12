@@ -119,21 +119,19 @@ namespace LibLibrary.Services
 
         // Deleted Book
         // Still need to delete every regist of books -> when deleting book, delete from the other tables as well
+        // By default EFCore has "On delete cascade"
         public Book DeleteBookById(int bookId)
         {
             Book bookToDel = null;
             Book deleted = null;
+
             try
             {
                 using (LibraryContext context = new LibraryContext())
                 {
                     bookToDel = context.Books.FirstOrDefault(b => b.BookId == bookId, null);
-                    var bookCover = context.Covers.FirstOrDefault(bcv => bcv.CoverId == bookId);
-                    var bookCopies = context.Copies.Where(bcopie => bcopie.BookId == bookId);
-                    var bookOrders = context.Orders.Where(ord => ord.Book.BookId == bookId);
 
                     deleted = CopieBook(bookToDel);
-
                     context.Remove(bookToDel);
                     context.SaveChanges();
                 }
