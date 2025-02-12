@@ -13,8 +13,20 @@ namespace WebAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsProfile",
+                policy =>
+                {
+                    policy
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod();
+                });
+            })
 
             var app = builder.Build();
+
+            app.UseCors("CorsProfile");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -29,6 +41,7 @@ namespace WebAPI
 
             app.MapGet("/Login", (HttpContext httpContext) =>
             {
+                return "Logged in";
             })
             .WithName("Login")
             .WithOpenApi();
