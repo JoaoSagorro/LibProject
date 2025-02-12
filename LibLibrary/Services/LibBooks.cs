@@ -57,7 +57,7 @@ namespace LibLibrary.Services
         }
 
         // Add book
-        // Just for admins
+        // Just for administrator
         // It's missing subject, cover and copies logic
         public static void AddBook(Book book)
         {
