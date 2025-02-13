@@ -19,9 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="EFLibrary">
-      <HintPath>..\EFLibrary\obj\Debug\net8.0\EFLibrary.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\EFLibrary\EFLibrary.csproj" />
   </ItemGroup>
 
 </Project>
