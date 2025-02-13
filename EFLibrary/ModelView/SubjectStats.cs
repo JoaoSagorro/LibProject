@@ -10,8 +10,8 @@ namespace EFLibrary.ModelView
     public class SubjectStats
     {
 
-        public List<List<Subject>> Subjects { get; set; }
-        public List<int> SubjectsCount { get; set; }
+        public string Subjects { get; set; }
+        public int SubjectsCount { get; set; }
 
     }
 }

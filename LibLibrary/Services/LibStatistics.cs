@@ -12,32 +12,24 @@ namespace LibLibrary.Services
 {
     public class LibStatistics
     {       
-        public static SubjectStats GetMostRequestedSubjects()
+        public static List<SubjectStats> GetMostRequestedSubjects()
         {
-            SubjectStats subjectStats = new SubjectStats();
+            List<SubjectStats> sbjStsList = new List<SubjectStats>();
 
             try
             {
                 using (LibraryContext context = new LibraryContext())
                 {
-                    var list = context
+                    // Need a query that returns the Subject Name and the Count of books requested with that Subject
+                    sbjStsList = context
                         .Orders
-                        .GroupBy(ord => ord.Book.Subjects)
-                        .Select(group => new
-                        {
-                            Subject = group.Key,
-                            Count = group.Count(),
-                        })
-                        .OrderByDescending(sbj => sbj.Count).ToList();
-
-                    foreach (var obj in list)
-                    {
-                        var subject = obj.Subject.ToList();
-                        int quantity = obj.Count;
-
-                        subjectStats.Subjects.Add(subject);
-                        subjectStats.SubjectsCount.Add(quantity);
-                    }
+                        .Include(obj => obj.Book)
+                        .ThenInclude(ob => ob.Subjects)
+                        .SelectMany(slct => slct.Book.Subjects, (order, subject) => new {order, subject})
+                        .GroupBy(group => group.subject.SubjectName)
+                        .Select(sbj => new SubjectStats { Subjects = sbj.Key, SubjectsCount = sbj.Count() })
+                        .OrderByDescending(count => count.SubjectsCount)
+                        .ToList();
                 }
             }
             catch (Exception e)
@@ -45,7 +37,7 @@ namespace LibLibrary.Services
                 throw new Exception(e.Message, e.InnerException);
             }
 
-            return subjectStats;
+            return sbjStsList;
         }
 
 
