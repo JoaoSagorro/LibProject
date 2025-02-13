@@ -5,20 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using EFLibrary;
 using EFLibrary.Models;
+using EFLibrary.ModelView;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibLibrary.Services
 {
     public class LibStatistics
-    {
-
-        public static Dictionary<ICollection<Subject>, int> GetMostBoughtSubjects()
+    {       
+        public static SubjectStats GetMostRequestedSubjects()
         {
-            Dictionary<ICollection<Subject>, int> bookList = new Dictionary<ICollection<Subject>, int>();
+            SubjectStats subjectStats = new SubjectStats();
 
             try
             {
-                using(LibraryContext context = new LibraryContext())
+                using (LibraryContext context = new LibraryContext())
                 {
                     var list = context
                         .Orders
@@ -32,21 +32,23 @@ namespace LibLibrary.Services
 
                     foreach (var obj in list)
                     {
-                        var subject = obj.Subject;
+                        var subject = obj.Subject.ToList();
                         int quantity = obj.Count;
 
-                        bookList.Add(subject, quantity);
+                        subjectStats.Subjects.Add(subject);
+                        subjectStats.SubjectsCount.Add(quantity);
                     }
                 }
             }
-            catch (Exception e )
+            catch (Exception e)
             {
                 throw new Exception(e.Message, e.InnerException);
             }
 
-            return bookList;
+            return subjectStats;
         }
-        
+
+
         public static Dictionary<Dictionary<List<Book>, List<Library>>, int> GetBooksInLibraries()
         {
             Dictionary<Dictionary<List<Book>, List<Library>>, int> dictionary = new Dictionary<Dictionary<List<Book>, List<Library>>, int>();
