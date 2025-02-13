@@ -36,48 +36,38 @@ namespace LibLibrary.Services
             {
                 throw new Exception(e.Message, e.InnerException);
             }
-
+             
             return sbjStsList;
         }
 
 
-        public static Dictionary<Dictionary<List<Book>, List<Library>>, int> GetBooksInLibraries()
+        public static List<OrdersByLibrary> GetLibraryWithLessOrders()
         {
-            Dictionary<Dictionary<List<Book>, List<Library>>, int> dictionary = new Dictionary<Dictionary<List<Book>, List<Library>>, int>();
-            Dictionary<List<Book>, List<Library>> lastDic = new Dictionary<List<Book>, List<Library>>();
+            List<OrdersByLibrary> ordByLib = new List<OrdersByLibrary>();
 
             try
             {
                 using (LibraryContext context = new LibraryContext())
                 {
-                    var list = context
-                        .Copies
-                        .Include(lib => lib.Library)
-                        .Include(bk => bk.Book)
-                        .GroupBy(bk => new { bk.Book, bk.Library })
-                        .Select(group => new
+                    ordByLib = context
+                        .Orders
+                        .Include(ord => ord.Library)
+                        .GroupBy(bk => bk.Library.LibraryName)
+                        .Select(group => new OrdersByLibrary
                         {
-                            Books = group.Key.Book,
-                            Libraries = group.Key.Library,
-                            Quantities = group.Select(e => e.NumberOfCopies)
-                        }).ToList();
-
-                    foreach(var l in list)
-                    {
-                        Book book = l.Books;
-                        Library lib = l.Libraries;
-                        if(l.Quantities.Count() != 1) 
-                        { 
-                            throw new Exception($"It wasn't possible to get the copies of {l.Books.Title} in the {l.Libraries.LibraryName}."); 
-                        }
-                        int quantity = l.Quantities.First();
-                    }
+                            LibraryName = group.Key,
+                            OrdersCount = group.Count()
+                        })
+                        .OrderBy(ord => ord.OrdersCount)
+                        .ToList();
                 }
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message, e.InnerException);
             }
+
+            return ordByLib;
         }
 
     }
