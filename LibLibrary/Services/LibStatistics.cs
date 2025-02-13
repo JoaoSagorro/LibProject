@@ -41,9 +41,9 @@ namespace LibLibrary.Services
         }
 
 
-        public static List<OrdersByLibrary> GetLibraryWithLessOrders()
+        public static List<LibraryStats> GetLibraryWithLessOrders()
         {
-            List<OrdersByLibrary> ordByLib = new List<OrdersByLibrary>();
+            List<LibraryStats> ordByLib = new List<LibraryStats>();
 
             try
             {
@@ -51,12 +51,15 @@ namespace LibLibrary.Services
                 {
                     ordByLib = context
                         .Orders
+                        .Include(ord => ord.User)
                         .Include(ord => ord.Library)
                         .GroupBy(bk => bk.Library.LibraryName)
-                        .Select(group => new OrdersByLibrary
+                        .Select(group => new LibraryStats
                         {
                             LibraryName = group.Key,
-                            OrdersCount = group.Count()
+                            OrdersCount = group.Count(),
+                            UsersCount = group.Select(user => user.User).Distinct().Count(),
+                            OrderDate = group.Select(date => date.OrderDate).Max()
                         })
                         .OrderBy(ord => ord.OrdersCount)
                         .ToList();
@@ -70,5 +73,69 @@ namespace LibLibrary.Services
             return ordByLib;
         }
 
+        public static List<LibraryStats> GetLibraryWithLessUsers()
+        {
+            List<LibraryStats> ordByUser = new List<LibraryStats>();
+
+            try
+            {
+                using (LibraryContext context = new LibraryContext())
+                {
+                    ordByUser = context
+                        .Orders
+                        .Include(ord => ord.User)
+                        .Include(ord => ord.Library)
+                        .GroupBy(bk => bk.Library.LibraryName)
+                        .Select(group => new LibraryStats
+                        {
+                            LibraryName = group.Key,
+                            OrdersCount = group.Count(),
+                            UsersCount = group.Select(user => user.User).Distinct().Count(),
+                            OrderDate = group.Select(date => date.OrderDate).Max()
+                        })
+                        .OrderBy(ord => ord.UsersCount)
+                        .ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return ordByUser;
+        }
+
+
+        public static List<LibraryStats> GetLibraryWithOldestRequest()
+        {
+            List<LibraryStats> ordByDate = new List<LibraryStats>();
+
+            try
+            {
+                using (LibraryContext context = new LibraryContext())
+                {
+                    ordByDate = context
+                        .Orders
+                        .Include(ord => ord.User)
+                        .Include(ord => ord.Library)
+                        .GroupBy(bk => bk.Library.LibraryName)
+                        .Select(group => new LibraryStats
+                        {
+                            LibraryName = group.Key,
+                            OrdersCount = group.Count(),
+                            UsersCount = group.Select(user => user.User.UserId).Distinct().Count(),
+                            OrderDate = group.Select(date => date.OrderDate).Min()
+                        })
+                        .OrderBy(ord => ord.OrderDate)
+                        .ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return ordByDate;
+        }
     }
 }

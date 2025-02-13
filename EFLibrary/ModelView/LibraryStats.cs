@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace EFLibrary.ModelView
 {
-    public class OrdersByLibrary
+    public class LibraryStats
     {
 
         public string LibraryName { get; set; }
+        public int UsersCount { get; set; }
         public int OrdersCount { get; set; }
+        public DateTime OrderDate { get; set; }
+
 
     }
 }
