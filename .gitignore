@@ -30,3 +30,16 @@ WebAPI/appsettings.Development.json
 WebAPI/appsettings.json
 WebAPI/WebAPI.sln
 /WebAPI/.vs/WebAPI/DesignTimeBuild
+/ADOLib
+/src/Projeto/ADOLib/bin/Debug/net8.0
+/src/Projeto/ADOLib/obj
+/src/Projeto/EFLibrary/bin/Debug/net8.0
+/src/Projeto/EFLibrary/obj/Debug/net8.0
+/src/Projeto/EFLibrary/obj
+/src/Projeto/LibLibrary.Tests/obj/Debug/net8.0
+/src/Projeto/LibLibrary.Tests/obj/Release/net8.0
+/src/Projeto/LibLibrary/bin/Debug/net8.0
+/src/Projeto/LibLibrary/obj/Debug/net8.0
+/src/Projeto/LibLibrary/obj
+/src/WebAPI/WebAPI/obj/Debug/net8.0
+/src/WebAPI/WebAPI/obj/Release/net8.0
