@@ -20,30 +20,88 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
-        public List<Book> GetAllBooks()
-        {
-            DataTable dataTable = null;
 
-            List<Book> books = new List<Book>();
+        private string QueryCreator(int? id = null)
+        {
+            string query = "";
+            if(id is null)
+            {
+                query = "SELECT Books.BookId, " +
+                        "Books.title, Books.Edition, Books.Year, Books.Quantity, " +
+                        "Authors.AuthorId, Authors.AuthorName, " +
+                        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
+                        "Copies.NumberOfCopies, Covers.CoverImage, " +
+                        "STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames " +
+                        "FROM Books " +
+                        "INNER JOIN Copies ON Books.BookId = Copies.BookId " +
+                        "INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId " +
+                        "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId " +
+                        "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
+                        "INNER JOIN Covers ON Books.BookId = Covers.CoverId " +
+                        "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId " +
+                        "GROUP BY Books.BookId, Books.Title, Books.Edition, Books.Year, Books.Quantity, " +
+                        "Authors.AuthorId, Authors.AuthorName, " +
+                        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
+                        "Copies.NumberOfCopies, Covers.CoverImage";
+            }
+
+            if(id is not null)
+            {
+                query = "SELECT Books.BookId, " +
+                        "Books.title, Books.Edition, Books.Year, Books.Quantity, " +
+                        "Authors.AuthorId, Authors.AuthorName, " +
+                        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
+                        "Copies.NumberOfCopies, Covers.CoverImage, " +
+                        "STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames " +
+                        "FROM Books " +
+                        "INNER JOIN Copies ON Books.BookId = Copies.BookId " +
+                        "INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId " +
+                        "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId " +
+                        "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
+                        "INNER JOIN Covers ON Books.BookId = Covers.CoverId " +
+                        "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId " +
+                        $"WHERE Books.BookId = {id} " +
+                        "GROUP BY Books.BookId, Books.Title, Books.Edition, Books.Year, Books.Quantity, " +
+                        "Authors.AuthorId, Authors.AuthorName, " +
+                        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
+                        "Copies.NumberOfCopies, Covers.CoverImage";
+            }
+
+            return query;
+        }
+
+        public List<BooksInfo> GetAllBooks(int? id = null)
+        {
+            List<BooksInfo> books = new List<BooksInfo>();
 
             try
             {
                 using(SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = "SELECT * FROM Books";
+                    string query = QueryCreator(id);
 
-                    dataTable = DB.GetSQLRead(connection, query);
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
 
                     foreach(DataRow row in dataTable.Rows)
                     {
-                        var book = new Book()
+                        var book = new BooksInfo()
                         {
                             BookId = Convert.ToInt32(row["BookId"]),
-                            AuthorId = Convert.ToInt32(row["AuthorId"]),
                             Title = row["Title"].ToString(),
                             Edition = row["Edition"].ToString(),
                             Year = Convert.ToInt32(row["Year"]),
-                            Quantity = Convert.ToInt32(row["Quantity"])
+                            Quantity = Convert.ToInt32(row["Quantity"]),
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            LibraryId = Convert.ToInt32(row["LibraryId"]),
+                            LibraryName = row["LibraryName"].ToString(),
+                            LibraryAddress = row["LibraryAddress"].ToString(),
+                            Email = row["Email"].ToString(),
+                            Contact = row["Contact"].ToString(),
+                            NumberOfCopies = Convert.ToInt32(row["NumberOfCopies"]),
+                            AuthorName = row["AuthorName"].ToString(),
+                            // Need to review this conversion and check if it isn't better just to create a converting method
+                            CoverImage = (byte[])row["CoverImage"],
+                            SubjectNames = row["SubjectName"].ToString().Split(",").Select(lst => lst.Trim()).ToList(),
                         };
 
                         books.Add(book);
@@ -58,9 +116,9 @@ namespace ADOLib
             return books;
         }
 
-        public Book GetBookById(int id)
+        public BooksInfo GetBookById(int id)
         {
-            Book book = null;
+            BooksInfo book = null;
 
             try
             {
@@ -71,14 +129,24 @@ namespace ADOLib
 
                     foreach(DataRow row in dataTable.Rows)
                     {
-                        book = new Book()
+                        book = new BooksInfo()
                         {
                             BookId = Convert.ToInt32(row["BookId"]),
-                            AuthorId = Convert.ToInt32(row["AuthorId"]),
                             Title = row["Title"].ToString(),
                             Edition = row["Edition"].ToString(),
                             Year = Convert.ToInt32(row["Year"]),
-                            Quantity = Convert.ToInt32(row["Quantity"])
+                            Quantity = Convert.ToInt32(row["Quantity"]),
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            LibraryId = Convert.ToInt32(row["LibraryId"]),
+                            LibraryName = row["LibraryName"].ToString(),
+                            LibraryAddress = row["LibraryAddress"].ToString(),
+                            Email = row["Email"].ToString(),
+                            Contact = row["Contact"].ToString(),
+                            NumberOfCopies = Convert.ToInt32(row["NumberOfCopies"]),
+                            AuthorName = row["AuthorName"].ToString(),
+                            // Need to review this conversion and check if it isn't better just to create a converting method
+                            CoverImage = (byte[])row["CoverImage"],
+                            SubjectNames = row["SubjectName"].ToString().Split(",").Select(lst => lst.Trim()).ToList()
                         };
                     }
 
@@ -135,7 +203,27 @@ namespace ADOLib
 
         public List<BooksByLibrary> GetBooksByLibrary()
         {
+            List<BooksByLibrary> books = new List<BooksByLibrary>();
 
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = "SELECT Books.*, Libraries.*, Copies.NumberOfCopies, Authors.AuthorName " +
+                        "FROM Books " +
+                        "INNER JOIN Copies ON Books.BookId = Copies.BookId " +
+                        "INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId " +
+                        "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId";
+
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
         }
     }
 }
