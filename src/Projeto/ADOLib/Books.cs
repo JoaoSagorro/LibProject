@@ -132,5 +132,10 @@ namespace ADOLib
 
             return bookSubjects;
         }
+
+        public List<BooksByLibrary> GetBooksByLibrary()
+        {
+
+        }
     }
 }
