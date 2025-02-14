@@ -36,6 +36,7 @@ namespace ADOLib
                         "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
                         "INNER JOIN Covers ON Books.BookId = Covers.CoverId " +
                         "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId ";
+
             if(id is not null)
             {
                 query += $"WHERE Books.BookId = {id} ";
