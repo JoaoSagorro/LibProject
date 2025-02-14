@@ -50,7 +50,7 @@ namespace LibLibrary.Services
 
         // Just for admins
 
-        public static void AddAuthor(Author author)
+        public static Author AddAuthor(Author author)
         {
             try
             {
