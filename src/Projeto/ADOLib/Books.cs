@@ -23,10 +23,7 @@ namespace ADOLib
 
         private string QueryCreator(int? id = null)
         {
-            string query = "";
-            if(id is null)
-            {
-                query = "SELECT Books.BookId, " +
+            string query = "SELECT Books.BookId, " +
                         "Books.title, Books.Edition, Books.Year, Books.Quantity, " +
                         "Authors.AuthorId, Authors.AuthorName, " +
                         "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
@@ -38,34 +35,16 @@ namespace ADOLib
                         "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId " +
                         "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
                         "INNER JOIN Covers ON Books.BookId = Covers.CoverId " +
-                        "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId " +
-                        "GROUP BY Books.BookId, Books.Title, Books.Edition, Books.Year, Books.Quantity, " +
-                        "Authors.AuthorId, Authors.AuthorName, " +
-                        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
-                        "Copies.NumberOfCopies, Covers.CoverImage";
-            }
-
+                        "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId ";
             if(id is not null)
             {
-                query = "SELECT Books.BookId, " +
-                        "Books.title, Books.Edition, Books.Year, Books.Quantity, " +
-                        "Authors.AuthorId, Authors.AuthorName, " +
-                        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
-                        "Copies.NumberOfCopies, Covers.CoverImage, " +
-                        "STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames " +
-                        "FROM Books " +
-                        "INNER JOIN Copies ON Books.BookId = Copies.BookId " +
-                        "INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId " +
-                        "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId " +
-                        "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
-                        "INNER JOIN Covers ON Books.BookId = Covers.CoverId " +
-                        "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId " +
-                        $"WHERE Books.BookId = {id} " +
-                        "GROUP BY Books.BookId, Books.Title, Books.Edition, Books.Year, Books.Quantity, " +
-                        "Authors.AuthorId, Authors.AuthorName, " +
-                        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
-                        "Copies.NumberOfCopies, Covers.CoverImage";
+                query += $"WHERE Books.BookId = {id} ";
             }
+
+            query += "GROUP BY Books.BookId, Books.Title, Books.Edition, Books.Year, Books.Quantity, " +
+                "Authors.AuthorId, Authors.AuthorName, " +
+                "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
+                "Copies.NumberOfCopies, Covers.CoverImage";
 
             return query;
         }
