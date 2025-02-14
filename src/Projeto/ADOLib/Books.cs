@@ -27,7 +27,7 @@ namespace ADOLib
 
             try
             {
-                using(SqlConnection connection = new SqlConnection())
+                using(SqlConnection connection = DB.Open(CnString))
                 {
                     string query = "SELECT * FROM Books";
 
@@ -55,6 +55,40 @@ namespace ADOLib
             }
 
             return books;
+        }
+
+        public Book GetBookById(int id)
+        {
+            Book book = null;
+
+            try
+            {
+                using(SqlConnection context = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Books WHERE BookId = {id}";
+                    DataTable dataTable = DB.GetSQLRead(context, query);
+
+                    foreach(DataRow row in dataTable.Rows)
+                    {
+                        book = new Book()
+                        {
+                            BookId = Convert.ToInt32(row["BookId"]),
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            Title = row["Title"].ToString(),
+                            Edition = row["Edition"].ToString(),
+                            Year = Convert.ToInt32(row["Year"]),
+                            Quantity = Convert.ToInt32(row["Quantity"])
+                        };
+                    }
+
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return book;
         }
 
     }
