@@ -6,23 +6,24 @@ using System.Text;
 using System.Threading.Tasks;
 using LibDB;
 using Microsoft.Data.SqlClient;
+using static ADOLib.Model.Model;
 
 namespace ADOLib
 {
-    public class LibBooks
+    public class Books
     {
         private string CnString { get; set; }
 
-        public LibBooks()
+        public Books()
         {
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
-        public List<LibBooks> GetAllBooks()
+        public List<Book> GetAllBooks()
         {
             DataTable dataTable = null;
 
-            List<LibBooks> books = new List<LibBooks>();
+            List<Book> books = new List<Book>();
 
             try
             {
@@ -34,10 +35,17 @@ namespace ADOLib
 
                     foreach(DataRow row in dataTable.Rows)
                     {
-                        var book = new LibBooks()
+                        var book = new Book()
                         {
-                            BookId = row["BookId"]
+                            BookId = Convert.ToInt32(row["BookId"]),
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            Title = row["Title"].ToString(),
+                            Edition = row["Edition"].ToString(),
+                            Year = Convert.ToInt32(row["Year"]),
+                            Quantity = Convert.ToInt32(row["Quantity"])
                         };
+
+                        books.Add(book);
                     }
                 }
             }
@@ -46,6 +54,7 @@ namespace ADOLib
                 throw new Exception(e.Message, e.InnerException);
             }
 
+            return books;
         }
 
     }
