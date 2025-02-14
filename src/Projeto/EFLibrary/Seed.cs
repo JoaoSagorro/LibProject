@@ -130,6 +130,42 @@ namespace EFLibrary
             context.SaveChanges();
         }
 
+        private static void Orders(LibraryContext context)
+        {
+            var user = context.Users.FirstOrDefault(u => u.Email == "ana@email.com");
+            var book = context.Books.FirstOrDefault(b => b.Title == "Test Book");
+            var library = context.Libraries.FirstOrDefault(l => l.LibraryName == "Lisboa XPTO");
+
+            if (user != null && book != null && library != null)
+            {
+                if (!context.Orders.Any())
+                {
+                    context.Orders.AddRange(new List<Order>
+            {
+                new Order
+                {
+                    User = user,
+                    Book = book,
+                    Library = library,
+                    OrderDate = DateTime.Now,
+                    State = context.States.FirstOrDefault(s => s.StateName == "Devolução URGENTE"),
+                    ReturnDate = DateTime.Now.AddDays(7)
+                },
+                new Order
+                {
+                    User = user,
+                    Book = book,
+                    Library = library,
+                    OrderDate = DateTime.Now,
+                    State = context.States.FirstOrDefault(s => s.StateName == "Devolver em breve"),
+                    ReturnDate = DateTime.Now.AddDays(3)
+                }
+            });
+                    context.SaveChanges();
+                }
+            }
+        }
+
         public static void SeedAll()
         {
             using LibraryContext context = new();
@@ -143,6 +179,7 @@ namespace EFLibrary
                 Books(context);
                 Libraries(context);
                 Copies(context);
+                Orders(context);
             }
             catch (Exception e) { Console.WriteLine($"Error seeding database {e}"); };
         }
