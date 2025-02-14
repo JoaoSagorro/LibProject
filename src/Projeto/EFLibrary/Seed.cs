@@ -91,11 +91,12 @@ namespace EFLibrary
             if (!context.States.Any())
             {
                 context.States.AddRange(new List<State>
-                {
-                    new() { StateName = "ATRASO"},
-                    new() { StateName = "Devolução URGENTE"},
-                    new() { StateName = "Devolver em breve"},
-                });
+        {
+            new() { StateName = "Requested" },
+            new() { StateName = "ATRASO" },
+            new() { StateName = "Devolução URGENTE" },
+            new() { StateName = "Devolução em breve" }
+        });
                 context.SaveChanges();
             }
         }
