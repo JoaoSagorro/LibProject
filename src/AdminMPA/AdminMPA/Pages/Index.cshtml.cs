@@ -29,9 +29,9 @@ public class IndexModel : PageModel
             // Replace this with your actual authentication logic
             if (Email == "admin@xpto.com" && Password == "password")
             {
-                lib = LibStatistics.GetLibraryWithLessOrders()[0];
+                //lib = LibStatistics.GetLibraryWithLessOrders()[0];
                 // Redirect to a secure page upon successful login
-                //return RedirectToPage("/SecurePage");
+                return RedirectToPage("/Admin/Index");
             }
             else
             {
