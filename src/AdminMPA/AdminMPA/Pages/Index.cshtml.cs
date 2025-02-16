@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using LibLibrary.Services;
+using EFLibrary.ModelView;
 
 public class IndexModel : PageModel
 {
@@ -14,6 +16,7 @@ public class IndexModel : PageModel
     [Required(ErrorMessage = "Password is required.")]
     [DataType(DataType.Password)]
     public string Password { get; set; }
+    public LibraryStats lib { get; set; } = new LibraryStats();
 
     public void OnGet()
     {
@@ -26,8 +29,9 @@ public class IndexModel : PageModel
             // Replace this with your actual authentication logic
             if (Email == "admin@xpto.com" && Password == "password")
             {
+                lib = LibStatistics.GetLibraryWithLessOrders()[0];
                 // Redirect to a secure page upon successful login
-                return RedirectToPage("/SecurePage");
+                //return RedirectToPage("/SecurePage");
             }
             else
             {
