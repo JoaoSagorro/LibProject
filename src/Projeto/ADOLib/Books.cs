@@ -124,6 +124,8 @@ namespace ADOLib
                     string addCopies = $"INSERT INTO Copies (BookId, LibraryId, NumberOfCopies) " +
                         $"VALUES ({bookId}, {book.LibraryId}, {book.NumberOfCopies})";
 
+                    int copiesResult = DB.CmdExecute(connection, addCopies, transaction);
+
                     transaction.Commit();
                 }
             }
