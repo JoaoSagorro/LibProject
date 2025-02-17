@@ -115,7 +115,16 @@ namespace ADOLib
                     // Second, grab book that was just added to get the Id.
                     int bookId = BookFinder(book.Title, book.Edition);
                     // Third, add Cover to Covers table
+                    string addCover = $"INSERT INTO Covers (CoverId, CoverImage) " +
+                        $"VALUES ({bookId}, {book.CoverImage})";
+
+                    int converResult = DB.CmdExecute(connection, addCover, transaction);
+
                     // Fourth, add copies to a specific library
+                    string addCopies = $"INSERT INTO Copies (BookId, LibraryId, NumberOfCopies) " +
+                        $"VALUES ({bookId}, {book.LibraryId}, {book.NumberOfCopies})";
+
+                    transaction.Commit();
                 }
             }
             catch (Exception e)
