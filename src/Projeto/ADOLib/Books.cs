@@ -146,6 +146,55 @@ namespace ADOLib
             }
         }
 
+        public BooksInfo DeleteBookById(int id)
+        {
+            BooksInfo book = null;
+
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    List<BooksInfo> books = GetAllBooks(id);
+
+                    if (books.Count != 1) throw new Exception("An error has occurred when trying to get the book.");
+
+                    foreach(BooksInfo bk in books)
+                    {
+                        book = bk;
+                    }
+
+                    SqlTransaction transaction = connection.BeginTransaction();
+                    // Delete from Orders
+                    string deleteOrders = $"DELETE FOM Orders WHERE BookId = {id}";
+
+                    int deletedOrders = DB.CmdExecute(connection, deleteOrders, transaction);
+
+                    // Delete from copies
+                    string deleteCopies = $"DELETE FOM Copies WHERE BookId = {id}";
+                    int deletedCopies = DB.CmdExecute(connection, deleteCopies, transaction);
+
+                    // Delete from Subjects
+                    string deleteSubjects = $"DELETE FOM BookSubject WHERE BookId = {id}";
+                    int deletedSubjects = DB.CmdExecute(connection, deleteSubjects, transaction);
+
+                    // Delete from covers
+                    string deleteCovers = $"DELETE FOM Covers WHERE CoverId = {id}";
+                    int deletedCovers = DB.CmdExecute(connection, deleteCovers, transaction);
+
+                    // Delete from books
+                    string deleteBook = $"DELETE FOM Books WHERE BookId = {id}";
+                    int deletedBooks = DB.CmdExecute(connection, deleteBook, transaction);
+
+                    transaction.Commit();
+                    return book;
+                }
+            }
+            catch(Exception e)
+            {
+                return book;
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
 
         public int BookFinder(string title, string edition)
         {
