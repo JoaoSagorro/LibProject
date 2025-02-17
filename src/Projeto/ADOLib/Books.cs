@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using ADOLib.ModelView;
 using LibDB;
 using Microsoft.Data.SqlClient;
@@ -94,6 +95,33 @@ namespace ADOLib
             }
 
             return books;
+        }
+
+
+        public void AddBook(BooksInfo book)
+        {
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    SqlTransaction transaction = connection.BeginTransaction();
+
+                    // First, add book to Books table;
+                    string addBook = $"INSERT INTO Books (Title, Edition, Year, Quantity, AuthorId) " +
+                        $"VALUES ({book.Title}, {book.Edition}, {book.Year}, {book.Quantity}, {book.AuthorId})";
+
+                    int result = DB.CmdExecute(connection, addBook, transaction);
+
+                    // Second, grab book that was just added to get the Id.
+                    int bookId = BookFinder(book.Title, book.Edition);
+                    // Third, add Cover to Covers table
+                    // Fourth, add copies to a specific library
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
         }
 
         //public BooksInfo GetBookById(int id)

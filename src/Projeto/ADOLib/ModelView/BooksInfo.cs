@@ -22,7 +22,6 @@ namespace ADOLib.ModelView
             public string LibraryAddress { get; set; }
             public string Email { get; set; }
             public string Contact { get; set; }
-            public int SubjectId { get; set; }
             public List<string> SubjectNames { get; set; }
         }
 }
