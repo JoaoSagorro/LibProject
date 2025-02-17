@@ -30,7 +30,7 @@ namespace LibLibrary.Services
             catch (Exception e)
 
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return author;
@@ -65,11 +65,8 @@ namespace LibLibrary.Services
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
-
-                     
-            return author;
         }
 
         // Author parameter must contain the id of the author to be updated and the new values;
@@ -97,7 +94,7 @@ namespace LibLibrary.Services
 
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return updatedAuthor;
@@ -118,7 +115,7 @@ namespace LibLibrary.Services
             }
             catch (Exception e)
             {
-                throw e;
+                throw new Exception(e.Message, e.InnerException);
             }
 
             return delAuthor;

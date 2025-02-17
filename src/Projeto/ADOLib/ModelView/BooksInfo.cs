@@ -25,6 +25,4 @@ namespace ADOLib.ModelView
             public int SubjectId { get; set; }
             public List<string> SubjectNames { get; set; }
         }
-
-    }
 }
