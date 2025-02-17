@@ -126,6 +126,17 @@ namespace ADOLib
 
                     int copiesResult = DB.CmdExecute(connection, addCopies, transaction);
 
+                    if (book.SubjectNames.Count <= 0) throw new Exception("There are no subjects for this book.");
+
+                    foreach(string subject in book.SubjectNames)
+                    {
+                        int subjectId = Subjects.SubjectFinder(subject);
+                        string addSubjects = $"INSERT INTO BookSubject (BooksBookId, SubjectsSubjectId) " +
+                        $"VALUES ({bookId}, {subjectId})";
+
+                        int subjectsResult = DB.CmdExecute(connection, addSubjects, transaction);
+                    }
+
                     transaction.Commit();
                 }
             }
