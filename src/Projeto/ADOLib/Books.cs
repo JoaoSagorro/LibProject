@@ -124,6 +124,34 @@ namespace ADOLib
             }
         }
 
+
+        public int BookFinder(string title, string edition)
+        {
+            int bookId = 0;
+
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Books WHERE Books.Title = {title} AND Books.Edition = {edition}";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to retrieve the id.");
+                    
+                    foreach(DataRow row in dataTable.Rows)
+                    {
+                        bookId = Convert.ToInt32(row["BookId"]);
+                    }
+                    
+                    return bookId;
+                }
+            }
+            catch(Exception e)
+            {
+                return bookId = -1;
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
         //public BooksInfo GetBookById(int id)
         //{
         //    BooksInfo book = null;
