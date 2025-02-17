@@ -3,12 +3,36 @@
 @{
     ViewData["Title"] = "Manage Books";
 }
-<h1>@ViewData["Title"]</h1>
-<p>Content for managing books goes here.</p>
-@if(Model.books != null){
-    <ul>
-        @foreach(var book in Model.books){
-            <li>@book.Title - @book.Edition - @book.Year <button>Manage</button></li>
-        }
-    </ul>
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+@if (Model.Books != null && Model.Books.Any())
+{
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Edition</th>
+                    <th>Year</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var book in Model.Books)
+            {
+                        <tr>
+                            <td>@book.Title</td>
+                            <td>@book.Edition</td>
+                            <td>@book.Year</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" asp-page="EditBook" asp-route-id="@book.BookId">Manage</a>
+                            </td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}
+else
+{
+        <p>No books available.</p>
 }

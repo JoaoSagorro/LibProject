@@ -7,10 +7,10 @@ namespace AdminMPA.Pages.Admin
 {
     public class ManageBooksModel : PageModel
     {
-        public List<Book> books { get; set; } = new();
+        public List<Book> Books { get; set; } = new();
         public void OnGet()
         {
-            books.AddRange(LibBooks.GetAllBooks());
+            Books.AddRange(LibBooks.GetAllBooks());
         }
     }
 }
