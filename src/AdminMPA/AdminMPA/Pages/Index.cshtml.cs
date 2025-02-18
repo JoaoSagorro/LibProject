@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Session;
 using System.ComponentModel.DataAnnotations;
 using LibLibrary.Services;
 using EFLibrary.ModelView;
@@ -18,8 +19,14 @@ public class IndexModel : PageModel
     public string Password { get; set; }
     public LibraryStats lib { get; set; } = new LibraryStats();
 
-    public void OnGet()
+    public IActionResult OnGet()
     {
+        if(HttpContext.Session.GetString("User") != null)
+
+        {
+            return RedirectToPage("/Admin/Index");
+        }
+        return Page();
     }
 
     public IActionResult OnPost()
@@ -31,6 +38,7 @@ public class IndexModel : PageModel
             {
                 //lib = LibStatistics.GetLibraryWithLessOrders()[0];
                 // Redirect to a secure page upon successful login
+                HttpContext.Session.SetString("User", Email);
                 return RedirectToPage("/Admin/Index");
             }
             else
