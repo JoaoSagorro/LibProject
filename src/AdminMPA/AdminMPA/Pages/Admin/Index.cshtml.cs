@@ -5,8 +5,14 @@ namespace AdminMPA.Pages.Admin
 {
     public class IndexModel : PageModel
     {
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if(HttpContext.Session.GetString("User") != null)
+            {
+                return Page();
+            }
+            return RedirectToPage("../Index");
+
         }
     }
 }

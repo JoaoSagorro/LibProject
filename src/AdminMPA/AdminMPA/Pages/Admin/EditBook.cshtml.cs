@@ -10,10 +10,15 @@ namespace AdminMPA.Pages.Admin
         public int BookId { get; set; }
         public Book book { get; set; }
 
-        public void OnGet(int id)
+        public IActionResult OnGet(int id)
         {
+           if(HttpContext.Session.GetString("User") != null)
+            {
             BookId = id; 
             book = LibBooks.GetBookById(id);
+                return Page();
+            }
+            return RedirectToPage("../Index");
         }
     }
 }
