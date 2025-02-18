@@ -1,3 +1,4 @@
+using LibLibrary.Services;
 
 namespace WebAPI
 {
@@ -27,9 +28,15 @@ namespace WebAPI
 
             
 
-            app.MapGet("/Login", (HttpContext httpContext) =>
+            app.MapPost("/Login", (string email, string password) =>
             {
-            })
+                if (LibUser.Login(email, password))
+                {
+                    var user = LibUser.GetUserByEmail(email);
+                    return Results.Ok(new { FirstName = user.FirstName, LastName = user.LastName, Email = user.Email });
+                }
+                return Results.BadRequest( "Error Logging in");
+             })
             .WithName("Login")
             .WithOpenApi();
 
