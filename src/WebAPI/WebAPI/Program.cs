@@ -1,4 +1,4 @@
-
+﻿
 namespace WebAPI
 {
     public class Program
@@ -7,53 +7,29 @@ namespace WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddAuthorization();
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddControllers();
-
-
-            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  policy =>
-                                  {
-                                      policy.WithOrigins("http://localhost:3000") // URL do Next.js
-                                            .AllowAnyHeader()
-                                            .AllowAnyMethod();
-                                  });
+                options.AddPolicy("FrontendPolicy", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000") // Update this for production
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
             });
 
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseCors("FrontendPolicy");
 
-            app.UseCors(MyAllowSpecificOrigins);
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
-
-            app.MapPost("/Login", (HttpContext httpContext) =>
-            {
-                return Results.Json(new { message = "Login realizado com sucesso!" });
-            })
-            .WithName("Login")
-            .WithOpenApi();
-
-            app.MapControllers();
+            app.MapGet("/ping", () => "API is working!").WithName("Ping").WithOpenApi();
 
             app.Run();
+
         }
     }
 }
