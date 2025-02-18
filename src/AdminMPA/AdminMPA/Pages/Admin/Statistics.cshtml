@@ -2,3 +2,12 @@
 @model AdminMPA.Pages.Admin.StatisticsModel
 @{
 }
+<h1>Statistics</h1>
+<h2>Subjects</h2>
+@foreach(var subject in Model.MostRequestedSubjects){
+    <p> @subject.Subjects - @subject.SubjectsCount</p>
+}
+<h2>Orders</h2>
+@foreach(var order in Model.LibsByOrders){
+    <p>@order.LibraryName - @order.OrdersCount</p>
+}
