@@ -10,10 +10,17 @@ namespace AdminMPA.Pages.Admin
     {
         public List<SubjectStats> MostRequestedSubjects { get; set;}
         public List<LibraryStats> LibsByOrders { get; set; }
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            MostRequestedSubjects = LibStatistics.GetMostRequestedSubjects();
-            LibsByOrders = LibStatistics.GetLibraryWithLessOrders();
+            if (HttpContext.Session.GetString("User") != null)
+            {
+                MostRequestedSubjects = LibStatistics.GetMostRequestedSubjects();
+                LibsByOrders = LibStatistics.GetLibraryWithLessOrders();
+
+                return Page();
+            }
+            return RedirectToPage("../Index");
         }
+        
     }
 }

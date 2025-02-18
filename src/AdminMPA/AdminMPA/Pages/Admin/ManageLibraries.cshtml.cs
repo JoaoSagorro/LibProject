@@ -5,8 +5,14 @@ namespace AdminMPA.Pages.Admin
 {
     public class ManageLibrariesModel : PageModel
     {
-        public void OnGet()
+        
+        public IActionResult OnGet()
         {
+        if (HttpContext.Session.GetString("User") != null)
+        {
+            return Page();
+        }
+        return RedirectToPage("../Index");
         }
     }
 }

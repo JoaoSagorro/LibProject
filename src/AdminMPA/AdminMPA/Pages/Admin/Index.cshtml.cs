@@ -12,7 +12,6 @@ namespace AdminMPA.Pages.Admin
                 return Page();
             }
             return RedirectToPage("../Index");
-
         }
     }
 }

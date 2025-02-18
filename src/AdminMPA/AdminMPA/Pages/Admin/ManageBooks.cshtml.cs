@@ -8,9 +8,14 @@ namespace AdminMPA.Pages.Admin
     public class ManageBooksModel : PageModel
     {
         public List<Book> Books { get; set; } = new();
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if (HttpContext.Session.GetString("User") != null)
+            {
             Books.AddRange(LibBooks.GetAllBooks());
+                return Page();
+            }
+            return RedirectToPage("../Index");
         }
     }
 }
