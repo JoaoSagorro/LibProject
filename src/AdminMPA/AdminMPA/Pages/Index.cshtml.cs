@@ -34,12 +34,15 @@ public class IndexModel : PageModel
         if (ModelState.IsValid)
         {
             // Replace this with your actual authentication logic
-            if (Email == "admin@xpto.com" && Password == "password")
+            if (LibUser.Login(Email,Password))
             {
-                //lib = LibStatistics.GetLibraryWithLessOrders()[0];
-                // Redirect to a secure page upon successful login
+                var user = LibUser.GetUserByEmail(Email);
+                if(user.Role.RoleName == "Admin") { 
                 HttpContext.Session.SetString("User", Email);
                 return RedirectToPage("/Admin/Index");
+                }
+                //lib = LibStatistics.GetLibraryWithLessOrders()[0];
+                // Redirect to a secure page upon successful login
             }
             else
             {

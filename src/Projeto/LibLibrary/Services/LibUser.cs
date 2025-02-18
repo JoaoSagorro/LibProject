@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibLibrary.Services
 {
@@ -28,7 +29,7 @@ namespace LibLibrary.Services
             try
             {
                 using var context = new LibraryContext();
-                return context.Users.FirstOrDefault(u => u.Email == email);
+                return context.Users.Include(u => u.Role).FirstOrDefault(u => u.Email == email);
             }
             catch (Exception e) { throw new Exception("Error getting user from Database", e); }
         }
