@@ -22,7 +22,7 @@ namespace ADOLib
 
         public List<Author> GetAllAuthors()
         {
-            List<Author> author = null;
+            List<Author> author = new List<Author>();
 
             try
             {
@@ -31,7 +31,7 @@ namespace ADOLib
                     string query = $"SELECT * FROM Authors";
                     DataTable dataTable = DB.GetSQLRead(connection, query);
 
-                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to find the author.");
+                    if (dataTable.Rows.Count <= 0) throw new Exception("Está vazia");
 
                     foreach (DataRow row in dataTable.Rows)
                     {
@@ -119,7 +119,7 @@ namespace ADOLib
             {
                 using (SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"UPDATE Authors SET AuthorName = {author.AuthorName} WHERE AuthorId = {author.AuthorId}";
+                    string query = $"UPDATE Authors SET AuthorName = '{author.AuthorName}' WHERE AuthorId = {author.AuthorId}";
                     SqlTransaction transaction = connection.BeginTransaction();
 
                     int rowsAffected = DB.CmdExecute(connection, query, transaction);
