@@ -100,17 +100,22 @@ namespace ADOLib
             }
         }
 
-        public static Author DeleteAuthorById(int id)
+        public Author DeleteAuthorById(int id)
         {
-            Author delAuthor;
+            Author delAuthor = null;
 
             try
             {
-
-                using (LibraryContext context = new LibraryContext())
+                using (SqlConnection connection = DB.Open(CnString))
                 {
-                    Author author = GetAuthorById(id);
-                    delAuthor = CopieAuthor(author);
+                    delAuthor = GetAuthorById(id);
+                    string deleteQuery = $"DELETE FROM Authors WHERE AuthorId = {id}";
+                    SqlTransaction transaction = connection.BeginTransaction();
+
+                    int rowsAffected = DB.CmdExecute(connection, deleteQuery, transaction);
+                    transaction.Commit();
+
+                    return delAuthor;
                 }
             }
             catch (Exception e)
@@ -118,7 +123,7 @@ namespace ADOLib
                 throw new Exception(e.Message, e.InnerException);
             }
 
-            return delAuthor;
+
         }
 
 
