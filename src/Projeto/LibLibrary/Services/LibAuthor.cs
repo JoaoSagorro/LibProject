@@ -50,7 +50,7 @@ namespace LibLibrary.Services
 
         // Just for admins
 
-        public static Author AddAuthor(Author author)
+        public static void AddAuthor(Author author)
         {
             try
             {
@@ -67,9 +67,6 @@ namespace LibLibrary.Services
             {
                 throw e;
             }
-
-                     
-            return author;
         }
 
         // Author parameter must contain the id of the author to be updated and the new values;
