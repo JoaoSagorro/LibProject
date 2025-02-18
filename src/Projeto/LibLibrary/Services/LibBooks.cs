@@ -45,7 +45,7 @@ namespace LibLibrary.Services
             {
                 using (LibraryContext context = new LibraryContext())
                 {
-                    book = context.Books.FirstOrDefault(bk => bk.BookId == bookId, null);
+                    book = context.Books.FirstOrDefault(bk => bk.BookId == bookId);
 
                     if (book is null) throw new Exception("The book does not exist.");
                 }
@@ -210,6 +210,17 @@ namespace LibLibrary.Services
 
                 return lista;
             }
+        }
+
+        public static List<Copie> GetCopies(Book book)
+        {
+            try
+            {
+            using var context = new LibraryContext();
+            var copieList = new List<Copie>();
+            copieList.AddRange(context.Copies.Include(c => c.Library).Where(c => c.BookId == book.BookId).ToList());
+            return copieList;
+            }catch(Exception e) { throw new Exception("Error getting copies", e); }
         }
 
     }

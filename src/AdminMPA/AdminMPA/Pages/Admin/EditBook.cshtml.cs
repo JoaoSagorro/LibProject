@@ -9,14 +9,16 @@ namespace AdminMPA.Pages.Admin
     {
         public int BookId { get; set; }
         public Book book { get; set; }
+        public List<Copie> copies { get; set; }
 
         public IActionResult OnGet(int id)
         {
            if(HttpContext.Session.GetString("User") != null)
             {
-            BookId = id; 
+            BookId = id;
             book = LibBooks.GetBookById(id);
-                return Page();
+            copies = LibBooks.GetCopies(book);
+            return Page();
             }
             return RedirectToPage("../Index");
         }
