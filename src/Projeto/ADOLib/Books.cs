@@ -100,15 +100,22 @@ namespace ADOLib
 
         public void AddBook(BooksInfo book)
         {
+            Authors authors = new Authors();
+            Author author = null;
             try
             {
                 using(SqlConnection connection = DB.Open(CnString))
                 {
                     SqlTransaction transaction = connection.BeginTransaction();
 
+                    if (authors.GetAuthorByName(book.Title) != null)
+                    {
+                        author = authors.GetAuthorByName(book.Title);
+                    };
+                    
                     // First, add book to Books table;
                     string addBook = $"INSERT INTO Books (Title, Edition, Year, Quantity, AuthorId) " +
-                        $"VALUES ({book.Title}, {book.Edition}, {book.Year}, {book.Quantity}, {book.AuthorId})";
+                        $"VALUES ({book.Title}, {book.Edition}, {book.Year}, {book.Quantity}, {author.AuthorId})";
 
                     int result = DB.CmdExecute(connection, addBook, transaction);
 
