@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using ADOLib.ModelView;
 using LibDB;
 using Microsoft.Data.SqlClient;
@@ -96,6 +97,156 @@ namespace ADOLib
             return books;
         }
 
+
+        public void AddBook(BooksInfo book)
+        {
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    SqlTransaction transaction = connection.BeginTransaction();
+
+                    // First, add book to Books table;
+                    string addBook = $"INSERT INTO Books (Title, Edition, Year, Quantity, AuthorId) " +
+                        $"VALUES ({book.Title}, {book.Edition}, {book.Year}, {book.Quantity}, {book.AuthorId})";
+
+                    int result = DB.CmdExecute(connection, addBook, transaction);
+
+                    // Second, grab book that was just added to get the Id.
+                    int bookId = BookFinder(book.Title, book.Edition);
+                    // Third, add Cover to Covers table
+                    string addCover = $"INSERT INTO Covers (CoverId, CoverImage) " +
+                        $"VALUES ({bookId}, {book.CoverImage})";
+
+                    int converResult = DB.CmdExecute(connection, addCover, transaction);
+
+                    // Fourth, add copies to a specific library
+                    string addCopies = $"INSERT INTO Copies (BookId, LibraryId, NumberOfCopies) " +
+                        $"VALUES ({bookId}, {book.LibraryId}, {book.NumberOfCopies})";
+
+                    int copiesResult = DB.CmdExecute(connection, addCopies, transaction);
+
+                    if (book.SubjectNames.Count <= 0) throw new Exception("There are no subjects for this book.");
+
+                    foreach(string subject in book.SubjectNames)
+                    {
+                        int subjectId = Subjects.SubjectFinder(subject);
+                        string addSubjects = $"INSERT INTO BookSubject (BooksBookId, SubjectsSubjectId) " +
+                        $"VALUES ({bookId}, {subjectId})";
+
+                        int subjectsResult = DB.CmdExecute(connection, addSubjects, transaction);
+                    }
+
+                    transaction.Commit();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
+        public int UpdateBook(Book book)
+        {
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"UPDATE Books" +
+                        $"SET Title = {book.Title}, Edition = {book.Edition}, Year = {book.Year}, Quantity = {book.Quantity}, AuthorId = {book.AuthorId}" +
+                        $"WHERE BookId = {book.BookId}";
+
+                    SqlTransaction transaction = connection.BeginTransaction();
+                    int updatedRows = DB.CmdExecute(connection, query, transaction);
+
+                    transaction.Commit();
+
+                    return updatedRows;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
+        public BooksInfo DeleteBookById(int id)
+        {
+            BooksInfo book = null;
+
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    List<BooksInfo> books = GetAllBooks(id);
+
+                    if (books.Count != 1) throw new Exception("An error has occurred when trying to get the book.");
+
+                    foreach(BooksInfo bk in books)
+                    {
+                        book = bk;
+                    }
+
+                    SqlTransaction transaction = connection.BeginTransaction();
+                    // Delete from Orders
+                    string deleteOrders = $"DELETE FOM Orders WHERE BookId = {id}";
+
+                    int deletedOrders = DB.CmdExecute(connection, deleteOrders, transaction);
+
+                    // Delete from copies
+                    string deleteCopies = $"DELETE FOM Copies WHERE BookId = {id}";
+                    int deletedCopies = DB.CmdExecute(connection, deleteCopies, transaction);
+
+                    // Delete from Subjects
+                    string deleteSubjects = $"DELETE FOM BookSubject WHERE BookId = {id}";
+                    int deletedSubjects = DB.CmdExecute(connection, deleteSubjects, transaction);
+
+                    // Delete from covers
+                    string deleteCovers = $"DELETE FOM Covers WHERE CoverId = {id}";
+                    int deletedCovers = DB.CmdExecute(connection, deleteCovers, transaction);
+
+                    // Delete from books
+                    string deleteBook = $"DELETE FOM Books WHERE BookId = {id}";
+                    int deletedBooks = DB.CmdExecute(connection, deleteBook, transaction);
+
+                    transaction.Commit();
+                    return book;
+                }
+            }
+            catch(Exception e)
+            {
+                return book;
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
+        public int BookFinder(string title, string edition)
+        {
+            int bookId = 0;
+
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Books WHERE Books.Title = {title} AND Books.Edition = {edition}";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to retrieve the id.");
+                    
+                    foreach(DataRow row in dataTable.Rows)
+                    {
+                        bookId = Convert.ToInt32(row["BookId"]);
+                    }
+                    
+                    return bookId;
+                }
+            }
+            catch(Exception e)
+            {
+                return bookId = -1;
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
         //public BooksInfo GetBookById(int id)
         //{
         //    BooksInfo book = null;
