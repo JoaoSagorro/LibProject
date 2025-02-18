@@ -126,15 +126,23 @@ namespace ADOLib
 
         }
 
-
-
-        public static bool AuthorExists(string name)
+        // needs to be reviewed
+        public bool AuthorExists(string name)
         {
-            using (LibraryContext context = new LibraryContext())
+            try
             {
-                List<Author> authors = context.Authors.Where(a => a.AuthorName == name).ToList();
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Authors WHERE AuthorName = {name}";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
 
-                return !authors.IsNullOrEmpty();
+
+                    return dataTable.Rows.Count > 0;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
             }
         }
 
