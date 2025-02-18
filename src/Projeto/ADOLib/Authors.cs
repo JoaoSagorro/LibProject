@@ -20,6 +20,41 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
+        public List<Author> GetAllAuthors()
+        {
+            List<Author> author = null;
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Authors";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to find the author.");
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        Author at = new Author()
+                        {
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            AuthorName = row["AuthorName"].ToString(),
+                        };
+
+                        author.Add(at);
+                    }
+                }
+
+            }
+            catch (Exception e)
+
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return author;
+        }
+
         public Author GetAuthorById(int authorId)
         {
             Author author = null;
@@ -61,8 +96,7 @@ namespace ADOLib
                 // check if this verification makes sense.
                 using (SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"INSERT INTO Books (AuthorName) " +
-                        $"VALUES ({author.AuthorName})";
+                    string query = $"INSERT INTO Authors (AuthorName) VALUES ('{author.AuthorName}')";
 
                     SqlTransaction transaction = connection.BeginTransaction();
 
