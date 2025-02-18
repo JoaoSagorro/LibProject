@@ -16,7 +16,7 @@ namespace ADOLib
 
         public Users()
         {
-            CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
+            CnString = "Server=host.docker.internal;Database=upskill_Projeto_EFJ;User Id = Nony; Password=1234Tukito69;Trusted_Connection=False;TrustServerCertificate=True";
         }
 
         public User GetUserInfo(int id)
