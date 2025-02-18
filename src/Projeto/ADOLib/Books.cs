@@ -146,6 +146,30 @@ namespace ADOLib
             }
         }
 
+        public int UpdateBook(Book book)
+        {
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"UPDATE Books" +
+                        $"SET Title = {book.Title}, Edition = {book.Edition}, Year = {book.Year}, Quantity = {book.Quantity}, AuthorId = {book.AuthorId}" +
+                        $"WHERE BookId = {book.BookId}";
+
+                    SqlTransaction transaction = connection.BeginTransaction();
+                    int updatedRows = DB.CmdExecute(connection, query, transaction);
+
+                    transaction.Commit();
+
+                    return updatedRows;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
         public BooksInfo DeleteBookById(int id)
         {
             BooksInfo book = null;
