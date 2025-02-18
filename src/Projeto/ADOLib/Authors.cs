@@ -180,6 +180,35 @@ namespace ADOLib
             }
         }
 
+        public Author GetAuthorByName(string authorName)
+        {
+            Author author = null;
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Authors WHERE AuthorName = '{authorName}'";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count != 0) throw new Exception("There was an error when trying to retrieve the author.");
+
+                    foreach(DataRow row in dataTable.Rows)
+                    {
+                        author = new Author()
+                        {
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            AuthorName = row["AuthorName"].ToString()
+                        };
+                    }
+
+                    return author;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
     }
 
 }
