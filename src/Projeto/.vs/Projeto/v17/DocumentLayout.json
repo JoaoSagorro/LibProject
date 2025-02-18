@@ -1,0 +1,115 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Administrator\\Desktop\\upskill\\M3\\Modulo 3\\LibraryProject\\LibProject\\src\\Projeto\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{178AD165-64CE-4D95-85BB-45E68BA2CA24}|LibLibrary\\LibLibrary.csproj|c:\\users\\administrator\\desktop\\upskill\\m3\\modulo 3\\libraryproject\\libproject\\src\\projeto\\liblibrary\\services\\libbooks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{178AD165-64CE-4D95-85BB-45E68BA2CA24}|LibLibrary\\LibLibrary.csproj|solutionrelative:liblibrary\\services\\libbooks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{644A45D6-0C7F-4887-B2AE-422363D4F66C}|ADOLib\\ADOLib.csproj|c:\\users\\administrator\\desktop\\upskill\\m3\\modulo 3\\libraryproject\\libproject\\src\\projeto\\adolib\\modelview\\booksinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{644A45D6-0C7F-4887-B2AE-422363D4F66C}|ADOLib\\ADOLib.csproj|solutionrelative:adolib\\modelview\\booksinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5176057-D409-4063-A17C-0340D6EDA4FD}|EFLibrary\\EFLibrary.csproj|c:\\users\\administrator\\desktop\\upskill\\m3\\modulo 3\\libraryproject\\libproject\\src\\projeto\\eflibrary\\seed.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5176057-D409-4063-A17C-0340D6EDA4FD}|EFLibrary\\EFLibrary.csproj|solutionrelative:eflibrary\\seed.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 10,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{ecb7191a-597b-41f5-9843-03a4cf275dde}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{004be353-6879-467c-9d1e-9ac23cdf6d49}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0504ff91-9d61-11d0-a794-00a0c9110051}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{be4d7042-ba3f-11d2-840e-00c04f9902c1}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{605322a2-17ae-43f4-b60f-766556e46c87}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{28836128-fc2c-11d2-a433-00c04f72d18a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LibBooks.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\upskill\\M3\\Modulo 3\\LibraryProject\\LibProject\\src\\Projeto\\LibLibrary\\Services\\LibBooks.cs",
+              "RelativeDocumentMoniker": "LibLibrary\\Services\\LibBooks.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Desktop\\upskill\\M3\\Modulo 3\\LibraryProject\\LibProject\\src\\Projeto\\LibLibrary\\Services\\LibBooks.cs",
+              "RelativeToolTip": "LibLibrary\\Services\\LibBooks.cs",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-18T12:53:04.926Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BooksInfo.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\upskill\\M3\\Modulo 3\\LibraryProject\\LibProject\\src\\Projeto\\ADOLib\\ModelView\\BooksInfo.cs",
+              "RelativeDocumentMoniker": "ADOLib\\ModelView\\BooksInfo.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Desktop\\upskill\\M3\\Modulo 3\\LibraryProject\\LibProject\\src\\Projeto\\ADOLib\\ModelView\\BooksInfo.cs",
+              "RelativeToolTip": "ADOLib\\ModelView\\BooksInfo.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAA4wBwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-18T12:39:35.6Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Seed.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Desktop\\upskill\\M3\\Modulo 3\\LibraryProject\\LibProject\\src\\Projeto\\EFLibrary\\Seed.cs",
+              "RelativeDocumentMoniker": "EFLibrary\\Seed.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Desktop\\upskill\\M3\\Modulo 3\\LibraryProject\\LibProject\\src\\Projeto\\EFLibrary\\Seed.cs",
+              "RelativeToolTip": "EFLibrary\\Seed.cs",
+              "ViewState": "AgIAAIsAAAAAAAAAAIAwwKAAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-18T12:31:21.788Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
