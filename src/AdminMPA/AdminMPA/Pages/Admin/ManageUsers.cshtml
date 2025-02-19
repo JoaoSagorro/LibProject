@@ -6,6 +6,7 @@
 
 <h1>@ViewData["Title"]</h1>
 <p>Content for managing users goes here.</p>
-<a asp-page="CreateUsers">Create Users</a>
-<p>Delete every inactive user <button>Delete</button></p>
-<p> </p>
+<a href="CreateUser/Index">Create Users</a>
+<form method="post" asp-page-handler="DeleteInactiveUsers">
+<p>Delete every inactive user <button type="submit" class="btn btn-primary">Delete</button></p>
+    </form>

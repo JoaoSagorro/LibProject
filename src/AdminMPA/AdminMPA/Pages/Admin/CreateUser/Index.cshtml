@@ -1,0 +1,58 @@
+﻿@page
+@model AdminMPA.Pages.Admin.CreateUser.IndexModel
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<h1>Create User</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="NewUser.FirstName"></label>
+        <input asp-for="NewUser.FirstName" class="form-control" />
+        <span asp-validation-for="NewUser.FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewUser.LastName"></label>
+        <input asp-for="NewUser.LastName" class="form-control" />
+        <span asp-validation-for="NewUser.LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewUser.Email"></label>
+        <input asp-for="NewUser.Email" class="form-control" type="email" />
+        <span asp-validation-for="NewUser.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewUser.Password"></label>
+        <input asp-for="NewUser.Password" class="form-control" type="password" />
+        <span asp-validation-for="NewUser.Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewUser.Role"></label>
+    <select asp-for="NewUser.Role" asp-items="Model.roles" class="form-control">
+        <option value="">-- Select Role --</option>
+    </select>
+        <span asp-validation-for="NewUser.Role" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewUser.Address"></label>
+        <input asp-for="NewUser.Address" class="form-control" />
+        <span asp-validation-for="NewUser.Address" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewUser.Birth"></label>
+        <input asp-for="NewUser.Birth" class="form-control" type="date" />
+        <span asp-validation-for="NewUser.Birth" class="text-danger"></span>
+    </div>
+    <!-- <div class="form-group">
+        <label asp-for="NewUser.CreateDate"></label>
+        <input asp-for="NewUser.CreateDate" class="form-control" type="date" readonly="readonly" />
+        <span asp-validation-for="NewUser.CreateDate" class="text-danger"></span>
+    </div>-->
+    <button type="submit" class="btn btn-primary">Create User</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

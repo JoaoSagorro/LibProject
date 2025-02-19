@@ -90,7 +90,7 @@ namespace LibLibrary.Services
                     {
                         throw new Exception("Role doesn't exist");
                     }
-                    else roleToAdd = context.Roles.FirstOrDefault(r => r.RoleName == "User");
+                    else roleToAdd = context.Roles.FirstOrDefault(r => r.RoleName == user.Role.RoleName);
                     user.Role = roleToAdd;
                     var leitor1 = InsertUser(context, user);
                     return leitor1;
@@ -107,6 +107,7 @@ namespace LibLibrary.Services
             try
             {
                 context.Add(user);
+                context.SaveChanges();
                 return context.Users.FirstOrDefault(u => u.Email == user.Email);
             }
             catch (Exception e)
@@ -153,6 +154,7 @@ namespace LibLibrary.Services
             }
             catch (Exception e) { throw e; }
         }
+
 
         public static User SuspendUser(string email)
         {
