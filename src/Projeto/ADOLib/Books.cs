@@ -102,11 +102,14 @@ namespace ADOLib
         {
             Authors authors = new Authors();
             Author author = null;
+
             try
             {
                 using(SqlConnection connection = DB.Open(CnString))
                 {
                     SqlTransaction transaction = connection.BeginTransaction();
+
+                    if (BookFinder(book.Title, book.Edition) is not null) throw new Exception("The book already exists.");
 
                     if (authors.GetAuthorByName(book.Title) != null)
                     {
@@ -130,16 +133,16 @@ namespace ADOLib
                     int result = DB.CmdExecute(connection, addBook, transaction);
 
                     // Second, grab book that was just added to get the Id.
-                    int bookId = BookFinder(book.Title, book.Edition);
+                    Book newBook = BookFinder(book.Title, book.Edition);
                     // Third, add Cover to Covers table
                     string addCover = $"INSERT INTO Covers (CoverId, CoverImage) " +
-                        $"VALUES ({bookId}, {book.CoverImage})";
+                        $"VALUES ({newBook.BookId}, {book.CoverImage})";
 
                     int converResult = DB.CmdExecute(connection, addCover, transaction);
 
                     // Fourth, add copies to a specific library
                     string addCopies = $"INSERT INTO Copies (BookId, LibraryId, NumberOfCopies) " +
-                        $"VALUES ({bookId}, {book.LibraryId}, {book.NumberOfCopies})";
+                        $"VALUES ({newBook.BookId}, {book.LibraryId}, {book.NumberOfCopies})";
 
                     int copiesResult = DB.CmdExecute(connection, addCopies, transaction);
 
@@ -149,7 +152,7 @@ namespace ADOLib
                     {
                         int subjectId = Subjects.SubjectFinder(subject);
                         string addSubjects = $"INSERT INTO BookSubject (BooksBookId, SubjectsSubjectId) " +
-                        $"VALUES ({bookId}, {subjectId})";
+                        $"VALUES ({newBook.BookId}, {subjectId})";
 
                         int subjectsResult = DB.CmdExecute(connection, addSubjects, transaction);
                     }
@@ -237,30 +240,36 @@ namespace ADOLib
             }
         }
 
-        public int BookFinder(string title, string edition)
+        public Book BookFinder(string title, string edition)
         {
-            int bookId = 0;
+            Book book = null;
 
             try
             {
                 using(SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"SELECT * FROM Books WHERE Books.Title = {title} AND Books.Edition = {edition}";
+                    string query = $"SELECT * FROM Books WHERE Books.Title = '{title}' AND Books.Edition = '{edition}'";
                     DataTable dataTable = DB.GetSQLRead(connection, query);
 
-                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to retrieve the id.");
+                    if (dataTable.Rows.Count == 0) return book = null;
                     
                     foreach(DataRow row in dataTable.Rows)
                     {
-                        bookId = Convert.ToInt32(row["BookId"]);
+                        book = new Book() {
+                            BookId = Convert.ToInt32(row["BookId"]),
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            Title = row["Title"].ToString(),
+                            Edition = row["Edition"].ToString(),
+                            Year = Convert.ToInt32(row["Year"]),
+                            Quantity = Convert.ToInt32(row["Quantity"])
+                        };
                     }
                     
-                    return bookId;
+                    return book;
                 }
             }
             catch(Exception e)
             {
-                return bookId = -1;
                 throw new Exception(e.Message, e.InnerException);
             }
         }
