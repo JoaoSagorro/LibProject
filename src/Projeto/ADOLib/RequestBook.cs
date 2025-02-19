@@ -12,7 +12,7 @@ namespace ADOLib
 
         public RequestBookService(string connectionString)
         {
-            CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
+            CnString = "";
         }
 
         public async Task<bool> RequestBook(int userId, int bookId, int libraryId)
@@ -23,7 +23,7 @@ namespace ADOLib
 
             try
             {
-                // Check if User, Library, and Book exist
+
                 if (!await ExistsAsync(connection, transaction, "Users", "UserId", userId) ||
                     !await ExistsAsync(connection, transaction, "Libraries", "LibraryId", libraryId) ||
                     !await ExistsAsync(connection, transaction, "Books", "BookId", bookId))
@@ -31,22 +31,18 @@ namespace ADOLib
                     throw new InvalidOperationException("Invalid request. User, Library, or Book not found.");
                 }
 
-                // Check if Book Copy is available
                 var copyCount = await GetCopyCountAsync(connection, transaction, bookId, libraryId);
                 if (copyCount < 1)
                 {
                     throw new InvalidOperationException("Book not available.");
                 }
 
-                // Insert order
                 DateTime orderDate = DateTime.UtcNow;
                 DateTime returnDate = orderDate.AddDays(15);
                 int orderId = await InsertOrderAsync(connection, transaction, userId, bookId, libraryId, orderDate, returnDate);
 
-                // Update the number of copies
                 await UpdateCopyCountAsync(connection, transaction, bookId, libraryId, copyCount - 1);
 
-                // Insert into OrderHistory
                 await InsertOrderHistoryAsync(connection, transaction, userId, bookId, libraryId, orderDate, returnDate);
 
                 await transaction.CommitAsync();
