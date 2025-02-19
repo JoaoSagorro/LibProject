@@ -150,9 +150,9 @@ namespace ADOLib
 
                     foreach(string subject in book.SubjectNames)
                     {
-                        int subjectId = Subjects.SubjectFinder(subject);
+                        Subject sbj = Subjects.SubjectFinder(subject);
                         string addSubjects = $"INSERT INTO BookSubject (BooksBookId, SubjectsSubjectId) " +
-                        $"VALUES ({newBook.BookId}, {subjectId})";
+                        $"VALUES ({newBook.BookId}, {sbj.SubjectId})";
 
                         int subjectsResult = DB.CmdExecute(connection, addSubjects, transaction);
                     }
