@@ -21,7 +21,7 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
-        public void AddCover(int bookId, byte[] image)
+        public void AddCover(Cover cover)
         {
             try
             {
@@ -32,8 +32,8 @@ namespace ADOLib
 
                     using(SqlCommand cmd = new SqlCommand(query, connection))
                     {
-                        cmd.Parameters.AddWithValue("@coverId", bookId);
-                        cmd.Parameters.AddWithValue("@image", image);
+                        cmd.Parameters.AddWithValue("@coverId", cover.BookId);
+                        cmd.Parameters.AddWithValue("@image", cover.CoverImage);
                         cmd.ExecuteNonQuery();
                     }
 
