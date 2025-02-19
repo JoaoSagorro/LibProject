@@ -112,6 +112,16 @@ namespace ADOLib
                     {
                         author = authors.GetAuthorByName(book.Title);
                     };
+
+                    if (authors.GetAuthorByName(book.Title) == null)
+                    {
+                        author = new Author()
+                        {
+                            AuthorName = book.AuthorName,
+                        };
+
+                        authors.AddAuthor(author);
+                    }
                     
                     // First, add book to Books table;
                     string addBook = $"INSERT INTO Books (Title, Edition, Year, Quantity, AuthorId) " +
