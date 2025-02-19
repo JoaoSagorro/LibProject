@@ -20,7 +20,81 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
-        
+        public Order GetOrderById(int orderId)
+        {
+            Order order = null;
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Orders WHERE OrderId = {orderId}";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count != 1) return order;
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        order = new Order()
+                        {
+                            OrderId = Convert.ToInt32(row["OrderId"]),
+                            BookId = Convert.ToInt32(row["BookId"]),
+                            UserId = Convert.ToInt32(row["UserId"]),
+                            LibraryId = Convert.ToInt32(row["LibraryId"]),
+                            StateId = Convert.ToInt32(row["StateId"]),
+                            OrderDate = Convert.ToDateTime(row["StateId"]),
+                            ReturnDate = Convert.ToDateTime(row["StateId"]),
+                        };
+                    }
+                }
+            }
+            catch (Exception e)
+
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return order;
+        } 
+
+        public List<Order> GetOrdersByUserId(int userId)
+        {
+            List<Order> orders = new List<Order>();
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Orders WHERE UserId = {userId}";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count == 0) return orders;
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        Order order = new Order()
+                        {
+                            OrderId = Convert.ToInt32(row["OrderId"]),
+                            BookId = Convert.ToInt32(row["BookId"]),
+                            UserId = Convert.ToInt32(row["UserId"]),
+                            LibraryId = Convert.ToInt32(row["LibraryId"]),
+                            StateId = Convert.ToInt32(row["StateId"]),
+                            OrderDate = Convert.ToDateTime(row["StateId"]),
+                            ReturnDate = Convert.ToDateTime(row["StateId"]),
+                        };
+
+                        orders.Add(order);
+                    }
+                }
+            }
+            catch (Exception e)
+
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return orders;
+        }
 
         public bool OrderBook(int userId, int bookId, int libraryId)
         {
