@@ -98,6 +98,8 @@ namespace ADOLib
                 {
                     string query = $"INSERT INTO Authors (AuthorName) VALUES ('{author.AuthorName}')";
 
+                    if (GetAuthorByName(author.AuthorName) is not null) throw new Exception("Author already exists");
+
                     SqlTransaction transaction = connection.BeginTransaction();
 
                     int rowsAffected = DB.CmdExecute(connection, query, transaction);
@@ -190,7 +192,7 @@ namespace ADOLib
                     string query = $"SELECT * FROM Authors WHERE AuthorName = '{authorName}'";
                     DataTable dataTable = DB.GetSQLRead(connection, query);
 
-                    if (dataTable.Rows.Count != 0) throw new Exception("There was an error when trying to retrieve the author.");
+                    if (dataTable.Rows.Count == 0) return author = null;
 
                     foreach(DataRow row in dataTable.Rows)
                     {

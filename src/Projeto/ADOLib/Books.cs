@@ -111,12 +111,12 @@ namespace ADOLib
 
                     if (BookFinder(book.Title, book.Edition) is not null) throw new Exception("The book already exists.");
 
-                    if (authors.GetAuthorByName(book.Title) != null)
+                    if (authors.GetAuthorByName(book.AuthorName) != null)
                     {
-                        author = authors.GetAuthorByName(book.Title);
+                        author = authors.GetAuthorByName(book.AuthorName);
                     };
 
-                    if (authors.GetAuthorByName(book.Title) == null)
+                    if (authors.GetAuthorByName(book.AuthorName) == null)
                     {
                         author = new Author()
                         {
