@@ -21,6 +21,7 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
+        // Make a method called CreateBooksInfo where it gathers all the info from all the books and returns a list of it.
 
         private string QueryCreator(int? id = null)
         {
