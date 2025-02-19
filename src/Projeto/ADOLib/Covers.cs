@@ -21,6 +21,75 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
+        public Cover GetCoverById(int id)
+        {
+            Cover cover = null;
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Covers WHERE AuthorId = {id}";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to find the author.");
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        cover = new Cover()
+                        {
+                            BookId = Convert.ToInt32(row["CoverId"]),
+                            CoverImage = (byte[])row["CoverImage"],
+                        };
+                    }
+                }
+
+            }
+            catch (Exception e)
+
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return cover;
+        }
+
+        public List<Cover> GetAllCovers()
+        {
+            List<Cover> covers = new List<Cover>();
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Covers";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count == 0) return covers;
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        Cover cover = new Cover()
+                        {
+                            BookId = Convert.ToInt32(row["CoverId"]),
+                            CoverImage = (byte[])row["CoverImage"],
+                        };
+
+                        covers.Add(cover);
+                    }
+                }
+
+            }
+            catch (Exception e)
+
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return covers;
+        }
+
+
         public void AddCover(Cover cover)
         {
             try
@@ -134,37 +203,6 @@ namespace ADOLib
             return image;
         }
 
-        public Cover GetCoverById(int id)
-        {
-            Cover cover = null;
-
-            try
-            {
-                using (SqlConnection connection = DB.Open(CnString))
-                {
-                    string query = $"SELECT * FROM Covers WHERE AuthorId = {id}";
-                    DataTable dataTable = DB.GetSQLRead(connection, query);
-
-                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to find the author.");
-
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        cover = new Cover()
-                        {
-                            BookId = Convert.ToInt32(row["CoverId"]),
-                            CoverImage = (byte[])row["CoverImage"],
-                        };
-                    }
-                }
-
-            }
-            catch (Exception e)
-
-            {
-                throw new Exception(e.Message, e.InnerException);
-            }
-
-            return cover;
-        }
+        
     }
 }
