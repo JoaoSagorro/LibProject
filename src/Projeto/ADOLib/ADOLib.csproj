@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Reference Include="LibDB">
-      <HintPath>..\..\..\..\..\ProjDemo\ProjDemo\LibDB\LibDB\bin\Debug\net8.0\LibDB.dll</HintPath>
+      <HintPath>..\..\..\..\..\ProjDemo\LibDB\LibDB\bin\Debug\net8.0\LibDB.dll</HintPath>
     </Reference>
   </ItemGroup>
 
