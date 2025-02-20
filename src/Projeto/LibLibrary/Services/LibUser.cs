@@ -192,20 +192,20 @@ namespace LibLibrary.Services
         //{
 
         //}
-        public static List<User> DeleteInactiveUsers()
-        {
-            List<User> deletedUsers = [];
-            using(LibraryContext context = new())
-            {
-                var users = GetUsers().Where(u => !UserHasActiveOrders(context,u) && !HasRecentOrders(context,u)).ToList();
-                foreach(var user in users)
-                {
-                    deletedUsers.Add(DeleteUser(user.Email)); 
-                }
-            }
-            return deletedUsers;
+        //public static List<User> DeleteInactiveUsers()
+        //{
+        //    List<User> deletedUsers = [];
+        //    using(LibraryContext context = new())
+        //    {
+        //        var users = GetUsers().Where(u => !UserHasActiveOrders(context,u) && !HasRecentOrders(context,u)).ToList();
+        //        foreach(var user in users)
+        //        {
+        //            deletedUsers.Add(DeleteUser(user.Email)); 
+        //        }
+        //    }
+        //    return deletedUsers;
 
-        }
+        //}
 
         public static User DeleteUser(string email)
         {
@@ -249,20 +249,20 @@ namespace LibLibrary.Services
             catch (Exception e) { throw new Exception("Error updating user", e); }
         }
 
-        private static bool UserHasActiveOrders(LibraryContext context, User user)
-        {
-                try
-                {
-                    return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.State != "Devolvido");
-                } catch (Exception e) { throw new Exception("Can't check valid Orders: ", e); }
-        }
+        //private static bool UserHasActiveOrders(LibraryContext context, User user)
+        //{
+        //        try
+        //        {
+        //            return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.State != "Devolvido");
+        //        } catch (Exception e) { throw new Exception("Can't check valid Orders: ", e); }
+        //}
 
-        private static bool HasRecentOrders(LibraryContext context, User user)
-        {
-            try
-            {
-                return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.ReturnDate.Year - DateTime.Now.Year <1);
-            } catch (Exception e) { throw new Exception("Error Checking recent Orders: ", e); }
-        }
+        //private static bool HasRecentOrders(LibraryContext context, User user)
+        //{
+        //    try
+        //    {
+        //        return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.ReturnDate.Year - DateTime.Now.Year <1);
+        //    } catch (Exception e) { throw new Exception("Error Checking recent Orders: ", e); }
+        //}
     }
 }
