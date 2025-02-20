@@ -21,8 +21,10 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
-        public void CheckOrderState()
+        public List<Order> CheckOrderState()
         {
+            List<Order> orders = new List<Order>();
+
             try
             {
                 using (SqlConnection connection = DB.Open(CnString))
@@ -59,11 +61,24 @@ namespace ADOLib
                                 stateId = states.GetStateByName("Devolução em breve").StateId;
                             }
 
+                            Order newOrder = new Order()
+                            {
+                                OrderId = Convert.ToInt32(order["OrderId"]),
+                                BookId = Convert.ToInt32(order["BookId"]),
+                                UserId = Convert.ToInt32(order["UserId"]),
+                                LibraryId = Convert.ToInt32(order["LibraryId"]),
+                                StateId = stateId,
+                                OrderDate = Convert.ToDateTime(order["OrderDate"]),
+                                ReturnDate = Convert.ToDateTime(order["ReturnDate"]),
+                            };
+
                             cmd.Parameters.AddWithValue("@stateId", stateId);
                             cmd.ExecuteNonQuery();
                         }
                     }
                 }
+
+                return orders;
             }
             catch (Exception e)
             {
@@ -93,8 +108,8 @@ namespace ADOLib
                             UserId = Convert.ToInt32(row["UserId"]),
                             LibraryId = Convert.ToInt32(row["LibraryId"]),
                             StateId = Convert.ToInt32(row["StateId"]),
-                            OrderDate = Convert.ToDateTime(row["StateId"]),
-                            ReturnDate = Convert.ToDateTime(row["StateId"]),
+                            OrderDate = Convert.ToDateTime(row["OrderDate"]),
+                            ReturnDate = Convert.ToDateTime(row["ReturnDate"]),
                         };
                     }
                 }
