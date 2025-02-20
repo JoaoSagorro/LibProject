@@ -49,7 +49,7 @@ namespace LibLibrary.Services
                     Library = library,
                     Book = book,
                     OrderDate = DateTime.UtcNow,
-                    ReturnDate = DateTime.UtcNow.AddDays(15)
+                    //ReturnDate = DateTime.UtcNow.AddDays(15)
                 };
 
                 _context.Orders.Add(order);
@@ -67,7 +67,7 @@ namespace LibLibrary.Services
                     LibraryName = library.LibraryName,
                     OrderedCopies = 1,
                     OrderDate = order.OrderDate,
-                    ReturnDate = order.ReturnDate
+                    //ReturnDate = order.ReturnDate
                 };
 
                 _context.OrderHistories.Add(orderHistory);
