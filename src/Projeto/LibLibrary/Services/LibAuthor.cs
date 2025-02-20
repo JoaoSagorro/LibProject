@@ -49,7 +49,6 @@ namespace LibLibrary.Services
         }
 
         // Just for admins
-
         public static void AddAuthor(Author author)
         {
             try

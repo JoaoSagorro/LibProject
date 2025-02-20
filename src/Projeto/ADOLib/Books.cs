@@ -21,6 +21,7 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
+        // Make a method called CreateBooksInfo where it gathers all the info from all the books and returns a list of it.
 
         private string QueryCreator(int? id = null)
         {
@@ -49,6 +50,43 @@ namespace ADOLib
                 "Copies.NumberOfCopies, Covers.CoverImage";
 
             return query;
+        }
+
+        public Book GetBookById(int id)
+        {
+            Book book = null;
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Books WHERE BookId = {id}";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to find the book.");
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        book = new Book()
+                        {
+                            BookId = Convert.ToInt32(row["BookId"]),
+                            Title = row["Title"].ToString(),
+                            Edition = row["Edition"].ToString(),
+                            Year = Convert.ToInt32(row["Year"]),
+                            Quantity = Convert.ToInt32(row["Quantity"]),
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                        };
+                    }
+                }
+
+            }
+            catch (Exception e)
+
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return book;
         }
 
         public List<BooksInfo> GetAllBooks(int? id = null)
@@ -97,32 +135,55 @@ namespace ADOLib
             return books;
         }
 
-
+        // Still not finished
         public void AddBook(BooksInfo book)
         {
+            Authors authors = new Authors();
+            Author author = null;
+
             try
             {
                 using(SqlConnection connection = DB.Open(CnString))
                 {
                     SqlTransaction transaction = connection.BeginTransaction();
 
+                    if (BookFinder(book.Title, book.Edition) is not null) throw new Exception("The book already exists.");
+
+                    if (authors.GetAuthorByName(book.AuthorName) != null)
+                    {
+                        author = authors.GetAuthorByName(book.AuthorName);
+                    };
+
+                    if (authors.GetAuthorByName(book.AuthorName) == null)
+                    {
+                        author = new Author()
+                        {
+                            AuthorName = book.AuthorName,
+                        };
+
+                        authors.AddAuthor(author);
+                    }
+                    
                     // First, add book to Books table;
                     string addBook = $"INSERT INTO Books (Title, Edition, Year, Quantity, AuthorId) " +
-                        $"VALUES ({book.Title}, {book.Edition}, {book.Year}, {book.Quantity}, {book.AuthorId})";
+                        $"VALUES ({book.Title}, {book.Edition}, {book.Year}, {book.Quantity}, {author.AuthorId})";
 
                     int result = DB.CmdExecute(connection, addBook, transaction);
 
                     // Second, grab book that was just added to get the Id.
-                    int bookId = BookFinder(book.Title, book.Edition);
+                    Book newBook = BookFinder(book.Title, book.Edition);
                     // Third, add Cover to Covers table
-                    string addCover = $"INSERT INTO Covers (CoverId, CoverImage) " +
-                        $"VALUES ({bookId}, {book.CoverImage})";
-
-                    int converResult = DB.CmdExecute(connection, addCover, transaction);
+                    Cover newCover = new Cover()
+                    {
+                        BookId = newBook.BookId,
+                        CoverImage = book.CoverImage
+                    };
+                    Covers covers = new Covers();
+                    covers.AddCover(newCover);
 
                     // Fourth, add copies to a specific library
                     string addCopies = $"INSERT INTO Copies (BookId, LibraryId, NumberOfCopies) " +
-                        $"VALUES ({bookId}, {book.LibraryId}, {book.NumberOfCopies})";
+                        $"VALUES ({newBook.BookId}, {book.LibraryId}, {book.NumberOfCopies})";
 
                     int copiesResult = DB.CmdExecute(connection, addCopies, transaction);
 
@@ -130,9 +191,9 @@ namespace ADOLib
 
                     foreach(string subject in book.SubjectNames)
                     {
-                        int subjectId = Subjects.SubjectFinder(subject);
+                        Subject sbj = Subjects.SubjectFinder(subject);
                         string addSubjects = $"INSERT INTO BookSubject (BooksBookId, SubjectsSubjectId) " +
-                        $"VALUES ({bookId}, {subjectId})";
+                        $"VALUES ({newBook.BookId}, {sbj.SubjectId})";
 
                         int subjectsResult = DB.CmdExecute(connection, addSubjects, transaction);
                     }
@@ -220,141 +281,39 @@ namespace ADOLib
             }
         }
 
-        public int BookFinder(string title, string edition)
+        public Book BookFinder(string title, string edition)
         {
-            int bookId = 0;
+            Book book = null;
 
             try
             {
                 using(SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"SELECT * FROM Books WHERE Books.Title = {title} AND Books.Edition = {edition}";
+                    string query = $"SELECT * FROM Books WHERE Books.Title = '{title}' AND Books.Edition = '{edition}'";
                     DataTable dataTable = DB.GetSQLRead(connection, query);
 
-                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to retrieve the id.");
+                    if (dataTable.Rows.Count == 0) return book = null;
                     
                     foreach(DataRow row in dataTable.Rows)
                     {
-                        bookId = Convert.ToInt32(row["BookId"]);
+                        book = new Book() {
+                            BookId = Convert.ToInt32(row["BookId"]),
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            Title = row["Title"].ToString(),
+                            Edition = row["Edition"].ToString(),
+                            Year = Convert.ToInt32(row["Year"]),
+                            Quantity = Convert.ToInt32(row["Quantity"])
+                        };
                     }
                     
-                    return bookId;
+                    return book;
                 }
             }
             catch(Exception e)
             {
-                return bookId = -1;
                 throw new Exception(e.Message, e.InnerException);
             }
         }
-        //public BooksInfo GetBookById(int id)
-        //{
-        //    BooksInfo book = null;
-
-        //    try
-        //    {
-        //        using(SqlConnection context = DB.Open(CnString))
-        //        {
-        //            string query = $"SELECT * FROM Books WHERE BookId = {id}";
-        //            DataTable dataTable = DB.GetSQLRead(context, query);
-
-        //            foreach(DataRow row in dataTable.Rows)
-        //            {
-        //                book = new BooksInfo()
-        //                {
-        //                    BookId = Convert.ToInt32(row["BookId"]),
-        //                    Title = row["Title"].ToString(),
-        //                    Edition = row["Edition"].ToString(),
-        //                    Year = Convert.ToInt32(row["Year"]),
-        //                    Quantity = Convert.ToInt32(row["Quantity"]),
-        //                    AuthorId = Convert.ToInt32(row["AuthorId"]),
-        //                    LibraryId = Convert.ToInt32(row["LibraryId"]),
-        //                    LibraryName = row["LibraryName"].ToString(),
-        //                    LibraryAddress = row["LibraryAddress"].ToString(),
-        //                    Email = row["Email"].ToString(),
-        //                    Contact = row["Contact"].ToString(),
-        //                    NumberOfCopies = Convert.ToInt32(row["NumberOfCopies"]),
-        //                    AuthorName = row["AuthorName"].ToString(),
-        //                    // Need to review this conversion and check if it isn't better just to create a converting method
-        //                    CoverImage = (byte[])row["CoverImage"],
-        //                    SubjectNames = row["SubjectName"].ToString().Split(",").Select(lst => lst.Trim()).ToList()
-        //                };
-        //            }
-
-        //        }
-        //    }
-        //    catch(Exception e)
-        //    {
-        //        throw new Exception(e.Message, e.InnerException);
-        //    }
-
-        //    return book;
-        //}
-
-
-        //public List<BooksWithSubjects> GetBooksWithSubjects()
-        //{
-        //    List<BooksWithSubjects> bookSubjects = new List<BooksWithSubjects>();
-
-        //    try
-        //    {
-        //        using (SqlConnection connection = DB.Open(CnString))
-        //        {
-        //            string query = "SELECT Books.*, Subjects.* " +
-        //                "FROM Books " +
-        //                "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
-        //                "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId";
-        //            DataTable dataTable = DB.GetSQLRead(connection, query);
-
-        //            foreach(DataRow row in dataTable.Rows)
-        //            {
-        //                BooksWithSubjects books = new BooksWithSubjects()
-        //                {
-        //                    BookId = Convert.ToInt32(row["BookId"]),
-        //                    Title = row["Title"].ToString(),
-        //                    Edition = row["Edition"].ToString(),
-        //                    Year = Convert.ToInt32(row["Year"]),
-        //                    Quantity = Convert.ToInt32(row["Quantity"]),
-        //                    AuthorId = Convert.ToInt32(row["AuthorId"]),
-        //                    SubjectId = Convert.ToInt32(row["SubjectId"]),
-        //                    SubjectName = row["SubjectName"].ToString()
-        //                };
-
-        //                bookSubjects.Add(books);
-        //            }
-        //        }
-        //    }
-        //    catch(Exception e)
-        //    {
-        //        throw new Exception(e.Message, e.InnerException);
-        //    }
-
-        //    return bookSubjects;
-        //}
-
-        //public List<BooksByLibrary> GetBooksByLibrary()
-        //{
-        //    List<BooksByLibrary> books = new List<BooksByLibrary>();
-
-        //    try
-        //    {
-        //        using(SqlConnection connection = DB.Open(CnString))
-        //        {
-        //            string query = "SELECT Books.*, Libraries.*, Copies.NumberOfCopies, Authors.AuthorName " +
-        //                "FROM Books " +
-        //                "INNER JOIN Copies ON Books.BookId = Copies.BookId " +
-        //                "INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId " +
-        //                "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId";
-
-        //            DataTable dataTable = DB.GetSQLRead(connection, query);
-
-
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new Exception(e.Message, e.InnerException);
-        //    }
-        //}
+        
     }
 }

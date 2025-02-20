@@ -71,7 +71,7 @@ namespace ADOLib.Model
             public string UserName { get; set; }
             public string BookName { get; set; }
             public int BookYear { get; set; }
-            public int BookEdition { get; set; }
+            public string BookEdition { get; set; }
             public string BookAuthor { get; set; }
             public string LibraryName { get; set; }
             public int OrderedCopies { get; set; }
