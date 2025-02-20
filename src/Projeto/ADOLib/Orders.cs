@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EFLibrary;
 using LibDB;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,56 @@ namespace ADOLib
         public Orders()
         {
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
+        }
+
+        public void CheckOrderState()
+        {
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = "SELECT * FROM Orders";
+                    string updateQuery = $"UPDATE Orders SET StateId = @stateId WHERE OrderId = @orderId";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+                    States states = new States();
+
+                    using(SqlCommand cmd = new SqlCommand(updateQuery, connection))
+                    {
+                        foreach (DataRow order in dataTable.Rows)
+                        {
+                            int dayDiff = (DateTime.Now - Convert.ToDateTime(order["OrderDate"])).Days;
+
+                            int id = Convert.ToInt32(order["OrderId"]);
+                            cmd.Parameters.AddWithValue("@orderId", id);
+                            int stateId = states.GetStateByName("Requisitado").StateId;
+
+                            if (order["ReturnDate"] != null)
+                            {
+                                stateId = states.GetStateByName("Devolvido").StateId;
+                            }
+                            else if (dayDiff > 15)
+                            {
+                                stateId = states.GetStateByName("ATRASO").StateId;
+                            }
+                            else if (dayDiff > 12)
+                            {
+                                stateId = states.GetStateByName("Devolução URGENTE").StateId;
+                            }
+                            else if (dayDiff > 10)
+                            {
+                                stateId = states.GetStateByName("Devolução em breve").StateId;
+                            }
+
+                            cmd.Parameters.AddWithValue("@stateId", stateId);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
         }
 
         public Order GetOrderById(int orderId)
