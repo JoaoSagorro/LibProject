@@ -149,7 +149,7 @@ namespace EFLibrary
                     Book = book,
                     Library = library,
                     OrderDate = DateTime.Now,
-                    State = context.States.FirstOrDefault(s => s.StateName == "Devolução URGENTE"),
+                    //State = context.States.FirstOrDefault(s => s.StateName == "Devolução URGENTE"),
                     ReturnDate = DateTime.Now.AddDays(7)
                 },
                 new Order
@@ -158,7 +158,7 @@ namespace EFLibrary
                     Book = book,
                     Library = library,
                     OrderDate = DateTime.Now,
-                    State = context.States.FirstOrDefault(s => s.StateName == "Devolver em breve"),
+                    //State = context.States.FirstOrDefault(s => s.StateName == "Devolver em breve"),
                     ReturnDate = DateTime.Now.AddDays(3)
                 }
             });
