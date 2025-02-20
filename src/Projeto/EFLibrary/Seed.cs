@@ -122,11 +122,13 @@ namespace EFLibrary
             var library1 = context.Libraries.FirstOrDefault(l => l.LibraryName == "Lisboa XPTO");
             var library2 = context.Libraries.FirstOrDefault(l => l.LibraryName == "Porto XPTO");
 
+            if (!context.Copies.Any()) 
+            {
             context.Copies.AddRange(new List<Copie>
             {
                 new() { Book = book, Library = library1, NumberOfCopies = 5 },
                 new() { Book = book, Library = library2, NumberOfCopies = 5 },
-            });
+            }); }
 
             context.SaveChanges();
         }
