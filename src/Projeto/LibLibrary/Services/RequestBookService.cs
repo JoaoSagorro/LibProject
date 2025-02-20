@@ -36,6 +36,7 @@ namespace LibLibrary.Services
                     var book = await context.Books
                              .Include(b => b.Author)
                              .FirstOrDefaultAsync(b => b.BookId == bookId);
+                    var state = context.States.First(a => a.StateId == 1);
 
                     if (user == null || library == null || book == null)
                     {
@@ -56,8 +57,10 @@ namespace LibLibrary.Services
                         User = user,
                         Library = library,
                         Book = book,
+                        State = state,
                         OrderDate = DateTime.UtcNow,
-                        ReturnDate = DateTime.UtcNow.AddDays(15)
+                        ReturnDate = DateTime.UtcNow.AddDays(15),
+                        RequestedCopiesQTY = numberOfCopies,
                     };
 
                     context.Orders.Add(order);
@@ -73,7 +76,7 @@ namespace LibLibrary.Services
                         BookAuthor = book.Author.AuthorName,
                         BookEdition = book.Edition,
                         LibraryName = library.LibraryName,
-                        OrderedCopies = 1,
+                        OrderedCopies = numberOfCopies,
                         OrderDate = order.OrderDate,
                         //ReturnDate = order.ReturnDate
                     };
