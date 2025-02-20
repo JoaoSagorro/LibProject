@@ -12,9 +12,9 @@ namespace EFLibrary.Models
     {
         [Key, ForeignKey("Book")]
         // Change CoverId to BookId(?)
-        public int CoverId { get; set; }
+        public int BookId { get; set; }
+        public virtual Book Book { get; set; }
         public byte[] CoverImage { get; set; }
 
-        public virtual Book Book { get; set; }
     }
 }

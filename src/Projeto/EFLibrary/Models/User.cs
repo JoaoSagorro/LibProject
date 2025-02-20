@@ -21,6 +21,6 @@ namespace EFLibrary.Models
         public bool Suspended { get; set; } = false;
         public bool Active { get; set; } = true;
         public int Strikes { get; set; } = 0;
-        //public List<Order> Orders { get; set; } = [];
+        public List<Order> Orders { get; set; } = [];
     }
 }
