@@ -12,31 +12,32 @@ namespace EFLibrary.Models
         public User User { get; set; }
         public Library Library { get; set; }
         public Book Book { get; set; }
+        public int RequestedCopiesQTY { get; set; }
         public DateTime OrderDate { get; set; }
-        public DateTime ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
 
         // Read-only property to calculate the state dynamically
-        public string State
+        public State State
         {
-            get
-            {
-                var today = DateTime.UtcNow;
-                var daysUntilReturn = (ReturnDate - today).TotalDays;
+            get; set;
+            //{
+            //    var today = DateTime.UtcNow;
+            //    var daysUntilReturn = (ReturnDate - today).TotalDays;
 
-                if (daysUntilReturn < 0)
-                {
-                    return "ATRASO"; // Late
-                }
-                if (daysUntilReturn == 0)
-                {
-                    return "Devolução URGENTE"; // Due today
-                }
-                if (daysUntilReturn <= 3)
-                {
-                    return "Devolução em breve"; // Due soon
-                }
-                return "Requested"; // Default state
-            }
+            //    if (daysUntilReturn < 0)
+            //    {
+            //        return "ATRASO"; // Late
+            //    }
+            //    if (daysUntilReturn == 0)
+            //    {
+            //        return "Devolução URGENTE"; // Due today
+            //    }
+            //    if (daysUntilReturn <= 3)
+            //    {
+            //        return "Devolução em breve"; // Due soon
+            //    }
+            //    return "Requested"; // Default state
+            //}
         }
 
     }

@@ -1,0 +1,31 @@
+﻿@page
+@model AdminMPA.Pages.Admin.EditUserModel
+@{
+    ViewData["Title"] = "Edit User";
+}
+<h1>@ViewData["Title"]</h1>
+
+@if (Model.user != null)
+{
+        <div>
+            <p>Email: @Model.user.Email</p>
+            <!-- Other user details -->
+        </div>
+}
+else
+{
+        <div>
+            <p>User not found.</p>
+        </div>
+}
+
+@if(@Model.user.Active){
+    <form method="post" asp-page-handler="SuspendUser">
+    <input type="hidden" name="email" value="@Model.user.Email" />
+    <button type="submit">Suspend User</button> 
+</form>}
+else{
+<form method="post" asp-page-handler="ReactivateUser">
+    <input type="hidden" name="email" value="@Model.user.Email" />
+    <button type="submit">Reactivate User</button> 
+</form>}
