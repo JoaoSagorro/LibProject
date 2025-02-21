@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibLibrary.Services
 {
@@ -28,7 +29,7 @@ namespace LibLibrary.Services
             try
             {
                 using var context = new LibraryContext();
-                return context.Users.FirstOrDefault(u => u.Email == email);
+                return context.Users.Include(u => u.Role).FirstOrDefault(u => u.Email == email);
             }
             catch (Exception e) { throw new Exception("Error getting user from Database", e); }
         }
@@ -89,7 +90,7 @@ namespace LibLibrary.Services
                     {
                         throw new Exception("Role doesn't exist");
                     }
-                    else roleToAdd = context.Roles.FirstOrDefault(r => r.RoleName == "User");
+                    else roleToAdd = context.Roles.FirstOrDefault(r => r.RoleName == user.Role.RoleName);
                     user.Role = roleToAdd;
                     var leitor1 = InsertUser(context, user);
                     return leitor1;
@@ -106,6 +107,7 @@ namespace LibLibrary.Services
             try
             {
                 context.Add(user);
+                context.SaveChanges();
                 return context.Users.FirstOrDefault(u => u.Email == user.Email);
             }
             catch (Exception e)
@@ -153,6 +155,7 @@ namespace LibLibrary.Services
             catch (Exception e) { throw e; }
         }
 
+
         public static User SuspendUser(string email)
         {
             using (LibraryContext context = new())
@@ -189,6 +192,20 @@ namespace LibLibrary.Services
         //{
 
         //}
+        public static List<User> DeleteInactiveUsers()
+        {
+            List<User> deletedUsers = [];
+            using(LibraryContext context = new())
+            {
+                var users = GetUsers().Where(u => !UserHasActiveOrders(context,u) && !HasRecentOrders(context,u)).ToList();
+                foreach(var user in users)
+                {
+                    deletedUsers.Add(DeleteUser(user.Email)); 
+                }
+            }
+            return deletedUsers;
+
+        }
 
         public static User DeleteUser(string email)
         {
@@ -217,7 +234,7 @@ namespace LibLibrary.Services
                     throw new Exception($"User with email: {email} not found");
                 }
             }
-            catch (Exception e) { throw e; };
+            catch (Exception e) { throw  new Exception("Error deleting user: ",e); };
         }
 
         public static User UpdateUser(User user)
@@ -232,9 +249,20 @@ namespace LibLibrary.Services
             catch (Exception e) { throw new Exception("Error updating user", e); }
         }
 
-        private bool UserHasActiveOrders(LibraryContext context, User user)
+        private static bool UserHasActiveOrders(LibraryContext context, User user)
         {
-            return context.Orders.Any(o => o.User.UserId == user.UserId && o.ReturnDate == null);
+                try
+                {
+                    return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.State != "Devolvido");
+                } catch (Exception e) { throw new Exception("Can't check valid Orders: ", e); }
+        }
+
+        private static bool HasRecentOrders(LibraryContext context, User user)
+        {
+            try
+            {
+                return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.ReturnDate.Year - DateTime.Now.Year <1);
+            } catch (Exception e) { throw new Exception("Error Checking recent Orders: ", e); }
         }
     }
 }

@@ -37,7 +37,7 @@ namespace LibLibrary.Services
                 var copy = await _context.Copies
                     .FirstOrDefaultAsync(c => c.BookId == bookId && c.LibraryId == libraryId);
 
-                if (copy == null || copy.NumberOfCopies < 1)
+                if (copy == null || copy.NumberOfCopies <= 1)
                 {
                     throw new InvalidOperationException("Book not available.");
                 }

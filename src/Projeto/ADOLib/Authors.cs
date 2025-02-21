@@ -20,6 +20,41 @@ namespace ADOLib
             CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
+        public List<Author> GetAllAuthors()
+        {
+            List<Author> author = new List<Author>();
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Authors";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count <= 0) throw new Exception("Está vazia");
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        Author at = new Author()
+                        {
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            AuthorName = row["AuthorName"].ToString(),
+                        };
+
+                        author.Add(at);
+                    }
+                }
+
+            }
+            catch (Exception e)
+
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return author;
+        }
+
         public Author GetAuthorById(int authorId)
         {
             Author author = null;
@@ -61,8 +96,9 @@ namespace ADOLib
                 // check if this verification makes sense.
                 using (SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"INSERT INTO Books (AuthorName) " +
-                        $"VALUES ({author.AuthorName})";
+                    string query = $"INSERT INTO Authors (AuthorName) VALUES ('{author.AuthorName}')";
+
+                    if (GetAuthorByName(author.AuthorName) is not null) throw new Exception("Author already exists");
 
                     SqlTransaction transaction = connection.BeginTransaction();
 
@@ -85,7 +121,7 @@ namespace ADOLib
             {
                 using (SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"UPDATE Authors SET AuthorName = {author.AuthorName} WHERE AuthorId = {author.AuthorId}";
+                    string query = $"UPDATE Authors SET AuthorName = '{author.AuthorName}' WHERE AuthorId = {author.AuthorId}";
                     SqlTransaction transaction = connection.BeginTransaction();
 
                     int rowsAffected = DB.CmdExecute(connection, query, transaction);
@@ -146,6 +182,35 @@ namespace ADOLib
             }
         }
 
+        public Author GetAuthorByName(string authorName)
+        {
+            Author author = null;
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = $"SELECT * FROM Authors WHERE AuthorName = '{authorName}'";
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    if (dataTable.Rows.Count == 0) return author = null;
+
+                    foreach(DataRow row in dataTable.Rows)
+                    {
+                        author = new Author()
+                        {
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            AuthorName = row["AuthorName"].ToString()
+                        };
+                    }
+
+                    return author;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
     }
 
 }

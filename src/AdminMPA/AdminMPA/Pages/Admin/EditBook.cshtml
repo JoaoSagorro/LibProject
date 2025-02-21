@@ -1,0 +1,17 @@
+﻿@page
+@model AdminMPA.Pages.Admin.EditBookModel
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h2>@Model.book.Title</h2>
+@foreach(var copy in Model.copies){
+    <p>@copy.Library.LibraryName - @copy.NumberOfCopies</p>
+}
+<br />
+<p>Transfer books library</p>
+<p>Buy books</p>
+<p>Eliminar books</p>
+<p>Update books</p>
+

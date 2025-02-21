@@ -1,0 +1,41 @@
+﻿@page
+@model ManageUsersModel
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>Content for managing users goes here.</p>
+<a href="CreateUser/Index">Create Users</a>
+<a href="ManageUsers/Index">Create Users</a>
+<form method="post" asp-page-handler="DeleteInactiveUsers">
+<p>Delete every inactive user <button type="submit" class="btn btn-primary">Delete</button></p>
+</form>
+@if(Model.deletedUsers.Any()){
+    foreach(var user in Model.deletedUsers){
+        <p>@user.Email - deleted</p>
+    }
+}
+<form method="get">
+    <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Pesquisar..." />
+    <button type="submit">Buscar</button>
+</form>
+<ul>
+    @foreach (var item in Model.Users)
+    {
+            <li>@item.Email</li>
+    }
+</ul>
+@if (Model.Users != null && Model.Users.Any())
+{
+        <ul>
+        @foreach (var user in Model.Users)
+        {
+                                    <li>@user.Email <a class="btn btn-primary btn-sm" asp-page="EditUser" asp-route-email="@user.Email">Manage</a></li> 
+        }
+        </ul>
+}
+else if(!string.IsNullOrEmpty(Model.SearchTerm) && (!Model.Users.Any() || Model.Users == null))
+{
+        <p>Nenhum resultado encontrado.</p>
+}
