@@ -195,12 +195,12 @@ namespace LibLibrary.Services
         public static List<User> DeleteInactiveUsers()
         {
             List<User> deletedUsers = [];
-            using(LibraryContext context = new())
+            using (LibraryContext context = new())
             {
-                var users = GetUsers().Where(u => !UserHasActiveOrders(context,u) && !HasRecentOrders(context,u)).ToList();
-                foreach(var user in users)
+                var users = GetUsers().Where(u => !UserHasActiveOrders(context, u) && !HasRecentOrders(context, u)).ToList();
+                foreach (var user in users)
                 {
-                    deletedUsers.Add(DeleteUser(user.Email)); 
+                    deletedUsers.Add(DeleteUser(user.Email));
                 }
             }
             return deletedUsers;
@@ -253,7 +253,7 @@ namespace LibLibrary.Services
         {
                 try
                 {
-                    return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.State != "Devolvido");
+                    return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.ReturnDate == null);
                 } catch (Exception e) { throw new Exception("Can't check valid Orders: ", e); }
         }
 
@@ -261,8 +261,27 @@ namespace LibLibrary.Services
         {
             try
             {
-                return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.ReturnDate.Year - DateTime.Now.Year <1);
+                //return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.ReturnDate.HasValue && o.ReturnDate.Year - DateTime.Now.Year <1);
+                return context.Orders
+    .Include(o => o.User)
+    .Any(o => o.User.UserId == user.UserId
+           && o.ReturnDate.HasValue
+           && (o.ReturnDate.Value > DateTime.Now.AddYears(-1) ));
             } catch (Exception e) { throw new Exception("Error Checking recent Orders: ", e); }
+        }
+
+        public static void AddStrikeToUser(User user)
+        {
+            using (LibraryContext context = new())
+            {
+                user.Strikes++;
+                context.Update(user);
+                context.SaveChanges();
+            }
+            if(user.Strikes > 3)
+            {
+                SuspendUser(user.Email);
+            }
         }
     }
 }
