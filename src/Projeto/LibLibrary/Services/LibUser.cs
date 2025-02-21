@@ -266,7 +266,7 @@ namespace LibLibrary.Services
     .Include(o => o.User)
     .Any(o => o.User.UserId == user.UserId
            && o.ReturnDate.HasValue
-           && (o.ReturnDate.Value.Year - DateTime.Now.Year < 1));
+           && (o.ReturnDate.Value > DateTime.Now.AddYears(-1) ));
             } catch (Exception e) { throw new Exception("Error Checking recent Orders: ", e); }
         }
 
