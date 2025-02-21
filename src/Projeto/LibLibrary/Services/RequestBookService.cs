@@ -9,78 +9,92 @@ namespace LibLibrary.Services
 {
     public class RequestBookService
     {
-        private readonly LibraryContext _context;
+        //private readonly LibraryContext _context;
 
-        public RequestBookService(LibraryContext context)
+        //public RequestBookService(LibraryContext context)
+        //{
+        //    _context = context;
+        //}
+
+        private bool CanRequest(int numberOfCopies)
         {
-            _context = context;
+            return numberOfCopies <= 4; 
         }
 
-        public async Task<bool> RequestBook(int userId, int bookId, int libraryId)
+        public async Task<bool> RequestBook(int userId, int bookId, int libraryId, int numberOfCopies)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
-                // Load all data needed for the transaction
-                var user = await _context.Users.FindAsync(userId);
-                var library = await _context.Libraries.FindAsync(libraryId);
-                var book = await _context.Books
-                         .Include(b => b.Author)
-                         .FirstOrDefaultAsync(b => b.BookId == bookId);
-
-                if (user == null || library == null || book == null)
+                using(LibraryContext context = new LibraryContext())
                 {
-                    throw new InvalidOperationException("Invalid request. User, Library, or Book not found.");
+                    if (!CanRequest(numberOfCopies)) throw new Exception("Can't request more than 4 copies.");
+
+                    var transaction = await context.Database.BeginTransactionAsync();
+                    // Load all data needed for the transaction
+                    var user = await context.Users.FindAsync(userId);
+                    var library = await context.Libraries.FindAsync(libraryId);
+                    var book = await context.Books
+                             .Include(b => b.Author)
+                             .FirstOrDefaultAsync(b => b.BookId == bookId);
+                    var state = context.States.First(a => a.StateId == 1);
+
+                    if (user == null || library == null || book == null)
+                    {
+                        throw new InvalidOperationException("Invalid request. User, Library, or Book not found.");
+                    }
+
+                    var copy = await context.Copies
+                        .FirstOrDefaultAsync(c => c.BookId == bookId && c.LibraryId == libraryId);
+
+                    if (copy == null || copy.NumberOfCopies <= 1)
+                    {
+                        throw new InvalidOperationException("Book not available.");
+                    }
+
+                    // check if the remaining copies are >= 1:
+                    int remaining = copy.NumberOfCopies - numberOfCopies;
+                    if (remaining < 1) throw new Exception("Can't request the desired amount of copies");
+
+                    // Create the order
+                    var order = new Order
+                    {
+                        User = user,
+                        Library = library,
+                        Book = book,
+                        State = state,
+                        OrderDate = DateTime.UtcNow,
+                        RequestedCopiesQTY = numberOfCopies,
+                    };
+
+                    context.Orders.Add(order);
+                    copy.NumberOfCopies = remaining;
+
+                    await context.SaveChangesAsync();
+
+                    var orderHistory = new OrderHistory
+                    {
+                        UserName = user.FirstName,
+                        BookName = book.Title,
+                        BookYear = book.Year,
+                        BookAuthor = book.Author.AuthorName,
+                        BookEdition = book.Edition,
+                        LibraryName = library.LibraryName,
+                        OrderedCopies = numberOfCopies,
+                        OrderDate = order.OrderDate
+                    };
+
+                    context.OrderHistories.Add(orderHistory);
+
+                    await context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+
+                    return true;
                 }
-
-                var copy = await _context.Copies
-                    .FirstOrDefaultAsync(c => c.BookId == bookId && c.LibraryId == libraryId);
-
-                if (copy == null || copy.NumberOfCopies <= 1)
-                {
-                    throw new InvalidOperationException("Book not available.");
-                }
-
-                // Create the order
-                var order = new Order
-                {
-                    User = user,
-                    Library = library,
-                    Book = book,
-                    OrderDate = DateTime.UtcNow,
-                    ReturnDate = DateTime.UtcNow.AddDays(15)
-                };
-
-                _context.Orders.Add(order);
-                copy.NumberOfCopies -= 1;
-
-                await _context.SaveChangesAsync();
-
-                var orderHistory = new OrderHistory
-                {
-                    UserName = user.FirstName,
-                    BookName = book.Title,
-                    BookYear = book.Year,
-                    BookAuthor = book.Author.AuthorName,
-                    BookEdition = book.Edition,
-                    LibraryName = library.LibraryName,
-                    OrderedCopies = 1,
-                    OrderDate = order.OrderDate,
-                    ReturnDate = order.ReturnDate.Value
-                };
-
-                _context.OrderHistories.Add(orderHistory);
-
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return true;
+                
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
                 Console.WriteLine($"Unexpected error: {ex.Message}");
                 throw new InvalidOperationException("An unexpected error occurred.", ex);
             }

@@ -13,6 +13,47 @@ namespace LibLibrary.Services
     public class LibOrders
     {
 
+        public List<Order> CheckOrderState()
+        {
+            List<Order> checkedOrders = new List<Order>();
+
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    var orders = context.Orders.Select(a => a);
+
+                    foreach(Order order in orders)
+                    {
+                        int dayDiff = (DateTime.Now - order.OrderDate).Days;
+
+                        if(dayDiff > 15)
+                        {
+                            order.State = context.States.First(a => a.StateName == "ATRASO");
+                        }
+                        else if(dayDiff > 12)
+                        {
+                            order.State = context.States.First(a => a.StateName == "Devolução URGENTE");
+                        }
+                        else if (dayDiff > 10)
+                        {
+                            order.State = context.States.First(a => a.StateName == "Devolução em breve");
+                        }
+
+                        checkedOrders.Add(order);
+                    }
+
+                    context.UpdateRange(checkedOrders);
+                    context.SaveChanges();
+                    return checkedOrders;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
         public List<Order> GetAllOrders()
         {
             List<Order> allOrders = new List<Order>();

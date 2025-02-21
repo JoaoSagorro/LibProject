@@ -43,6 +43,10 @@ namespace LibLibrary.Services
 
                 order.ReturnDate = DateTime.UtcNow;
 
+                if(order.ReturnDate.HasValue && (order.ReturnDate.Value - order.OrderDate).Days > 15)
+                {
+                    LibUser.AddStrikeToUser(order.User);
+                }
                 copy.NumberOfCopies += 1;
 
                 await _context.SaveChangesAsync();
