@@ -32,6 +32,9 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
+              "C:\\Users\\nonyt\\Desktop\\code\\LibFork\\LibProject\\src\\Projeto\\EFLibrary\\EFLibrary.csproj": {
+                "projectPath": "C:\\Users\\nonyt\\Desktop\\code\\LibFork\\LibProject\\src\\Projeto\\EFLibrary\\EFLibrary.csproj"
+              },
               "C:\\Users\\nonyt\\Desktop\\code\\LibFork\\LibProject\\src\\Projeto\\LibLibrary\\LibLibrary.csproj": {
                 "projectPath": "C:\\Users\\nonyt\\Desktop\\code\\LibFork\\LibProject\\src\\Projeto\\LibLibrary\\LibLibrary.csproj"
               }

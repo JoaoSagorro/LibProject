@@ -13,7 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Projeto\LibLibrary\LibLibrary.csproj" />
+        <ProjectReference Include="..\..\Projeto\LibLibrary\LibLibrary.csproj" />
+    <ProjectReference Include="..\..\Projeto\EFLibrary\EFLibrary.csproj" />
   </ItemGroup>
 
 </Project>

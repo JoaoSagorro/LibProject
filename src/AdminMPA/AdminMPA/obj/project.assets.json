@@ -4801,6 +4801,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "EFLibrary >= 1.0.0",
       "LibLibrary >= 1.0.0",
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.21.0"
     ]
@@ -4837,6 +4838,9 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
+            "C:\\Users\\nonyt\\Desktop\\code\\LibFork\\LibProject\\src\\Projeto\\EFLibrary\\EFLibrary.csproj": {
+              "projectPath": "C:\\Users\\nonyt\\Desktop\\code\\LibFork\\LibProject\\src\\Projeto\\EFLibrary\\EFLibrary.csproj"
+            },
             "C:\\Users\\nonyt\\Desktop\\code\\LibFork\\LibProject\\src\\Projeto\\LibLibrary\\LibLibrary.csproj": {
               "projectPath": "C:\\Users\\nonyt\\Desktop\\code\\LibFork\\LibProject\\src\\Projeto\\LibLibrary\\LibLibrary.csproj"
             }

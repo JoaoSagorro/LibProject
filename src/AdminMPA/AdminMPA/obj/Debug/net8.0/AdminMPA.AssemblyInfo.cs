@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AdminMPA")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8a0a346f7e12423bedde56d3fa9ac06ab686948b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+17029d3a991fb0c9d865162ae23ee574e0503ede")]
 [assembly: System.Reflection.AssemblyProductAttribute("AdminMPA")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AdminMPA")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
