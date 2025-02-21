@@ -19,7 +19,7 @@ namespace ADOLib
             _cnString= "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
-        public void ReturnBook(int orderId)
+        public void ReturnBookByOrderId(int orderId)
         {
             using var connection = DB.Open(_cnString);
             var transaction = connection.BeginTransaction();
