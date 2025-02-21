@@ -192,20 +192,20 @@ namespace LibLibrary.Services
         //{
 
         //}
-        //public static List<User> DeleteInactiveUsers()
-        //{
-        //    List<User> deletedUsers = [];
-        //    using(LibraryContext context = new())
-        //    {
-        //        var users = GetUsers().Where(u => !UserHasActiveOrders(context,u) && !HasRecentOrders(context,u)).ToList();
-        //        foreach(var user in users)
-        //        {
-        //            deletedUsers.Add(DeleteUser(user.Email)); 
-        //        }
-        //    }
-        //    return deletedUsers;
+        public static List<User> DeleteInactiveUsers()
+        {
+            List<User> deletedUsers = [];
+            using (LibraryContext context = new())
+            {
+                var users = GetUsers().Where(u => !UserHasActiveOrders(context, u) && !HasRecentOrders(context, u)).ToList();
+                foreach (var user in users)
+                {
+                    deletedUsers.Add(DeleteUser(user.Email));
+                }
+            }
+            return deletedUsers;
 
-        //}
+        }
 
         public static User DeleteUser(string email)
         {
