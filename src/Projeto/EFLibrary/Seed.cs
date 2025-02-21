@@ -211,6 +211,7 @@ namespace EFLibrary
         {
             if (!context.Users.Any())
             {
+                var adminR = context.Roles.FirstOrDefault(r => r.RoleName == "Admin");
                 var role = context.Roles.FirstOrDefault(r => r.RoleName == "Usuário");
                 context.Users.AddRange(new List<User>{
                 new User {
@@ -260,6 +261,18 @@ namespace EFLibrary
                     Password = "password",
                     Suspended = false,
                     Role = role
+                },
+                new User {
+                    FirstName = "Admin",
+                    LastName = "Admin",
+                    Address = "Rua das Flores, 400",
+                    Active = true,
+                    Birthdate = DateTime.Parse("1992-07-22"),
+                    RegisterDate = DateTime.Now,
+                    Email = "admin@xpto.com",
+                    Password = "password",
+                    Suspended = false,
+                    Role = adminR
                 }
             });
                 context.SaveChanges();
