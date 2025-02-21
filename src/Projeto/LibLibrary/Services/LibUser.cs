@@ -253,7 +253,7 @@ namespace LibLibrary.Services
         {
                 try
                 {
-                    return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.State != "Devolvido");
+                    return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.State.StateName != "Devolvido");
                 } catch (Exception e) { throw new Exception("Can't check valid Orders: ", e); }
         }
 
@@ -261,7 +261,7 @@ namespace LibLibrary.Services
         {
             try
             {
-                return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.ReturnDate.Year - DateTime.Now.Year <1);
+                return context.Orders.Include(o => o.User).Any(o => o.User.UserId == user.UserId && o.ReturnDate.HasValue && (o.ReturnDate.Value.Year - DateTime.Now.Year < 1));
             } catch (Exception e) { throw new Exception("Error Checking recent Orders: ", e); }
         }
     }

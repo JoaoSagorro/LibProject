@@ -74,6 +74,53 @@ namespace ADOLib
             }
         }
 
+        public async Task<User?> LoginUser(string email, string password)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(CnString))
+                {
+                    await connection.OpenAsync();
+
+                    string query = "SELECT * FROM Users WHERE Email = @Email AND Password = @Password";
+
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@Email", email);
+                        cmd.Parameters.AddWithValue("@Password", password);
+
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                return new User
+                                {
+                                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                                    Email = reader.GetString(reader.GetOrdinal("Email"))
+                                };
+                            }
+                            else
+                            {
+                                // Throw a specific exception for invalid credentials
+                                throw new UnauthorizedAccessException("Invalid email or password.");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Rethrow the specific exception for invalid credentials
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Log the error and rethrow a generic exception
+                Console.WriteLine($"Error: {ex.Message}");
+                throw new Exception("An error occurred while logging in.");
+            }
+        }
+
     }
 }
 

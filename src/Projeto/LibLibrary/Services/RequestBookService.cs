@@ -67,7 +67,7 @@ namespace LibLibrary.Services
                     LibraryName = library.LibraryName,
                     OrderedCopies = 1,
                     OrderDate = order.OrderDate,
-                    ReturnDate = order.ReturnDate
+                    ReturnDate = order.ReturnDate.Value
                 };
 
                 _context.OrderHistories.Add(orderHistory);

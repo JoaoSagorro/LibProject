@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using ADOLib;
 using static ADOLib.Model.Model;
+using Microsoft.AspNetCore.Identity.Data;
 
 namespace WebAPI.Controllers
 {
@@ -41,5 +42,31 @@ namespace WebAPI.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                return BadRequest("Email and password are required.");
+
+            try
+            {
+                var user = await _userService.LoginUser(request.Email, request.Password);
+
+                if (user == null)
+                    return Unauthorized(new { error = "Invalid email or password." });
+
+                return Ok(new { message = "Login successful", userId = user.UserId });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while logging in." });
+            }
+        }
+
     }
 }

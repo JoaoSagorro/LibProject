@@ -31,19 +31,6 @@ namespace WebAPI
     //        app.UseAuthorization();
     //        app.MapControllers();
 
-
-    //        app.MapPost("/Login", (string email, string password) =>
-    //        {
-    //            if (LibUser.Login(email, password))
-    //            {
-    //                var user = LibUser.GetUserByEmail(email);
-    //                return Results.Ok(new { FirstName = user.FirstName, LastName = user.LastName, Email = user.Email });
-    //            }
-    //            return Results.BadRequest("Error Logging in");
-    //        })
-    //        .WithName("Login")
-    //        .WithOpenApi();
-
     //        app.Run();
     //    }
     //}
