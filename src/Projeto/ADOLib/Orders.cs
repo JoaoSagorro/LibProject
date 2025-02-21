@@ -172,7 +172,7 @@ namespace ADOLib
 
             try
             {
-                if (!CanRequest(numberOfCopies)) throw new Exception("Can request the specified amount of copies.");
+                if (!CanRequest(numberOfCopies)) throw new Exception("Can't request the specified amount of copies.");
 
                 if (!await ExistsAsync(connection, transaction, "Users", "UserId", userId) ||
                     !await ExistsAsync(connection, transaction, "Libraries", "LibraryId", libraryId) ||
@@ -182,7 +182,12 @@ namespace ADOLib
                 }
 
                 var copyCount = await GetCopyCountAsync(connection, transaction, bookId, libraryId);
-                if (copyCount <= 1)
+
+                // check if copies remaining are >= 1
+                int remainingCopies = copyCount - numberOfCopies;
+                if (remainingCopies < 1) throw new Exception("Can't request the specified amount of copies.");
+
+                if (copyCount <=  1)
                 {
                     throw new InvalidOperationException("Book not available.");
                 }
@@ -190,7 +195,7 @@ namespace ADOLib
                 DateTime orderDate = DateTime.UtcNow;
                 int orderId = await InsertOrderAsync(connection, transaction, userId, bookId, libraryId, orderDate);
 
-                await UpdateCopyCountAsync(connection, transaction, bookId, libraryId, copyCount - 1);
+                await UpdateCopyCountAsync(connection, transaction, bookId, libraryId, remainingCopies);
 
                 await InsertOrderHistoryAsync(connection, transaction, userId, bookId, libraryId, orderDate);
 

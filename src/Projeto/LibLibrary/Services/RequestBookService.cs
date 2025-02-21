@@ -51,6 +51,10 @@ namespace LibLibrary.Services
                         throw new InvalidOperationException("Book not available.");
                     }
 
+                    // check if the remaining copies are >= 1:
+                    int remaining = copy.NumberOfCopies - numberOfCopies;
+                    if (remaining < 1) throw new Exception("Can't request the desired amount of copies");
+
                     // Create the order
                     var order = new Order
                     {
@@ -59,12 +63,11 @@ namespace LibLibrary.Services
                         Book = book,
                         State = state,
                         OrderDate = DateTime.UtcNow,
-                        ReturnDate = DateTime.UtcNow.AddDays(15),
                         RequestedCopiesQTY = numberOfCopies,
                     };
 
                     context.Orders.Add(order);
-                    copy.NumberOfCopies -= 1;
+                    copy.NumberOfCopies = remaining;
 
                     await context.SaveChangesAsync();
 
@@ -77,8 +80,7 @@ namespace LibLibrary.Services
                         BookEdition = book.Edition,
                         LibraryName = library.LibraryName,
                         OrderedCopies = numberOfCopies,
-                        OrderDate = order.OrderDate,
-                        //ReturnDate = order.ReturnDate
+                        OrderDate = order.OrderDate
                     };
 
                     context.OrderHistories.Add(orderHistory);
