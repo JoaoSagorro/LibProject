@@ -16,7 +16,7 @@
         }
     </div>
     <div class="d-flex justify-content-between">
-        <button class="btn btn-outline-primary fs-5 fw-bold text-black d-flex align-content-center" href="CreateUser/Index">+</button>
+        <a class="btn btn-outline-primary fs-5 fw-bold text-black d-flex align-content-center" href="/Admin/CreateUser">+</a>
         @* <a href="ManageUsers/Index">Create Users</a> *@
         <form class="d-flex" method="get">
             <input class="form-control w-75" type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Pesquisar..." />
@@ -37,19 +37,54 @@
                 </tr>
             </thead>
             <tbody id="user-table">
-                @foreach(var user in Model.AllUsers) {
-                    <tr>
-                        <th scope = 'row'> @(Model.Number += 1) </th>
-                        <td>@user.FirstName @user.LastName</td>
-                        <td>@user.Email</td>
-                        <td>@user.Address</td>
-                        <td>@user.Strikes</td>
-                        <td class='text-center'>
-                            <button class='btn btn-info'>Edit</button>
-                            <button class='btn btn-outline-secondary'>Delete</button>
-                        </td> 
-                    </tr>;
-                }
+                
+                    @if (!string.IsNullOrEmpty(Model.SearchTerm) && (!Model.Users.Any() || Model.Users == null))
+                    {
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="d-flex justify-content-center">
+                                <h4>Nenhum resultado encontrado.</h4>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
+                    else if (Model.Users is null || !Model.Users.Any()) 
+                    {
+                        @foreach (var user in Model.AllUsers)
+                        {
+                            <tr>
+                                <th scope='row'> @(Model.Number += 1) </th>
+                                <td>@user.FirstName @user.LastName</td>
+                                <td>@user.Email</td>
+                                <td>@user.Address</td>
+                                <td>@user.Strikes</td>
+                                <td class='text-center'>
+                                    <button class='btn btn-info'>Edit</button>
+                                    <button class='btn btn-outline-secondary'>Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else if (Model.Users != null && Model.Users.Any())
+                    {
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <th scope='row'> @(Model.Number += 1) </th>
+                                <td>@user.FirstName @user.LastName</td>
+                                <td>@user.Email</td>
+                                <td>@user.Address</td>
+                                <td>@user.Strikes</td>
+                                <td class='text-center'>
+                                    <button class='btn btn-info'>Edit</button>
+                                    <button class='btn btn-outline-secondary'>Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    }
             </tbody>
         </table>
     </div>
@@ -61,7 +96,7 @@
         </form>
     </div>
 
-    <div class="container-fluid">
+    @* <div class="container-fluid">
         <ul>
             @foreach (var item in Model.Users)
             {
@@ -79,7 +114,7 @@
         }
         else if(!string.IsNullOrEmpty(Model.SearchTerm) && (!Model.Users.Any() || Model.Users == null))
         {
-                <p>Nenhum resultado encontrado.</p>
+            <p>Olá</p>    
         }
-    </div>
+    </div> *@
 </div>

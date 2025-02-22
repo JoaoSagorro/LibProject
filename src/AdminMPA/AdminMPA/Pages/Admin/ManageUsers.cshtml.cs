@@ -17,6 +17,8 @@ namespace AdminMPA.Pages.Admin
 
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
+
+
         public IActionResult OnGet()
         {
             Number = 0;
@@ -32,6 +34,7 @@ namespace AdminMPA.Pages.Admin
             }
             return RedirectToPage("../Index");
         }
+
         public IActionResult DeleteInactiveUsers()
         {
             deletedUsers = LibUser.DeleteInactiveUsers();
