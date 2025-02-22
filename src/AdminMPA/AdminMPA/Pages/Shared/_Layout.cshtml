@@ -20,17 +20,26 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Admin/ManageUsers">Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Admin/ManageLibraries">Libraries</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Admin/ManageBooks">Books</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                         @if (Context.Session.GetString("User") != null)
                         {
-        <!-- Use a form or an anchor tag that calls your logout page -->
-        <form method="post" asp-page="/Account/Logout" style="display:inline;">
-            <button type="submit" class="btn btn-link">Logout</button>
-        </form>
+                            <!-- Use a form or an anchor tag that calls your logout page -->
+                            <form method="post" asp-page="/Account/Logout" style="display:inline;">
+                                <button type="submit" class="btn btn-link">Logout</button>
+                            </form>
                         }
                     </ul>
                 </div>
