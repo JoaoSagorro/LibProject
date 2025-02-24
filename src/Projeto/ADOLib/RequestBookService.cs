@@ -1,32 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Castle.Core.Configuration;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using LibDB;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ADOLib
 {
-    internal class RequestBookService
+    public class RequestBookService
     {
-        private readonly string _cnString;
+        private readonly string CnString;
 
         public RequestBookService()
         {
-            _cnString = "Server=;Database=;Trusted_Connection=True;TrustServerCertificate=True";
+            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
         private bool CanRequest(int numberOfCopies) => numberOfCopies <= 4;
 
         public async Task<bool> RequestBook(int userId, int bookId, int libraryId, int numberOfCopies)
         {
+
             if (!CanRequest(numberOfCopies))
                 throw new Exception("Can't request more than 4 copies.");
 
-            using SqlConnection connection = DB.Open(_cnString);
-            await connection.OpenAsync();
+            using SqlConnection connection = DB.Open(CnString);
             using SqlTransaction transaction = connection.BeginTransaction();
 
             try
@@ -44,9 +39,14 @@ namespace ADOLib
                 if (availableCopies < numberOfCopies || availableCopies <= 1)
                     throw new InvalidOperationException("Book not available.");
 
+                // Fetch additional details
+                var userDetails = await GetUserDetails(connection, transaction, userId);
+                var bookDetails = await GetBookDetails(connection, transaction, bookId);
+                var libraryDetails = await GetLibraryDetails(connection, transaction, libraryId);
+
                 // Insert order
                 string orderQuery = "INSERT INTO Orders (UserId, BookId, LibraryId, StateId, OrderDate, RequestedCopiesQTY) OUTPUT INSERTED.OrderId " +
-                               "VALUES (@userId, @bookId, @libraryId, @stateId, @orderDate, @requestedCopiesQTY)";
+                                   "VALUES (@userId, @bookId, @libraryId, @stateId, @orderDate, @requestedCopiesQTY)";
                 using SqlCommand orderCmd = new SqlCommand(orderQuery, connection, transaction);
                 orderCmd.Parameters.AddWithValue("@userId", userId);
                 orderCmd.Parameters.AddWithValue("@bookId", bookId);
@@ -65,24 +65,116 @@ namespace ADOLib
                 await updateCopiesCmd.ExecuteNonQueryAsync();
 
                 // Insert into order history
-                string orderHistoryQuery = "INSERT INTO OrderHistory (UserId , BookId, LibraryId, OrderedCopies, OrderDate) VALUES (@userId, @bookId, @libraryId, @orderedCopies, @orderDate)";
-                using SqlCommand orderHistoryCmd = new SqlCommand(orderHistoryQuery, connection, transaction);
-                orderHistoryCmd.Parameters.AddWithValue("@userId", userId);
-                orderHistoryCmd.Parameters.AddWithValue("@bookId", bookId);
-                orderHistoryCmd.Parameters.AddWithValue("@libraryId", libraryId);
-                orderHistoryCmd.Parameters.AddWithValue("@orderedCopies", numberOfCopies);
-                orderHistoryCmd.Parameters.AddWithValue("@orderDate", DateTime.UtcNow);
-                await orderHistoryCmd.ExecuteNonQueryAsync();
+                string orderHistoriesQuery = @"
+    INSERT INTO OrderHistories (UserName, BookName, BookYear, BookEdition, BookAuthor, LibraryName, OrderedCopies, OrderDate, ReturnDate)
+    VALUES (@userName, @bookName, @bookYear, @bookEdition, @bookAuthor, @libraryName, @orderedCopies, @orderDate, @returnDate)";
+                using SqlCommand orderHistoriesCmd = new SqlCommand(orderHistoriesQuery, connection, transaction);
+                orderHistoriesCmd.Parameters.AddWithValue("@userName", userDetails.UserName);
+                orderHistoriesCmd.Parameters.AddWithValue("@bookName", bookDetails.BookName);
+                orderHistoriesCmd.Parameters.AddWithValue("@bookYear", bookDetails.BookYear);
+                orderHistoriesCmd.Parameters.AddWithValue("@bookEdition", bookDetails.BookEdition);
+                orderHistoriesCmd.Parameters.AddWithValue("@bookAuthor", bookDetails.BookAuthor);
+                orderHistoriesCmd.Parameters.AddWithValue("@libraryName", libraryDetails.LibraryName);
+                orderHistoriesCmd.Parameters.AddWithValue("@orderedCopies", numberOfCopies);
+                orderHistoriesCmd.Parameters.AddWithValue("@orderDate", DateTime.UtcNow);
+                orderHistoriesCmd.Parameters.AddWithValue("@returnDate", DateTime.UtcNow.AddDays(14)); 
+                await orderHistoriesCmd.ExecuteNonQueryAsync();
 
-                // Commit transaction
                 await transaction.CommitAsync();
                 return true;
+
             }
             catch (Exception e)
             {
                 await transaction.RollbackAsync();
                 throw new Exception(e.Message, e.InnerException);
             }
+        }
+
+        private async Task<UserDetails> GetUserDetails(SqlConnection connection, SqlTransaction transaction, int userId)
+        {
+            string query = "SELECT FirstName, LastName FROM Users WHERE UserId = @userId";
+            using SqlCommand cmd = new SqlCommand(query, connection, transaction);
+            cmd.Parameters.AddWithValue("@userId", userId);
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                string firstName = reader["FirstName"].ToString();
+                string lastName = reader["LastName"].ToString();
+                string userName = $"{firstName} {lastName}";
+
+                return new UserDetails
+                {
+                    UserName = userName
+                };
+            }
+            throw new Exception("User not found.");
+        }
+
+        private async Task<BookDetails> GetBookDetails(SqlConnection connection, SqlTransaction transaction, int bookId)
+        {
+            // Fetch book details from the Books table
+            string bookQuery = @"
+        SELECT Title, Edition, Year, AuthorId 
+        FROM Books 
+        WHERE BookId = @bookId";
+            using SqlCommand bookCmd = new SqlCommand(bookQuery, connection, transaction);
+            bookCmd.Parameters.AddWithValue("@bookId", bookId);
+            using SqlDataReader bookReader = await bookCmd.ExecuteReaderAsync();
+
+            if (await bookReader.ReadAsync())
+            {
+                // Fetch book details
+                string title = bookReader["Title"].ToString();
+                string edition = bookReader["Edition"].ToString();
+                int year = Convert.ToInt32(bookReader["Year"]);
+                int authorId = Convert.ToInt32(bookReader["AuthorId"]);
+
+                await bookReader.CloseAsync();
+
+                // Fetch author details from the Authors table
+                string authorQuery = "SELECT AuthorName FROM Authors WHERE AuthorId = @authorId";
+                using SqlCommand authorCmd = new SqlCommand(authorQuery, connection, transaction);
+                authorCmd.Parameters.AddWithValue("@authorId", authorId);
+                using SqlDataReader authorReader = await authorCmd.ExecuteReaderAsync();
+
+                if (await authorReader.ReadAsync())
+                {
+                    string authorName = authorReader["AuthorName"].ToString();
+
+                    // Return the combined book and author details
+                    return new BookDetails
+                    {
+                        BookName = title, 
+                        BookYear = year,        
+                        BookEdition = edition,  
+                        BookAuthor = authorName 
+                    };
+                }
+                else
+                {
+                    throw new Exception("Author not found.");
+                }
+            }
+            else
+            {
+                throw new Exception("Book not found.");
+            }
+        }
+        private async Task<LibraryDetails> GetLibraryDetails(SqlConnection connection, SqlTransaction transaction, int libraryId)
+        {
+            string query = "SELECT LibraryName FROM Libraries WHERE LibraryId = @libraryId";
+            using SqlCommand cmd = new SqlCommand(query, connection, transaction);
+            cmd.Parameters.AddWithValue("@libraryId", libraryId);
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new LibraryDetails
+                {
+                    LibraryName = reader["LibraryName"].ToString()
+                };
+            }
+            throw new Exception("Library not found.");
         }
 
         private async Task<bool> CheckExists(SqlConnection connection, SqlTransaction transaction, string tableName, string columnName, int id)
@@ -103,6 +195,24 @@ namespace ADOLib
             cmd.Parameters.AddWithValue("@libraryId", libraryId);
             object result = await cmd.ExecuteScalarAsync();
             return result != null ? Convert.ToInt32(result) : 0;
+        }
+
+        public class UserDetails
+        {
+            public string UserName { get; set; }
+        }
+
+        public class BookDetails
+        {
+            public string BookName { get; set; }
+            public int BookYear { get; set; }
+            public string BookEdition { get; set; }
+            public string BookAuthor { get; set; }
+        }
+
+        public class LibraryDetails
+        {
+            public string LibraryName { get; set; }
         }
     }
 }
