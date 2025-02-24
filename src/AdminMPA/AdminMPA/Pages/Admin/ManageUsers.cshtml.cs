@@ -17,6 +17,8 @@ namespace AdminMPA.Pages.Admin
 
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
+        [BindProperty]
+        public string Email { get; set; }
 
 
         public IActionResult OnGet()
@@ -42,6 +44,14 @@ namespace AdminMPA.Pages.Admin
             {
                 return NotFound("Nenhum usuario inativo encontrado para deletar.");
             }
+            return Page();
+        }
+
+        public IActionResult OnPostDelete()
+        {
+            LibUser.DeleteUser(Email);
+            AllUsers = LibUser.GetUsers();
+
             return Page();
         }
     }

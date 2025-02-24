@@ -12,6 +12,7 @@ namespace AdminMPA.Pages.Admin
             [BindProperty]
             public CreateUserDTO NewUser { get; set; }
             public IEnumerable<SelectListItem> roles { get; set; }
+
             public void OnGet()
             {
                 roles = LibRole.GetRoles().Select(r => new SelectListItem { Value = r.RoleName, Text = r.RoleName }).ToList();

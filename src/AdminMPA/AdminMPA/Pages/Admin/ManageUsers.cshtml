@@ -56,15 +56,18 @@
                         @foreach (var user in Model.AllUsers)
                         {
                             <tr>
-                                <th scope='row'> @(Model.Number += 1) </th>
-                                <td>@user.FirstName @user.LastName</td>
-                                <td>@user.Email</td>
-                                <td>@user.Address</td>
-                                <td>@user.Strikes</td>
-                                <td class='text-center'>
-                                    <button class='btn btn-info'>Edit</button>
-                                    <button class='btn btn-outline-secondary'>Delete</button>
-                                </td>
+                                <form method="post">
+                                    <th scope='row'> @(Model.Number += 1) </th>
+                                    <td>@user.FirstName @user.LastName</td>
+                                    <td>@user.Email</td>
+                                    <td>@user.Address</td>
+                                    <td>@user.Strikes</td>
+                                    <td class='text-center'>
+                                        <button class='btn btn-info'>Edit</button>
+                                        <input name="Email" value="@user.Email" hidden/>
+                                        <button type="submit" asp-page-handler="delete" class='btn btn-outline-secondary'>Delete</button>
+                                    </td>
+                                </form>
                             </tr>
                         }
                     }
@@ -73,15 +76,18 @@
                         @foreach (var user in Model.Users)
                         {
                             <tr>
-                                <th scope='row'> @(Model.Number += 1) </th>
-                                <td>@user.FirstName @user.LastName</td>
-                                <td>@user.Email</td>
-                                <td>@user.Address</td>
-                                <td>@user.Strikes</td>
-                                <td class='text-center'>
-                                    <button class='btn btn-info'>Edit</button>
-                                    <button class='btn btn-outline-secondary'>Delete</button>
-                                </td>
+                                <form method="post">
+                                    <th scope='row'> @(Model.Number += 1) </th>
+                                    <td>@user.FirstName @user.LastName</td>
+                                    <td>@user.Email</td>
+                                    <td>@user.Address</td>
+                                    <td>@user.Strikes</td>
+                                    <td class='text-center'>
+                                        <button class='btn btn-info'>Edit</button>
+                                        <input name="Email" value="@user.Email" hidden />
+                                        <button type="submit" asp-page-handler="delete" class='btn btn-outline-secondary'>Delete</button>
+                                    </td>
+                                </form>
                             </tr>
                         }
                     }
