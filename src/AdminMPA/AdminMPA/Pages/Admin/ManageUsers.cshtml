@@ -32,15 +32,21 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Address</th>
+                    <th scope="col">Birthdate</th>
+                    <th scope="col">Register Date</th>
+                    <th scope="col">Suspeded Account?</th>
+                    <th scope="col">Active Account?</th>
                     <th scope="col">Strikes</th>
                     <th class="text-center" scope="col">Action</th>
                 </tr>
             </thead>
             <tbody id="user-table">
-                
+
                     @if (!string.IsNullOrEmpty(Model.SearchTerm) && (!Model.Users.Any() || Model.Users == null))
                     {
                         <tr>
+                            <td></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -49,21 +55,26 @@
                             </td>
                             <td></td>
                             <td></td>
+                            <td></td>
                         </tr>
                     }
-                    else if (Model.Users is null || !Model.Users.Any()) 
+                    else  
                     {
-                        @foreach (var user in Model.AllUsers)
+                        @foreach (var user in Model.TableContent())
                         {
-                            <tr>
+                            <tr id="tableRow">
                                 <form method="post">
                                     <th scope='row'> @(Model.Number += 1) </th>
-                                    <td>@user.FirstName @user.LastName</td>
-                                    <td>@user.Email</td>
-                                    <td>@user.Address</td>
-                                    <td>@user.Strikes</td>
+                                    <td id="userName">@user.FirstName @user.LastName</td>
+                                    <td id="userEmail">@user.Email</td>
+                                    <td id="userAddress">@user.Address</td>
+                                    <td id="userAddress">@user.Birthdate.ToString("dd/MM/yyyy")</td>
+                                    <td id="userAddress">@user.RegisterDate.ToString("dd/MM/yyyy")</td>
+                                    <td id="userAddress">@(@user.Suspended ? "Yes" : "No")</td>
+                                    <td id="userAddress">@(@user.Active ? "Yes" : "No")</td>
+                                    <td id="userStrikes">@user.Strikes</td>
                                     <td class='text-center'>
-                                        <button class='btn btn-info'>Edit</button>
+                                        <a class='btn btn-info' asp-page="EditUser" asp-route-email="@user.Email">Edit</a>
                                         <input name="Email" value="@user.Email" hidden/>
                                         <button type="submit" asp-page-handler="delete" class='btn btn-outline-secondary'>Delete</button>
                                     </td>
@@ -71,26 +82,7 @@
                             </tr>
                         }
                     }
-                    else if (Model.Users != null && Model.Users.Any())
-                    {
-                        @foreach (var user in Model.Users)
-                        {
-                            <tr>
-                                <form method="post">
-                                    <th scope='row'> @(Model.Number += 1) </th>
-                                    <td>@user.FirstName @user.LastName</td>
-                                    <td>@user.Email</td>
-                                    <td>@user.Address</td>
-                                    <td>@user.Strikes</td>
-                                    <td class='text-center'>
-                                        <button class='btn btn-info'>Edit</button>
-                                        <input name="Email" value="@user.Email" hidden />
-                                        <button type="submit" asp-page-handler="delete" class='btn btn-outline-secondary'>Delete</button>
-                                    </td>
-                                </form>
-                            </tr>
-                        }
-                    }
+                    
             </tbody>
         </table>
     </div>
@@ -101,7 +93,6 @@
             <button type="submit" class="btn btn-outline-secondary">Click Here</button>
         </form>
     </div>
-
     @* <div class="container-fluid">
         <ul>
             @foreach (var item in Model.Users)

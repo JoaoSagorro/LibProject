@@ -3,29 +3,51 @@
 @{
     ViewData["Title"] = "Edit User";
 }
-<h1>@ViewData["Title"]</h1>
+
+<div class="d-flex justify-content-center">
+    <h1>@ViewData["Title"]</h1>
+</div>
 
 @if (Model.user != null)
 {
-        <div>
-            <p>Email: @Model.user.Email</p>
+    <div class="container-fluid d-flex flex-column justify-content-center w-25 border border-secondary rounded">
+        <form class="m-2" method="post">
+            <input asp-for="UpdatedUser.UserId" class="form-control mb-2" value="@Model.user.UserId" hidden />
+            <input asp-for="UpdatedUser.FirstName" class="form-control mb-2" value="@Model.user.FirstName" />
+            <input asp-for="UpdatedUser.LastName" class="form-control mb-2" value="@Model.user.LastName" />
+            <input asp-for="UpdatedUser.Email" class="form-control mb-2" value="@Model.user.Email" />
+            <input asp-for="UpdatedUser.Address" class="form-control mb-2" value="@Model.user.Address" />
+            <input asp-for="UpdatedUser.Birthdate" class="form-control mb-2" value="@Model.user.Birthdate.ToString("yyyy-MM-dd")" type="date" />
+            <input asp-for="UpdatedUser.RegisterDate" class="form-control mb-2" value="@Model.user.RegisterDate" type="datetime" hidden />
+            <input asp-for="UpdatedUser.Password" class="form-control mb-2" value="@Model.user.Password" hidden />
+            <input asp-for="UpdatedUser.Active" class="form-control mb-2" value="@Model.user.Active" hidden />
+            <input asp-for="UpdatedUser.Strikes" class="form-control mb-2" value="@Model.user.Strikes" hidden />
+            <input asp-for="UpdatedUser.Suspended" class="form-control mb-2" value="@Model.user.Suspended" hidden />
+            <button asp-page-handler="edit" class="btn btn-primary " type="submit">Save Changes</button>
             <!-- Other user details -->
-        </div>
+        </form>
+
+        @if (@Model.user.Active)
+        {
+            <form method="post" asp-page-handler="SuspendUser">
+                <input type="hidden" name="email" value="@Model.user.Email" />
+                <button class="btn btn-danger ms-2 mb-2" type="submit">Suspend User</button>
+            </form>
+        }
+        else
+        {
+            <form method="post" asp-page-handler="ReactivateUser">
+                <input type="hidden" name="email" value="@Model.user.Email" />
+                <button class="btn btn-danger ms-2 mb-2" type="submit">Reactivate User</button>
+            </form>
+        }
+    </div>
 }
 else
 {
-        <div>
-            <p>User not found.</p>
-        </div>
+    <div>
+        <p>User not found.</p>
+    </div>
 }
 
-@if(@Model.user.Active){
-    <form method="post" asp-page-handler="SuspendUser">
-    <input type="hidden" name="email" value="@Model.user.Email" />
-    <button type="submit">Suspend User</button> 
-</form>}
-else{
-<form method="post" asp-page-handler="ReactivateUser">
-    <input type="hidden" name="email" value="@Model.user.Email" />
-    <button type="submit">Reactivate User</button> 
-</form>}
+

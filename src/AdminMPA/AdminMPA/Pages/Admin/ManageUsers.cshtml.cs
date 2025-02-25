@@ -5,15 +5,17 @@ using EFLibrary.Models;
 using static System.Formats.Asn1.AsnWriter;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Collections.Generic;
+using Azure;
+using System;
 
 namespace AdminMPA.Pages.Admin
 {
     public class ManageUsersModel : PageModel
     {
         public List<User> deletedUsers { get; set; } = [];
-        public int Number { get; set; }
         public List<User> Users { get; set; } = [];
         public List<User> AllUsers { get; set; } = [];
+        public int Number { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
@@ -53,6 +55,27 @@ namespace AdminMPA.Pages.Admin
             AllUsers = LibUser.GetUsers();
 
             return Page();
+        }
+
+        public List<User> TableContent()
+        {
+            List<User> html = null;
+            try
+            {
+                if (Users is null || !Users.Any())
+                {
+                    html = AllUsers;
+                }
+                else if (Users != null && Users.Any())
+                {
+                    html = Users;
+                }
+                return html;
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
         }
     }
 }

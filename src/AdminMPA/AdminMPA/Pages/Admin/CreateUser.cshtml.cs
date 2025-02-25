@@ -40,7 +40,7 @@ namespace AdminMPA.Pages.Admin
                     Suspended = false
                 };
                 LibUser.AddUser(user);
-                return RedirectToPage("/ManageUsers");
+                return RedirectToPage("/Admin/ManageUsers");
             }
     }
 }
