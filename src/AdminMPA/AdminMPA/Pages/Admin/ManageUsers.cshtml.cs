@@ -39,7 +39,7 @@ namespace AdminMPA.Pages.Admin
             return RedirectToPage("../Index");
         }
 
-        public IActionResult DeleteInactiveUsers()
+        public IActionResult OnPostCheckInactiveUsers()
         {
             deletedUsers = LibUser.DeleteInactiveUsers();
             if(deletedUsers == null || !deletedUsers.Any())
@@ -62,13 +62,17 @@ namespace AdminMPA.Pages.Admin
             List<User> html = null;
             try
             {
-                if (Users is null || !Users.Any())
+                if (Users is null && deletedUsers is null || !Users.Any() && !deletedUsers.Any())
                 {
                     html = AllUsers;
                 }
                 else if (Users != null && Users.Any())
                 {
                     html = Users;
+                }
+                else if (deletedUsers != null && deletedUsers.Any())
+                {
+                    html = deletedUsers;
                 }
                 return html;
             }
