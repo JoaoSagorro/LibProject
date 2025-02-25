@@ -17,7 +17,7 @@ namespace ADOLib
 
         public Users()
         {
-            CnString = "Server=localhost;Database=upskill_Projeto_EFJ;Trusted_Connection=True;TrustServerCertificate=True";
+            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
         public User GetUserInfo(int id)

@@ -12,16 +12,16 @@ namespace ADOLib
 {
     public class ReturnBook
     {
-        private readonly string _cnString;
+        private readonly string CnString;
 
         public ReturnBook()
         {
-            _cnString= "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
+            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
         public void ReturnBookByOrderId(int orderId)
         {
-            using var connection = DB.Open(_cnString);
+            using var connection = DB.Open(CnString);
             var transaction = connection.BeginTransaction();
 
             try
