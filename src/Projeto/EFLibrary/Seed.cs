@@ -554,9 +554,8 @@ namespace EFLibrary
 
 
 
-        public static void SeedAll()
+        public static void SeedAll(LibraryContext context)
         {
-            using LibraryContext context = new();
             try
             {
                 Roles(context);
