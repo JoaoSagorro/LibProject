@@ -22,6 +22,10 @@ namespace LibLibrary.Services
                         Book book = LibBooks.GetBookById(copie.BookId);
                         Copie oldCopie = context.Copies.First<Copie>(cp => cp.BookId == copie.BookId && cp.LibraryId == copie.LibraryId);
 
+                        if(oldCopie.NumberOfCopies + copie.NumberOfCopies < 1)
+                        {
+                            throw new Exception("Can't remove that many copies.");
+                        }
                         oldCopie.NumberOfCopies += copie.NumberOfCopies;
                         book.Quantity += copie.NumberOfCopies;
                         context.SaveChanges();

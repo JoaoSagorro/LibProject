@@ -6,12 +6,41 @@
 
 <h1>@ViewData["Title"]</h1>
 <h2>@Model.book.Title</h2>
-@foreach(var copy in Model.copies){
-    <p>@copy.Library.LibraryName - @copy.NumberOfCopies</p>
-}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome da Biblioteca</th>
+            <th>Número de Cópias</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var copy in Model.copies)
+        {
+                <tr>
+                    <td>@copy.Library.LibraryName</td>
+                    <td>@copy.NumberOfCopies</td>
+                    <td>
+                        <form method="post" class="d-inline">
+                        <input type="hidden" asp-for="@copy.BookId" /> 
+                        <input type="hidden" asp-for="@copy.LibraryId" /> 
+                            <button type="submit" class="btn btn-primary">Transfer</button>
+                        </form>
+                        <form method="post" class="d-inline">
+                        <input type="hidden" asp-for="@copy.BookId" /> 
+                        <input type="hidden" asp-for="@copy.LibraryId" /> 
+                        <button type="submit" class="btn btn-danger"> Eliminar</button> 
+                        </form>
+                   </td>
+                </tr>
+        }
+    </tbody>
+</table>
+
+
+
 <br />
-<p>Transfer books library</p>
 <p>Buy books</p>
-<p>Eliminar books</p>
 <p>Update books</p>
 
