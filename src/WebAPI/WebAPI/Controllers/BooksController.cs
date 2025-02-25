@@ -7,6 +7,51 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    public class BooksController : ControllerBase
+    {
+        private readonly Books _booksService;
+
+        public BooksController()
+        {
+            _booksService = new Books();
+        }
+
+        // GET: api/books
+        [HttpGet]
+        public IActionResult GetAllBooks()
+        {
+            try
+            {
+                var books = _booksService.GetAllBooks();
+                return Ok(books);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // GET: api/books/{id}
+        [HttpGet("{id}")]
+        public IActionResult GetBookById(int id)
+        {
+            try
+            {
+                var book = _booksService.GetBookById(id);
+                if (book == null)
+                    return NotFound(new { message = "Book not found." });
+
+                return Ok(book);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+    }
+
+    [Route("api/[controller]")]
+    [ApiController]
     public class RequestBookController : ControllerBase
     {
         private readonly RequestBookService _requestBookService;
