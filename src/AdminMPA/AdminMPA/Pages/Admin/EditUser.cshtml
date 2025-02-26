@@ -20,9 +20,9 @@
             <input asp-for="UpdatedUser.Birthdate" class="form-control mb-2" value="@Model.user.Birthdate.ToString("yyyy-MM-dd")" type="date" />
             <input asp-for="UpdatedUser.RegisterDate" class="form-control mb-2" value="@Model.user.RegisterDate" type="datetime" hidden />
             <input asp-for="UpdatedUser.Password" class="form-control mb-2" value="@Model.user.Password" hidden />
-            <input asp-for="UpdatedUser.Active" class="form-control mb-2" value="@Model.user.Active" hidden />
+            @* <input asp-for="UpdatedUser.Active" class="form-control mb-2" value="@Model.user.Active" hidden /> *@
             <input asp-for="UpdatedUser.Strikes" class="form-control mb-2" value="@Model.user.Strikes" hidden />
-            <input asp-for="UpdatedUser.Suspended" class="form-control mb-2" value="@Model.user.Suspended" hidden />
+            @* <input asp-for="UpdatedUser.Suspended" class="form-control mb-2" value="@Model.user.Suspended" hidden /> *@
             <button asp-page-handler="edit" class="btn btn-primary " type="submit">Save Changes</button>
             <!-- Other user details -->
         </form>

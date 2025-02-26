@@ -1,12 +1,8 @@
+using EFLibrary.Models;
+using LibLibrary.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using LibLibrary.Services;
-using EFLibrary.Models;
-using static System.Formats.Asn1.AsnWriter;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Collections.Generic;
-using Azure;
-using System;
+using System.Text.Json;
 
 namespace AdminMPA.Pages.Admin
 {
@@ -42,11 +38,13 @@ namespace AdminMPA.Pages.Admin
         public IActionResult OnPostCheckInactiveUsers()
         {
             deletedUsers = LibUser.DeleteInactiveUsers();
+            string jsonDeletedUsers = JsonSerializer.Serialize(deletedUsers);
+            HttpContext.Session.SetString("DeletedUsers", jsonDeletedUsers);
             if(deletedUsers == null || !deletedUsers.Any())
             {
                 return NotFound("Nenhum usuario inativo encontrado para deletar.");
             }
-            return Page();
+            return RedirectToPage("/Admin/DeletedUsers");
         }
 
         public IActionResult OnPostDelete()

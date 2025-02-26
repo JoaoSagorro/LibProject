@@ -3,18 +3,18 @@
 @{
     ViewData["Title"] = "Manage Users";
 }
-
-<div class="container-fluid d-flex flex-column">
-    <div class="container-fluid d-flex flex-column align-items-center">
-        <h1>@ViewData["Title"]</h1>
-        <p>Content for managing users goes here.</p>
-        
-        @* @if(Model.deletedUsers.Any()){
+@* @if(Model.deletedUsers.Any()){
             foreach(var user in Model.deletedUsers){
                 <p>@user.Email - deleted</p>
             }
         } *@
-    </div>
+<div class="container-fluid d-flex flex-column align-items-center mb-5"> 
+    <h1>@ViewData["Title"]</h1>
+</div>
+<br />
+
+<div class="container-fluid d-flex flex-column">
+
     <div class="d-flex justify-content-between">
         <a class="btn btn-outline-primary text-black d-flex align-content-center ms-2" href="/Admin/CreateUser">Add user</a>
         @* <a href="ManageUsers/Index">Create Users</a> *@
