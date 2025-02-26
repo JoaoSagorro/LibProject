@@ -18,20 +18,24 @@
     <tbody>
         @foreach (var copy in Model.copies)
         {
-                <tr>
-                    <td>@copy.Library.LibraryName</td>
-                    <td>@copy.NumberOfCopies</td>
-                    <td>
-                        <form method="post" class="d-inline">
-                        <input type="hidden" asp-for="@copy.BookId" /> 
-                        <input type="hidden" asp-for="@copy.LibraryId" /> 
-                            <button type="submit" class="btn btn-primary">Transfer</button>
-                        </form>
-                        <form method="post" class="d-inline">
-                        <input type="hidden" asp-for="@copy.BookId" /> 
-                        <input type="hidden" asp-for="@copy.LibraryId" /> 
-                        <button type="submit" class="btn btn-danger"> Eliminar</button> 
-                        </form>
+            <tr>
+                <td>@copy.Library.LibraryName</td>
+                <td>@copy.NumberOfCopies</td>
+                <td>
+                    @* <form method="post" asp-page-handler="Transfer" asp-action="Transfer" class="d-inline"> *@
+                    @* <input type="hidden" asp-for="@copy.BookId" />  *@
+                    @* <input type="hidden" asp-for="@copy.LibraryId" />  *@
+                    @*     <button type="submit" class="btn btn-primary">Transfer</button> *@
+                    @* </form> *@
+                    @if (copy.NumberOfCopies>1) {<a class="btn btn-primary" asp-page="TransferBook" asp-route-libraryId="@copy.LibraryId" asp-route-bookId="@copy.BookId">Transfer/Buy Books</a>
+                    }
+                    @if (copy.NumberOfCopies==1) {<a class="btn btn-primary" asp-page="TransferBook" asp-route-libraryId="@copy.LibraryId" asp-route-bookId="@copy.BookId">Buy</a>
+                    }
+                    @* <form asp-action="Delete" class="d-inline"> *@
+                        @* <input type="hidden" asp-for="@copy.BookId" />  *@
+                        @* <input type="hidden" asp-for="@copy.LibraryId" />  *@
+                        @* <button type="submit" class="btn btn-danger"> Eliminar</button>  *@
+                        @* </form> *@
                    </td>
                 </tr>
         }
@@ -41,6 +45,5 @@
 
 
 <br />
-<p>Buy books</p>
-<p>Update books</p>
+
 

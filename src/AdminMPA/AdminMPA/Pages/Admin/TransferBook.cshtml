@@ -1,4 +1,30 @@
 ﻿@page
-@model AdminMPA.Pages.Admin.TransferBookModel
-@{
+@model TransferBookModel
+
+<h2>@Model.Copy.Book.Title</h2>
+<h3>@Model.Copy.Library.LibraryName</h3>
+<p>Livros em stock - @Model.Copy.NumberOfCopies</p>
+@if(Model.Copy.NumberOfCopies >1){
+<form method="post">
+    <input type="hidden" asp-for="Copy.BookId" />
+    <input type="hidden" asp-for="Copy.LibraryId" />
+
+    <label for="targetLibrary">Select Target Library:</label>
+    <select id="targetLibrary" name="targetLibraryId" required>
+        <option value="">--Select Library--</option>
+        @foreach (var library in Model.Libraries)
+        {
+                <option value="@library.LibraryId">@library.LibraryName</option>
+        }
+    </select>
+
+    <label for="quantity">Quantity to Transfer:</label>
+    <input type="number" id="quantity" name="quantity" min="1" max="@(Model.Copy.NumberOfCopies-1)" required />
+
+    <button type="submit" class="btn btn-primary">Transfer</button>
+</form>
 }
+ <form  asp-page-handler="UpdateCopyValue">
+        <input type="hidden" asp-for="Copy.BookId" />
+    <input type="hidden" asp-for="Copy.LibraryId" />
+    <input id="buyQuantity" name="buyQuantity" type="number" min="@(1-Model.Copy.NumberOfCopies)"/><button type="submit"> Buy/Sell</button></form>
