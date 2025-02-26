@@ -61,8 +61,9 @@ namespace ADOLib.Model
             public int LibraryId { get; set; }
             public int BookId { get; set; }
             public int StateId { get; set; }
+            public int RequestedCopiesQTY { get; set; }
             public DateTime OrderDate { get; set; }
-            public DateTime ReturnDate { get; set; }
+            public DateTime? ReturnDate { get; set; } = null;
         }
 
         public class OrderHistory

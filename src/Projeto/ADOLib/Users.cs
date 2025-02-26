@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using LibDB;
 using Microsoft.Data.SqlClient;
 using static ADOLib.Model.Model;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ADOLib
 {
@@ -16,7 +17,7 @@ namespace ADOLib
 
         public Users()
         {
-            CnString = "Server=host.docker.internal;Database=upskill_Projeto_EFJ;User Id = Nony; Password=1234Tukito69;Trusted_Connection=False;TrustServerCertificate=True";
+            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
         public User GetUserInfo(int id)
@@ -56,6 +57,35 @@ namespace ADOLib
             }
 
             return user;
+        }
+
+        public int StrikeUser(int orderId)
+        {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                var transaction = connection.BeginTransaction();
+                try
+                {
+                string query = $@"UPDATE u
+                                SET u.Strikes = u.Strikes + 1
+                                FROM Users u
+                                INNER JOIN Orders o ON u.UserId = o.UserId
+                                WHERE o.OrderId = {orderId}";
+                int changed = DB.CmdExecute(connection, query, transaction);
+                string getNewStrikes = $@"Select Strikes
+                                        FROM User u
+                                        INNER JOIN Orders o ON u.UserID = o.UserId
+                                        WHERE o.OrderId = {orderId}";
+                int strikes =int.Parse(DB.GetSQLRead(connection, query).Rows[0]["Strikes"].ToString());
+                transaction.Commit();
+                return strikes;
+                }
+                catch(Exception e)
+                {
+                    transaction.Rollback();
+                    throw new Exception($"Error adding strike to User: {e.Message}");
+                }
+                }
         }
 
     }

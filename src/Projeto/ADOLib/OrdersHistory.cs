@@ -12,6 +12,12 @@ namespace ADOLib
 {
     public class OrdersHistory
     {
+        private string CnString { get; set; }
+
+        public OrdersHistory()
+        {
+            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+        }
 
         public static void AddHistory(string cnString, OrderHistory history)
         {

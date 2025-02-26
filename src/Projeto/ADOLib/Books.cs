@@ -18,39 +18,39 @@ namespace ADOLib
 
         public Books()
         {
-            CnString = "Server=LAPTOP-DKPO5APD\\MSSQLSERVER02;Database=upskill_fake_library;Trusted_Connection=True;TrustServerCertificate=True";
+            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
         }
 
         // Make a method called CreateBooksInfo where it gathers all the info from all the books and returns a list of it.
 
-        private string QueryCreator(int? id = null)
-        {
-            string query = "SELECT Books.BookId, " +
-                        "Books.title, Books.Edition, Books.Year, Books.Quantity, " +
-                        "Authors.AuthorId, Authors.AuthorName, " +
-                        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
-                        "Copies.NumberOfCopies, Covers.CoverImage, " +
-                        "STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames " +
-                        "FROM Books " +
-                        "INNER JOIN Copies ON Books.BookId = Copies.BookId " +
-                        "INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId " +
-                        "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId " +
-                        "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
-                        "INNER JOIN Covers ON Books.BookId = Covers.CoverId " +
-                        "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId ";
+        //private string QueryCreator(int? id = null)
+        //{
+        //    string query = "SELECT Books.BookId, " +
+        //                "Books.title, Books.Edition, Books.Year, Books.Quantity, " +
+        //                "Authors.AuthorId, Authors.AuthorName, " +
+        //                "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
+        //                "Copies.NumberOfCopies, Covers.CoverImage, " +
+        //                "STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames " +
+        //                "FROM Books " +
+        //                "INNER JOIN Copies ON Books.BookId = Copies.BookId " +
+        //                "INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId " +
+        //                "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId " +
+        //                "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
+        //                "INNER JOIN Covers ON Books.BookId = Covers.BookId " +
+        //                "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId ";
 
-            if(id is not null)
-            {
-                query += $"WHERE Books.BookId = {id} ";
-            }
+        //    if(id is not null)
+        //    {
+        //        query += $"WHERE Books.BookId = {id} ";
+        //    }
 
-            query += "GROUP BY Books.BookId, Books.Title, Books.Edition, Books.Year, Books.Quantity, " +
-                "Authors.AuthorId, Authors.AuthorName, " +
-                "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
-                "Copies.NumberOfCopies, Covers.CoverImage";
+        //    query += "GROUP BY Books.BookId, Books.Title, Books.Edition, Books.Year, Books.Quantity, " +
+        //        "Authors.AuthorId, Authors.AuthorName, " +
+        //        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
+        //        "Copies.NumberOfCopies, Covers.CoverImage";
 
-            return query;
-        }
+        //    return query;
+        //}
 
         public Book GetBookById(int id)
         {
@@ -97,11 +97,46 @@ namespace ADOLib
             {
                 using(SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = QueryCreator(id);
+                    string query = @"
+                    SELECT 
+                        Books.BookId, 
+                        Books.Title, 
+                        Books.Edition, 
+                        Books.Year, 
+                        Books.Quantity, 
+                        Authors.AuthorId, 
+                        Authors.AuthorName, 
+                        Libraries.LibraryId, 
+                        Libraries.LibraryName, 
+                        Libraries.LibraryAddress, 
+                        Libraries.Email, 
+                        Libraries.Contact, 
+                        Copies.NumberOfCopies, 
+                        STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames 
+                    FROM Books 
+                    INNER JOIN Copies ON Books.BookId = Copies.BookId 
+                    INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId 
+                    INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId 
+                    INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId 
+                    INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId 
+                    GROUP BY 
+                        Books.BookId, 
+                        Books.Title, 
+                        Books.Edition, 
+                        Books.Year, 
+                        Books.Quantity, 
+                        Authors.AuthorId, 
+                        Authors.AuthorName, 
+                        Libraries.LibraryId, 
+                        Libraries.LibraryName, 
+                        Libraries.LibraryAddress, 
+                        Libraries.Email, 
+                        Libraries.Contact, 
+                        Copies.NumberOfCopies";
 
                     DataTable dataTable = DB.GetSQLRead(connection, query);
 
-                    foreach(DataRow row in dataTable.Rows)
+                    foreach (DataRow row in dataTable.Rows)
                     {
                         var book = new BooksInfo()
                         {
@@ -118,9 +153,7 @@ namespace ADOLib
                             Contact = row["Contact"].ToString(),
                             NumberOfCopies = Convert.ToInt32(row["NumberOfCopies"]),
                             AuthorName = row["AuthorName"].ToString(),
-                            // Need to review this conversion and check if it isn't better just to create a converting method
-                            CoverImage = (byte[])row["CoverImage"],
-                            SubjectNames = row["SubjectName"].ToString().Split(",").Select(lst => lst.Trim()).ToList(),
+                            SubjectNames = row["SubjectNames"].ToString().Split(',').Select(lst => lst.Trim()).ToList(),
                         };
 
                         books.Add(book);
@@ -263,7 +296,7 @@ namespace ADOLib
                     int deletedSubjects = DB.CmdExecute(connection, deleteSubjects, transaction);
 
                     // Delete from covers
-                    string deleteCovers = $"DELETE FOM Covers WHERE CoverId = {id}";
+                    string deleteCovers = $"DELETE FOM Covers WHERE BookId = {id}";
                     int deletedCovers = DB.CmdExecute(connection, deleteCovers, transaction);
 
                     // Delete from books

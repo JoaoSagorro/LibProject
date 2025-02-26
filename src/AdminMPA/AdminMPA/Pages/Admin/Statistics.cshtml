@@ -1,13 +1,84 @@
 ﻿@page
 @model AdminMPA.Pages.Admin.StatisticsModel
 @{
+    ViewData["Title"] = "Dashboard";
 }
-<h1>Statistics</h1>
-<h2>Subjects</h2>
-@foreach(var subject in Model.MostRequestedSubjects){
-    <p> @subject.Subjects - @subject.SubjectsCount</p>
-}
-<h2>Orders</h2>
-@foreach(var order in Model.LibsByOrders){
-    <p>@order.LibraryName - @order.OrdersCount</p>
-}
+
+<h1 class="text-center mb-5">Library Statistics</h1>
+<br />
+
+<div class="container-fluid d-flex justify-content-center">
+    <div class="container-fluid d-flex flex-column align-items-center justify-content-center">
+        <h3 class="text-center">Most Requested Subjects</h3>
+        <div class="container-fluid border border-light rounded m-2">
+            <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Subject Name</th>
+                            <th scope="col">Book Count</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table">
+                        <tr>
+                            @foreach(var sbjs in Model.MostRequestedSubjects){
+                                <td>@(Model.RequestedNumber += 1)</td>
+                                <td>@sbjs.Subjects</td>
+                                <td>@sbjs.SubjectsCount</td>
+                            }
+                        </tr>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container-fluid d-flex flex-column align-items-center justify-content-center">
+        <h3 class="text-center">Libraries with Most Requests</h3>
+        <div class="container-fluid border border-light rounded m-2">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Library Name</th>
+                        <th scope="col">Order Count</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table">
+                    <tr>
+                        @foreach (var sbjs in Model.LibsByOrders)
+                        {
+                            <td>@(Model.OrdersNumber += 1)</td>
+                            <td>@sbjs.LibraryName</td>
+                            <td>@sbjs.OrdersCount</td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container-fluid d-flex flex-column align-items-center justify-content-center">
+        <h3 class="text-center">Library with Oldest Orders</h3>
+        <div class="container-fluid border border-light rounded m-2">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Subject Name</th>
+                        <th scope="col">Book Count</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table">
+                    <tr>
+                        @foreach (var sbjs in Model.LibsByOldestRequest)
+                        {
+                            <td>@(Model.OldestNumber += 1)</td>
+                            <td>@sbjs.LibraryName</td>
+                            <td>@sbjs.OrderDate.ToString("dd-MM-yyyy")</td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
