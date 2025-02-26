@@ -1,0 +1,100 @@
+﻿@page
+@model AdminMPA.Pages.Admin.DeletedUsersModel
+@{
+	ViewData["Title"] = "Deleted Users";
+}
+
+<div class="container-fluid d-flex flex-column align-items-center mb-5">
+    <h1>@ViewData["Title"]</h1>
+</div>
+<br />
+
+<div class="container-fluid d-flex flex-column">
+    <div class="container-fluid d-flex justify-content-center ">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Birthdate</th>
+                    <th scope="col">Register Date</th>
+                    <th scope="col">Suspeded Account?</th>
+                    <th scope="col">Active Account?</th>
+                    <th scope="col">Strikes</th>
+                    <th class="text-center" scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody id="user-table">
+
+                @if (!Model.deletedUsers.Any() || Model.deletedUsers == null)
+                {
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="d-flex justify-content-center">
+                            <h4>Nenhum resultado encontrado.</h4>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var user in Model.deletedUsers)
+                    {
+                        <tr id="tableRow">
+                            <form method="post">
+                            <th scope='row'> @(Model.Number += 1) </th>
+                            <td id="userName">@user.FirstName @user.LastName</td>
+                            <td id="userEmail">@user.Email</td>
+                            <td id="userAddress">@user.Address</td>
+                            <td id="userAddress">@user.Birthdate.ToString("dd/MM/yyyy")</td>
+                            <td id="userAddress">@user.RegisterDate.ToString("dd/MM/yyyy")</td>
+                            <td id="userAddress">@(@user.Suspended ? "Yes" : "No")</td>
+                            <td id="userAddress">@(@user.Active ? "Yes" : "No")</td>
+                            <td id="userStrikes">@user.Strikes</td>
+                            <td class='text-center'>
+                                <a class='btn btn-info' asp-page="EditUser" asp-route-email="@user.Email">Edit</a>
+                                <input name="Email" value="@user.Email" hidden />
+                                <button type="submit" asp-page-handler="delete" class='btn btn-outline-secondary'>Delete</button>
+                            </td>
+                            </form>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container-fluid d-flex justify-content-center mt-3 ">
+        <a href="/Admin/ManageUsers" class="btn btn-outline-secondary">Return</a>
+    </div>
+    @* <div class="container-fluid">
+        <ul>
+            @foreach (var item in Model.Users)
+            {
+                    <li>@item.Email</li>
+            }
+        </ul>
+        @if (Model.Users != null && Model.Users.Any())
+        {
+                <ul>
+                @foreach (var user in Model.Users)
+                {
+                    <li>@user.Email <a class="btn btn-primary btn-sm" asp-page="EditUser" asp-route-email="@user.Email">Manage</a></li> 
+                }
+                </ul>
+        }
+        else if(!string.IsNullOrEmpty(Model.SearchTerm) && (!Model.Users.Any() || Model.Users == null))
+        {
+            <p>Olá</p>    
+        }
+    </div> *@
+</div>

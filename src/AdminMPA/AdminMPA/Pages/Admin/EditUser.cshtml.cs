@@ -8,6 +8,8 @@ namespace AdminMPA.Pages.Admin
     public class EditUserModel : PageModel
     {
         public User? user { get; set; }
+        [BindProperty]
+        public User UpdatedUser { get; set; }
         public IActionResult OnGet(string email)
         {
             if (HttpContext.Session.GetString("User") != null)
@@ -39,7 +41,7 @@ namespace AdminMPA.Pages.Admin
                 if (user != null)
                 {
                     LibUser.SuspendUser(user.Email);
-                    return RedirectToPage(new { email = user.Email });
+                    return RedirectToPage("/Admin/ManageUsers");
                 }
             }
             return RedirectToPage("../Index");
@@ -53,10 +55,21 @@ namespace AdminMPA.Pages.Admin
                 if (user != null)
                 {
                     LibUser.ReactivateUser(user.Email);
-                    return RedirectToPage(new { email = user.Email });
+                    return RedirectToPage("/Admin/ManageUsers");
                 }
             }
             return RedirectToPage("../Index");
+        }
+
+        public IActionResult OnPostEdit()
+        {
+            user = LibUser.GetUserByEmail(UpdatedUser.Email);
+
+            UpdatedUser.Active = user.Active;
+            UpdatedUser.Suspended = user.Suspended;
+
+            LibUser.UpdateUser(UpdatedUser);
+            return RedirectToPage("/Admin/ManageUsers");
         }
 
     }
