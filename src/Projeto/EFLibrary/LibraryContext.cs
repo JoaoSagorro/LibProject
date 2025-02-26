@@ -6,7 +6,8 @@ namespace EFLibrary
     public class LibraryContext : DbContext
     {
         //private string CnString { get; set; } = "Server=host.docker.internal;Database=upskill_Projeto_EFJ;User Id = Nony; Password=1234Tukito69;Trusted_Connection=False;TrustServerCertificate=True";  
-        private string CnString { get; set; } = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";  
+        //private string CnString { get; set; } = "Server=localhost;Database=upskill_Projeto_EFJ;Trusted_Connection=True;TrustServerCertificate=True";
+        private string CnString { get; set; } = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
         // Constructor for dependency injection (used in production)
         public LibraryContext(DbContextOptions<LibraryContext> options)
