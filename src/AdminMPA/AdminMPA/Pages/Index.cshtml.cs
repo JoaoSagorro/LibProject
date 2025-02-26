@@ -39,7 +39,7 @@ public class IndexModel : PageModel
                 var user = LibUser.GetUserByEmail(Email);
                 if(user.Role.RoleName == "Admin") { 
                 HttpContext.Session.SetString("User", Email);
-                return RedirectToPage("/Admin/Index");
+                return RedirectToPage("/Admin/Statistics");
                 }
                 //lib = LibStatistics.GetLibraryWithLessOrders()[0];
                 // Redirect to a secure page upon successful login
