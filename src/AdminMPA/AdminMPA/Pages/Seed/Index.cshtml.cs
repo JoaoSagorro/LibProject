@@ -7,7 +7,7 @@ namespace AdminMPA.Pages.Seed
     {
         public void OnGet()
         {
-            EFLibrary.Seed.SeedAll();
+            //EFLibrary.Seed.SeedAll();
         }
     }
 }
