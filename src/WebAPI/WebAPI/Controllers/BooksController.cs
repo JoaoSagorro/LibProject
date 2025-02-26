@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ADOLib;
 using ADOLib.DTOs;
+using ADOLib.ModelView;
 
 
 namespace WebAPI.Controllers
@@ -10,10 +11,12 @@ namespace WebAPI.Controllers
     public class BooksController : ControllerBase
     {
         private readonly Books _booksService;
+        private readonly RequestBookService _requestBookService;
 
         public BooksController()
         {
             _booksService = new Books();
+            _requestBookService = new RequestBookService();
         }
 
         // GET: api/books
@@ -48,19 +51,7 @@ namespace WebAPI.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-    }
-
-    [Route("api/[controller]")]
-    [ApiController]
-    public class RequestBookController : ControllerBase
-    {
-        private readonly RequestBookService _requestBookService;
-
-        public RequestBookController()
-        {
-            _requestBookService = new RequestBookService();
-        }
-
+    
         [HttpPost]
         public async Task<IActionResult> RequestBook([FromBody] RequestBookDto request)
         {
@@ -77,6 +68,22 @@ namespace WebAPI.Controllers
                     return Ok(new { message = "Book requested successfully." });
 
                 return BadRequest("Book request failed.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+    
+
+        // GET: api/books-search
+        [HttpGet("getAll")]
+        public IActionResult GetBooksForSearch()
+        {
+            try
+            {
+                var books = _booksService.GetBooksForSearch();
+                return Ok(books);
             }
             catch (Exception ex)
             {
