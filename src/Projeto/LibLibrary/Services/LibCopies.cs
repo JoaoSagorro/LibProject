@@ -71,5 +71,13 @@ namespace LibLibrary.Services
             using var context = new LibraryContext();
             return context.Copies.Where(cp => cp.BookId == bookId).Count();
         }
+
+        public static void CreateInitialCopies(int bookId, int libraryId, int qty)
+        {
+            using var context = new LibraryContext();
+            Copie newCopie = new Copie { BookId = bookId, LibraryId = libraryId, NumberOfCopies = qty };
+            context.Copies.Add(newCopie);
+            context.SaveChanges();
+        }
     }
 }
