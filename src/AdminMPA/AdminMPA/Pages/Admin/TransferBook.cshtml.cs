@@ -3,7 +3,6 @@ using EFLibrary;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using LibLibrary.Services;
-using EFLibrary.Services;
 
 namespace AdminMPA.Pages.Admin
 {
@@ -13,11 +12,18 @@ namespace AdminMPA.Pages.Admin
         public Copie  Copy { get; set; }
         public List<Copie> Copies { get; set; }
         public List<Library> Libraries { get; set; }
+        public string ImgSrc { get; set; }
+
         public IActionResult OnGet(int libraryId, int bookId)
         {
-            if (HttpContext.Session.GetString("User") != null){
+            if (HttpContext.Session.GetString("User") != null)
+            {
                 Copy = LibCopies.GetCopy(bookId,libraryId);
                 Copies = LibBooks.GetCopies(Copy.Book);
+                Cover cover = LibCover.GetCoverById(bookId);
+                var base64 = Convert.ToBase64String(cover.CoverImage);
+                ImgSrc = String.Format("data:image/gif;base64,{0}", base64);
+
                 Libraries = LibLibraries.GetLibraries();
                 int libIndex = Libraries.FindIndex(l => l.LibraryId == Copy.LibraryId);
                 if(libIndex >= 0)
@@ -38,32 +44,13 @@ namespace AdminMPA.Pages.Admin
         {
             if (HttpContext.Session.GetString("User") != null)
             {
-                using var _context = new LibraryContext();
                 // Retrieve the current copy
-                var currentCopy = _context.Copies.FirstOrDefault(c => c.BookId == Copy.BookId && c.LibraryId == Copy.LibraryId);
+                var currentCopy = LibCopies.GetCopy(Copy.BookId, Copy.LibraryId);
                 if (currentCopy == null)
                 {
                     // Handle the case where the current copy is not found
                     ModelState.AddModelError(string.Empty, "The specified copy was not found.");
                     return Page();
-                }
-
-                // Retrieve the target library copy
-                var targetCopy = _context.Copies.FirstOrDefault(c => c.BookId == Copy.BookId && c.LibraryId == targetLibraryId);
-                if (targetCopy == null)
-                {
-                    var book = _context.Books.FirstOrDefault(b => b.BookId == Copy.BookId);
-                    var targetLib = _context.Libraries.FirstOrDefault(l => l.LibraryId == targetLibraryId);
-                    var newCopie = new Copie { Book = book, BookId = book.BookId, Library = targetLib, LibraryId = targetLib.LibraryId, NumberOfCopies = quantity };
-                    currentCopy.NumberOfCopies -= quantity;
-                    _context.Copies.Add(newCopie);
-                    _context.Update(currentCopy);
-                    _context.SaveChanges();
-                    //LibCopies.UpdateNumberOfCopies(newCopie);
-                    // Handle the case where the target copy is not found
-                    //ModelState.AddModelError(string.Empty, "The target library copy was not found.");
-                    //return Page();
-                    return RedirectToPage("./EditBook", new { id = Copy.BookId }); // Redirect to a success page or another appropriate page
                 }
 
                 // Check if the quantity to transfer is valid
@@ -73,13 +60,7 @@ namespace AdminMPA.Pages.Admin
                     return Page();
                 }
 
-                // Update the number of copies
-                currentCopy.NumberOfCopies -= quantity;
-                targetCopy.NumberOfCopies += quantity;
-
-                _context.Update(currentCopy);
-                _context.Update(targetCopy);
-                _context.SaveChanges();
+                TransferService.TransferCopies(currentCopy, targetLibraryId, quantity);
 
                 return RedirectToPage("./EditBook", new {id = Copy.BookId}); // Redirect to a success page or another appropriate page
             }
