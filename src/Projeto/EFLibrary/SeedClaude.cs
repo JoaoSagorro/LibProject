@@ -359,7 +359,7 @@ namespace EFLibrary
                 {
                     //new State { StateName = "Solicitado" },
                     //new State { StateName = "Em Processamento" },
-                    new State { StateName = "Emprestado" },
+                    new State { StateName = "Requisitado" },
                     new State { StateName = "ATRASADO" },
                     new State { StateName = "Devolução URGENTE" },
                     new State { StateName = "Devolver em breve" },
@@ -486,7 +486,7 @@ namespace EFLibrary
 
                 // Obter estados
                 //var solicitado = context.States.FirstOrDefault(s => s.StateName == "Solicitado");
-                var emprestado = context.States.FirstOrDefault(s => s.StateName == "Emprestado");
+                var emprestado = context.States.FirstOrDefault(s => s.StateName == "Requisitado");
                 var emAtraso = context.States.FirstOrDefault(s => s.StateName == "ATRASO");
                 var devolucaoUrgente = context.States.FirstOrDefault(s => s.StateName == "Devolução URGENTE");
                 var devolucaoEmBreve = context.States.FirstOrDefault(s => s.StateName == "Devolver em breve");

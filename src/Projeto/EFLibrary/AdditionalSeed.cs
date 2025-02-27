@@ -352,7 +352,7 @@ namespace EFLibrary
 
             // Obter estados
             var atraso = context.States.FirstOrDefault(s => s.StateName == "ATRASO");
-            var emprestado = context.States.FirstOrDefault(s => s.StateName == "Emprestado");
+            var emprestado = context.States.FirstOrDefault(s => s.StateName == "Requisitado");
             var urgente = context.States.FirstOrDefault(s => s.StateName == "Devolução URGENTE");
             var devolucaoEmBreve = context.States.FirstOrDefault(s => s.StateName == "Devolução em breve");
 
