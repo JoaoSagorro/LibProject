@@ -4,12 +4,14 @@
     ViewData["Title"] = "Manage Books";
 }
 
-<h1 class="mb-4">@ViewData["Title"]</h1>
+<h1 class="text-center mb-5">@ViewData["Title"]</h1>
+<br />
 
 <div>
     <table class="table">
         <thead>
             <tr>
+                <th scope="col">#</th>
                 <th scope="col">Title</th>
                 <th scope="col">Edition</th>
                 <th scope="col">Year</th>
@@ -22,6 +24,7 @@
                 @foreach (var book in Model.Books)
                 {
                             <tr>
+                                <td>@(Model.Number += 1)</td>
                                 <td>@book.Title</td>
                                 <td>@book.Edition</td>
                                 <td>@book.Year</td>
