@@ -360,7 +360,7 @@ namespace EFLibrary
                     //new State { StateName = "Solicitado" },
                     //new State { StateName = "Em Processamento" },
                     new State { StateName = "Requisitado" },
-                    new State { StateName = "ATRASADO" },
+                    new State { StateName = "ATRASO" },
                     new State { StateName = "Devolução URGENTE" },
                     new State { StateName = "Devolver em breve" },
                     new State { StateName = "Devolvido" },

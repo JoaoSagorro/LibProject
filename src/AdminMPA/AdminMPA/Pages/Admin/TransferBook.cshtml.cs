@@ -13,7 +13,7 @@ namespace AdminMPA.Pages.Admin
         public List<Copie> Copies { get; set; }
         public List<Library> Libraries { get; set; }
         public string ImgSrc { get; set; }
-
+         
         public IActionResult OnGet(int libraryId, int bookId)
         {
             if (HttpContext.Session.GetString("User") != null)
@@ -23,8 +23,8 @@ namespace AdminMPA.Pages.Admin
                 Cover cover = LibCover.GetCoverById(bookId);
                 if(cover is not null)
                 {
-                var base64 = Convert.ToBase64String(cover.CoverImage);
-                ImgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                    var base64 = Convert.ToBase64String(cover.CoverImage);
+                    ImgSrc = String.Format("data:image/gif;base64,{0}", base64);
                 }
 
                 Libraries = LibLibraries.GetLibraries();
