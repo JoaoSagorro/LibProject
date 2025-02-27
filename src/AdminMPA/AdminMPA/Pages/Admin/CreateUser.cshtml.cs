@@ -13,12 +13,19 @@ namespace AdminMPA.Pages.Admin
             public CreateUserDTO NewUser { get; set; }
             public IEnumerable<SelectListItem> roles { get; set; }
 
-            public void OnGet()
+            public IActionResult OnGet()
+            {
+            if (HttpContext.Session.GetString("User") != null)
             {
                 roles = LibRole.GetRoles().Select(r => new SelectListItem { Value = r.RoleName, Text = r.RoleName }).ToList();
+                return Page();
+            }
+            return RedirectToPage("../Index");
             }
 
             public IActionResult OnPost()
+            {
+            if (HttpContext.Session.GetString("User") != null)
             {
                 if (!ModelState.IsValid)
                 {
@@ -41,6 +48,8 @@ namespace AdminMPA.Pages.Admin
                 };
                 LibUser.AddUser(user);
                 return RedirectToPage("/Admin/ManageUsers");
+            }
+            return RedirectToPage("../Index");
             }
     }
 }

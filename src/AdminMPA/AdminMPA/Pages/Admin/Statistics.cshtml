@@ -20,13 +20,13 @@
                         </tr>
                     </thead>
                     <tbody id="user-table">
-                        <tr>
                             @foreach(var sbjs in Model.MostRequestedSubjects){
+                        <tr>
                                 <td>@(Model.RequestedNumber += 1)</td>
                                 <td>@sbjs.Subjects</td>
                                 <td>@sbjs.SubjectsCount</td>
-                            }
                         </tr>
+                            }
                     </tbody>
             </table>
         </div>
@@ -44,14 +44,14 @@
                     </tr>
                 </thead>
                 <tbody id="user-table">
-                    <tr>
                         @foreach (var sbjs in Model.LibsByOrders)
                         {
+                    <tr>
                             <td>@(Model.OrdersNumber += 1)</td>
                             <td>@sbjs.LibraryName</td>
                             <td>@sbjs.OrdersCount</td>
-                        }
                     </tr>
+                        }
                 </tbody>
             </table>
         </div>
@@ -69,14 +69,14 @@
                     </tr>
                 </thead>
                 <tbody id="user-table">
-                    <tr>
                         @foreach (var sbjs in Model.LibsByOldestRequest)
                         {
+                    <tr>
                             <td>@(Model.OldestNumber += 1)</td>
                             <td>@sbjs.LibraryName</td>
                             <td>@sbjs.OrderDate.ToString("dd-MM-yyyy")</td>
-                        }
                     </tr>
+                        }
                 </tbody>
             </table>
         </div>
