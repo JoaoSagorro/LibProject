@@ -347,6 +347,59 @@ namespace ADOLib
                 throw new Exception(e.Message, e.InnerException);
             }
         }
-        
+
+        public List<BookSearchResult> GetBooksForSearch()
+        {
+            List<BookSearchResult> books = new List<BookSearchResult>();
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = @"
+                        SELECT 
+                            Books.BookId,
+                            Books.Title,
+                            Books.Quantity,
+                            Authors.AuthorId,
+                            Authors.AuthorName,
+                            STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames
+                        FROM Books
+                        INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId
+                        INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId
+                        INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId
+                        GROUP BY 
+                            Books.BookId,
+                            Books.Title,
+                            Books.Quantity,
+                            Authors.AuthorId,
+                            Authors.AuthorName
+                        Order BY
+                            Books.BookId";
+
+                    DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        var book = new BookSearchResult()
+                        {
+                            BookId = Convert.ToInt32(row["BookId"]),
+                            Title = row["Title"].ToString(),
+                            Quantity = Convert.ToInt32(row["Quantity"]),
+                            AuthorId = Convert.ToInt32(row["AuthorId"]),
+                            AuthorName = row["AuthorName"].ToString(),
+                            SubjectNames = row["SubjectNames"].ToString().Split(',').Select(lst => lst.Trim()).ToList()
+                        };
+                        books.Add(book);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+            return books;
+
+        }
     }
 }

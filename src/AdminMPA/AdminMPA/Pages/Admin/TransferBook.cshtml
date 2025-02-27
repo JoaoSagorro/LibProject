@@ -1,30 +1,51 @@
 ﻿@page
 @model TransferBookModel
 
-<h2>@Model.Copy.Book.Title</h2>
-<h3>@Model.Copy.Library.LibraryName</h3>
-<p>Livros em stock - @Model.Copy.NumberOfCopies</p>
-@if(Model.Copy.NumberOfCopies >1){
-<form method="post">
-    <input type="hidden" asp-for="Copy.BookId" />
-    <input type="hidden" asp-for="Copy.LibraryId" />
+<div class="container-fluid">
 
-    <label for="targetLibrary">Select Target Library:</label>
-    <select id="targetLibrary" name="targetLibraryId" required>
-        <option value="">--Select Library--</option>
-        @foreach (var library in Model.Libraries)
+    <div class="container-fluid d-flex mb-2">
+            <img src="@Model.ImgSrc" class="rounded "/>
+
+        <div class="container-fluid align-content-center">
+            <h2 class="fw-bold">@Model.Copy.Book.Title</h2>
+            <h5>@Model.Copy.Library.LibraryName</h5>
+            <p>Livros em stock - @Model.Copy.NumberOfCopies</p>
+        </div>
+    
+    </div>
+
+    <div class="container-fluid d-flex justify-content-start align-content-start">
+        @if(Model.Copy.NumberOfCopies >1)
         {
-                <option value="@library.LibraryId">@library.LibraryName</option>
+            <div class="d-flex w-25">
+                <form method="post">
+                        <input type="hidden" asp-for="Copy.BookId" />
+                        <input type="hidden" asp-for="Copy.LibraryId" />
+
+                        <label class="mb-2" for="targetLibrary">Select Target Library:</label>
+                            <select class="form-control" id="targetLibrary" name="targetLibraryId" required>
+                            <option value="">--Select Library--</option>
+                            @foreach (var library in Model.Libraries)
+                            {
+                                <option value="@library.LibraryId">@library.LibraryName</option>
+                            }
+                        </select>
+
+                        <label class="mb-2" for="quantity">Quantity to Transfer:</label>
+                        <input class="form-control" type="number" id="quantity" name="quantity" min="1" max="@(Model.Copy.NumberOfCopies-1)" required />
+
+                        <button type="submit" class="btn btn-primary mt-2">Transfer</button>
+                </form>
+            </div>
         }
-    </select>
-
-    <label for="quantity">Quantity to Transfer:</label>
-    <input type="number" id="quantity" name="quantity" min="1" max="@(Model.Copy.NumberOfCopies-1)" required />
-
-    <button type="submit" class="btn btn-primary">Transfer</button>
-</form>
-}
- <form  asp-page-handler="UpdateCopyValue">
-        <input type="hidden" asp-for="Copy.BookId" />
-    <input type="hidden" asp-for="Copy.LibraryId" />
-    <input id="buyQuantity" name="buyQuantity" type="number" min="@(1-Model.Copy.NumberOfCopies)"/><button type="submit"> Buy/Sell</button></form>
+        <div class="w-25">
+             <form  asp-page-handler="UpdateCopyValue">
+                <input type="hidden" asp-for="Copy.BookId" />
+                <input type="hidden" asp-for="Copy.LibraryId" />
+                <label class="mb-2" for="targetLibrary">Buy new copies:</label>
+                <input class="form-control" id="buyQuantity" name="buyQuantity" type="number" min="@(1-Model.Copy.NumberOfCopies)"/>
+                <button class="btn btn-primary mt-2" type="submit"> Buy/Sell</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -20,13 +20,13 @@
                         </tr>
                     </thead>
                     <tbody id="user-table">
-                        <tr>
                             @foreach(var sbjs in Model.MostRequestedSubjects){
-                                <td>@(Model.RequestedNumber += 1)</td>
-                                <td>@sbjs.Subjects</td>
-                                <td>@sbjs.SubjectsCount</td>
+                                <tr>
+                                    <td>@(Model.RequestedNumber += 1)</td>
+                                    <td>@sbjs.Subjects</td>
+                                    <td>@sbjs.SubjectsCount</td>
+                                </tr>
                             }
-                        </tr>
                     </tbody>
             </table>
         </div>
