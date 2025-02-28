@@ -12,16 +12,35 @@ namespace LibLibrary.Services
     public class LibCover
     {
 
-        public static void AddCover(byte[] image)
+        public static void AddCover(byte[] image, int bookId)
         {
             try
             {
                 using(LibraryContext context = new LibraryContext())
                 {
-                    Cover cover = new Cover { CoverImage = image };
+                    Cover cover = new Cover { CoverImage = image, BookId = bookId };
 
                     context.Add(cover);
                     context.SaveChanges();
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
+        public static Cover GetCoverById(int bookId)
+        {
+            Cover cover = null;
+
+            try
+            {
+                using(LibraryContext context = new LibraryContext())
+                {
+                    cover = context.Covers.FirstOrDefault(cv => cv.BookId == bookId);
+
+                    return cover;
                 }
             }
             catch(Exception e)
@@ -63,5 +82,6 @@ namespace LibLibrary.Services
 
             return image;
         }
+
     }
 }

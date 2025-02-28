@@ -4,35 +4,45 @@
     ViewData["Title"] = "Manage Books";
 }
 
-<h1 class="mb-4">@ViewData["Title"]</h1>
+<h1 class="text-center mb-5">@ViewData["Title"]</h1>
+<br />
 
-@if (Model.Books != null && Model.Books.Any())
-{
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Edition</th>
-                    <th>Year</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var book in Model.Books)
-            {
-                        <tr>
-                            <td>@book.Title</td>
-                            <td>@book.Edition</td>
-                            <td>@book.Year</td>
-                            <td>
-                                <a class="btn btn-primary btn-sm" asp-page="EditBook" asp-route-id="@book.BookId">Manage</a>
-                            </td>
-                        </tr>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Edition</th>
+                <th scope="col">Year</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Books != null && Model.Books.Any())
+            {               
+                @foreach (var book in Model.Books)
+                {
+                            <tr>
+                                <td>@(Model.Number += 1)</td>
+                                <td>@book.Title</td>
+                                <td>@book.Edition</td>
+                                <td>@book.Year</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm" asp-page="EditBook" asp-route-id="@book.BookId">Manage</a>
+                                </td>
+                            </tr>
+                }
             }
-            </tbody>
+            else
+            {
+                <tr>
+                    <td>No books available.</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
         </table>
-}
-else
-{
-        <p>No books available.</p>
-}
+</div>
