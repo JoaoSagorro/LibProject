@@ -10,7 +10,8 @@ namespace ADOLib
 
         public RequestBookService()
         {
-            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         private bool CanRequest(int numberOfCopies) => numberOfCopies <= 4;

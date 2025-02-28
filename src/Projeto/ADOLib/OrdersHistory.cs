@@ -16,7 +16,8 @@ namespace ADOLib
 
         public OrdersHistory()
         {
-            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public static void AddHistory(string cnString, OrderHistory history)

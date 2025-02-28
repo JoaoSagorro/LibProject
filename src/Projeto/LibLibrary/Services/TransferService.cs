@@ -21,27 +21,20 @@ namespace LibLibrary.Services
                 {
                     var targetCopie = context.Copies.FirstOrDefault(c => c.BookId == currentCopy.BookId && c.LibraryId == destinationLibraryId);
 
-
-                    if(targetCopie is not null)
-                    {
-                        currentCopy.NumberOfCopies -= quantity;
-                        targetCopie.NumberOfCopies += quantity;
-
-                        context.Update(currentCopy);
-                        context.Update(targetCopie);
-                        context.SaveChanges();
-                    }
-
-                    if (targetCopie is null)
+                    if(targetCopie is null)
                     {
                         var targetLib = context.Libraries.FirstOrDefault(l => l.LibraryId == destinationLibraryId);
                         var newCopie = new Copie { BookId = currentCopy.BookId, LibraryId = targetLib.LibraryId, NumberOfCopies = quantity };
                         currentCopy.NumberOfCopies -= quantity;
                         context.Copies.Add(newCopie);
-                        context.Update(currentCopy);
-                        context.SaveChanges();
                     }
-                    
+                    else
+                    {
+                        currentCopy.NumberOfCopies -= quantity;
+                        targetCopie.NumberOfCopies += quantity;
+                    }
+                    context.Update(currentCopy);
+                    context.SaveChanges();
                 }
             }
             catch(Exception e)
