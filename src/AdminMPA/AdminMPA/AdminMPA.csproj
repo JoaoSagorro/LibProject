@@ -8,11 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Projeto\LibLibrary\LibLibrary.csproj" />
+    <Reference Include="EFLibrary">
+      <HintPath>..\..\Projeto\EFLibrary\obj\Debug\net8.0\EFLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="LibLibrary">
+      <HintPath>..\..\Projeto\LibLibrary\obj\Debug\net8.0\LibLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
