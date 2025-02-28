@@ -74,8 +74,22 @@ namespace LibLibrary.Services
             {
                 using (LibraryContext context = new LibraryContext())
                 {
+                    List<Subject> subjects = [];
+                Author author = context.Authors.FirstOrDefault(b => b.AuthorName == book.Author.AuthorName);
+                    if (author != null) book.Author = author;
+                    else { bookAuthor = book.Author; }
                     // LibCover.AddCover(bookCover);
+                    foreach(var sub in book.Subjects)
+                    {
+                        if(!LibSubjects.SubjectExists(sub, context))
+                        {
+                            LibSubjects.AddSubject(sub, context);
+                        }
+                        var subject = context.Subjects.FirstOrDefault(s => s.SubjectName == sub.SubjectName);
+                        subjects.Add(subject);
+                    }
 
+                    book.Subjects = subjects;
                     if (BookExists(book.Title, book.Edition))
                     {
                         throw new Exception("The book already exists.");
@@ -89,7 +103,6 @@ namespace LibLibrary.Services
 
                     if (!LibAuthor.AuthorExists(bookAuthor.AuthorName))
                     {
-
                         LibAuthor.AddAuthor(bookAuthor);
                         context.Books.Add(book);
                         context.SaveChanges();

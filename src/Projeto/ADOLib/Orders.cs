@@ -4,6 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ADOLib.Enums;
+using ADOLib.ModelView;
 using EFLibrary;
 using LibDB;
 using Microsoft.Data.SqlClient;
@@ -18,23 +20,49 @@ namespace ADOLib
 
         public Orders()
         {
-            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
-        public List<Order> CheckOrderState()
+        public List<UserOrder> CheckOrderState(int userId)
         {
-            List<Order> orders = new List<Order>();
+            List<UserOrder> orders = new List<UserOrder>();
 
             try
             {
                 using (SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = "SELECT * FROM Orders";
+                    string query = @"
+                        SELECT 
+                            Orders.OrderId,
+                            Books.Title,
+                            Authors.AuthorName,
+                            Libraries.LibraryName,
+                            Orders.OrderDate,
+                            Orders.ReturnDate,
+                            States.StateName
+                        FROM Orders
+                        INNER JOIN Books ON Orders.BookId = Books.BookId
+                        INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId
+                        INNER JOIN Libraries ON Orders.LibraryId = Libraries.LibraryId
+                        INNER JOIN States ON Orders.StateId = States.StateId
+                        WHERE Orders.UserId = " + userId.ToString() + @"
+                        GROUP BY 
+                            Orders.OrderId,
+                            Books.Title,
+                            Authors.AuthorName,
+                            Libraries.LibraryName,
+                            Orders.OrderDate,
+                            Orders.ReturnDate,
+                            States.StateName
+                        Order BY
+                            Orders.OrderDate";
+
                     string updateQuery = $"UPDATE Orders SET StateId = @stateId WHERE OrderId = @orderId";
                     DataTable dataTable = DB.GetSQLRead(connection, query);
                     States states = new States();
 
-                    using(SqlCommand cmd = new SqlCommand(updateQuery, connection))
+                    using (SqlCommand cmd = new SqlCommand(updateQuery, connection))
                     {
                         foreach (DataRow order in dataTable.Rows)
                         {
@@ -42,35 +70,37 @@ namespace ADOLib
 
                             int id = Convert.ToInt32(order["OrderId"]);
                             cmd.Parameters.AddWithValue("@orderId", id);
-                            int stateId = states.GetStateByName("Requisitado").StateId;
+                            int stateId = (int)StatesEnum.Solicitado;
 
-                            if (order["ReturnDate"] != null)
+                            if (order["ReturnDate"] != DBNull.Value)
                             {
-                                stateId = states.GetStateByName("Devolvido").StateId;
+                                stateId = (int)StatesEnum.Devolvido;
                             }
                             else if (dayDiff > 15)
                             {
-                                stateId = states.GetStateByName("ATRASO").StateId;
+                                stateId = (int)StatesEnum.EmAtraso;
                             }
                             else if (dayDiff > 12)
                             {
-                                stateId = states.GetStateByName("Devolução URGENTE").StateId;
+                                stateId = (int)StatesEnum.DevolucaoUrgente;
                             }
                             else if (dayDiff > 10)
                             {
-                                stateId = states.GetStateByName("Devolução em breve").StateId;
+                                stateId = (int)StatesEnum.DevolucaoEmBreve;
                             }
 
-                            Order newOrder = new Order()
+                            UserOrder newOrder = new UserOrder()
                             {
                                 OrderId = Convert.ToInt32(order["OrderId"]),
-                                BookId = Convert.ToInt32(order["BookId"]),
-                                UserId = Convert.ToInt32(order["UserId"]),
-                                LibraryId = Convert.ToInt32(order["LibraryId"]),
-                                StateId = stateId,
+                                Title = order["Title"].ToString(),
+                                AuthorName = order["AuthorName"].ToString(),
+                                LibraryName = order["LibraryName"].ToString(),
                                 OrderDate = Convert.ToDateTime(order["OrderDate"]),
-                                ReturnDate = Convert.ToDateTime(order["ReturnDate"]),
+                                ReturnDate = order["ReturnDate"] != DBNull.Value ? Convert.ToDateTime(order["ReturnDate"]) : DateTime.MinValue,
+                                StateName = states.GetStateById(stateId).StateName
                             };
+
+                            orders.Add(newOrder);
 
                             cmd.Parameters.AddWithValue("@stateId", stateId);
                             cmd.ExecuteNonQuery();

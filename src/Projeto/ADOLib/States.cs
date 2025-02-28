@@ -16,7 +16,8 @@ namespace ADOLib
 
         public States()
         {
-            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public State GetStateById(int stateId)
@@ -58,7 +59,7 @@ namespace ADOLib
             {
                 using (SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"SELECT * FROM States WHERE StateId = @stateName";
+                    string query = $"SELECT * FROM States WHERE StateName = {stateName}";
                     DataTable dataTable = DB.GetSQLRead(connection, query);
 
                     if (dataTable.Rows.Count == 0) return state;

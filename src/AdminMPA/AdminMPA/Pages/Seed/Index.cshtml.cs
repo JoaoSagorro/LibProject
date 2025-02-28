@@ -8,6 +8,8 @@ namespace AdminMPA.Pages.Seed
         public void OnGet()
         {
             //EFLibrary.Seed.SeedAll();
+            EFLibrary.SeedClaude.SeedAll();
+            EFLibrary.AdditionalSeed.SeedAdditional();
         }
     }
 }
