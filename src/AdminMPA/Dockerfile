@@ -69,6 +69,12 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
 WORKDIR /app
 
+# Install ICU libraries
+RUN apk add --no-cache icu-libs
+
+# Set environment variable to disable globalization-invariant mode
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 COPY --from=build /app .
 
 RUN mkdir -p /app/keys && \
