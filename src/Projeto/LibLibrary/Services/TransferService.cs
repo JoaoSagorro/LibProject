@@ -39,24 +39,18 @@ namespace LibLibrary.Services
 
                     if(targetCopie is null)
                     {
-                        var book = context.Books.FirstOrDefault(b => b.BookId == currentCopy.BookId);
                         var targetLib = context.Libraries.FirstOrDefault(l => l.LibraryId == destinationLibraryId);
-                        var newCopie = new Copie { BookId = book.BookId, LibraryId = targetLib.LibraryId, NumberOfCopies = quantity };
+                        var newCopie = new Copie { BookId = currentCopy.BookId, LibraryId = targetLib.LibraryId, NumberOfCopies = quantity };
                         currentCopy.NumberOfCopies -= quantity;
                         context.Copies.Add(newCopie);
-                        context.SaveChanges();
-                        context.Update(currentCopy);
-                        context.SaveChanges();
                     }
                     else
                     {
                         currentCopy.NumberOfCopies -= quantity;
                         targetCopie.NumberOfCopies += quantity;
-
-                        context.Update(currentCopy);
-                        context.Update(targetCopie);
-                        context.SaveChanges();
                     }
+                    context.Update(currentCopy);
+                    context.SaveChanges();
                 }
             }
             catch(Exception e)
