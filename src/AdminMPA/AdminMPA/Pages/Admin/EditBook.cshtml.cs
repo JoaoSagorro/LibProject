@@ -9,22 +9,22 @@ namespace AdminMPA.Pages.Admin
     {
         public int BookId { get; set; }
         public int LibCount { get; set; }
+        public int Number { get; set; }
         public Book book { get; set; }
         public List<Copie> copies { get; set; }
 
         public IActionResult OnGet(int id)
         {
-           if(HttpContext.Session.GetString("User") != null)
+            Number = 0;
+            if(HttpContext.Session.GetString("User") != null)
             {
-            BookId = id;
-            LibCount = LibCopies.GetLibCount(id);
-            book = LibBooks.GetBookById(id);
-            copies = LibBooks.GetCopies(book);
-            return Page();
+                BookId = id;
+                LibCount = LibCopies.GetLibCount(id);
+                book = LibBooks.GetBookById(id);
+                copies = LibBooks.GetCopies(book);
+                return Page();
             }
             return RedirectToPage("../Index");
         }
-
-        //public IActionResult OnPost()
     }
 }
