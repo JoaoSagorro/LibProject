@@ -8,12 +8,12 @@ namespace AdminMPA
 {
     public class Program
     {
+        private string CnString { get; set; } = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add data protection and persist keys to the file system
-            builder.Services.AddDataProtection()
+        // Add data protection and persist keys to the file system
+        builder.Services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo(@"/app/keys"))
                 .SetApplicationName("AdminMPA");
 
@@ -24,6 +24,7 @@ namespace AdminMPA
                 options.Cookie.HttpOnly = true; // Make the session cookie HTTP only
                 options.Cookie.IsEssential = true; // Mark the session cookie as essential
             });
+            builder.Configuration.AddEnvironmentVariables();
 
             // Add services to the container
             builder.Services.AddRazorPages();

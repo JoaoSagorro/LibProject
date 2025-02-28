@@ -69,6 +69,9 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
 WORKDIR /app
 
+# RUN mkdir -p /app/dp_keys && \
+#     chown -R $APP_UID:$APP_UID /app/dp_keys
+
 # Install ICU libraries
 RUN apk add --no-cache icu-libs
 
