@@ -47,14 +47,12 @@ namespace AdminMPA.Pages.Admin
             {
                 if (!ModelState.IsValid)
                 {
-                // Re-populate the required data for the page
                 book = LibBooks.GetBookById(BookId);
                 copies = LibBooks.GetCopies(book);
                 LibCount = LibCopies.GetLibCount(BookId);
                 return Page();
                 }
 
-            // Update the book using the bound EditBook data
             var bookToUpdate = LibBooks.GetBookById(BookId);
             bookToUpdate.Title = editBook.Title;
             bookToUpdate.Edition = editBook.Edition;
@@ -71,7 +69,6 @@ namespace AdminMPA.Pages.Admin
                 bookToUpdate.Author = newAuthor;
             }
 
-            // Call your update method
             LibBooks.EditBook(bookToUpdate);
 
             return RedirectToPage("./EditBook", new { id = BookId });
@@ -85,21 +82,15 @@ namespace AdminMPA.Pages.Admin
             {
                     try
                     {
-                    // Call your delete method
                     var deletedBook = LibBooks.DeleteBookById(id);
 
-                    // You could add a success message to TempData if you want
-                    TempData["SuccessMessage"] = $"Book '{deletedBook.Title}' was successfully deleted.";
 
-                    // Redirect to the books list page
                     return RedirectToPage("./ManageBooks");
                     }
                     catch (Exception ex)
                     {
-                    // Handle any errors
                     ModelState.AddModelError("", $"Error deleting book: {ex.Message}");
 
-                    // Re-populate the page data
                     BookId = id;
                     book = LibBooks.GetBookById(id);
                     copies = LibBooks.GetCopies(book);
