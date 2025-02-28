@@ -18,7 +18,7 @@ namespace ADOLib
         public Users()
         {
             //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
-        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public User GetUserInfo(int id)
@@ -45,7 +45,7 @@ namespace ADOLib
                             Password = row["Password"].ToString(),
                             Birthdate = Convert.ToDateTime(row["Birthdate"]),
                             RegisterDate = Convert.ToDateTime(row["RegisterDate"]),
-                            Suspended = Convert.ToBoolean(row["RegisterDate"]),
+                            Suspended = Convert.ToBoolean(row["Suspended"]),
                             Active = Convert.ToBoolean(row["Active"]),
                             Strikes = Convert.ToInt32(row["Strikes"])
                         };

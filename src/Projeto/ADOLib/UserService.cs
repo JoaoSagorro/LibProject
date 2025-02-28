@@ -14,8 +14,8 @@ namespace ADOLib
 
         public UserService()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProject;Trusted_Connection=True;TrustServerCertificate=True";
-        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public async Task<bool> RegisterUser(User user)
@@ -137,8 +137,9 @@ namespace ADOLib
                 using (SqlConnection connection = DB.Open(CnString))
                 {
                     user = usr.GetUserInfo(userId);
+                    SqlTransaction transaction = connection.BeginTransaction();
 
-                    if(UserActiveOrders(connection, userId))
+                    if(UserActiveOrders(userId))
                     {
                         List<Order> allOrders = ord.GetOrdersByUserId(userId);
 
@@ -153,15 +154,14 @@ namespace ADOLib
 
                     deletedOrders = ord.DeleteUserOrders(userId);
                     string deleteUser = "DELETE FROM Users WHERE Users.UserId = @userId";
-                    SqlTransaction transaction = connection.BeginTransaction();
 
                     using(SqlCommand cmd = new SqlCommand(deleteUser, connection, transaction))
                     {
                         cmd.Parameters.AddWithValue("@userId", userId);
                         int affectedRows = cmd.ExecuteNonQuery();
+                        transaction.Commit();
                     }
 
-                    transaction.Commit();
                     return user;
                 }
             }
@@ -172,11 +172,11 @@ namespace ADOLib
         }
 
 
-        private bool UserActiveOrders(SqlConnection connection, int userId)
+        private bool UserActiveOrders(int userId)
         {
             try
             {
-                using(connection)
+                using(SqlConnection connection = DB.Open(CnString))
                 {
                     string query = $"SELECT * FROM Orders WHERE Orders.UserId = {userId}";
                     DataTable userOrders = DB.GetSQLRead(connection, query);
