@@ -1,30 +1,28 @@
-﻿using ADOLib;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using ADOLib;
 using static ADOLib.Model.Model;
+using Microsoft.AspNetCore.Identity.Data;
 
 namespace WebAPI.Controllers
 {
-    public class OrdersController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OrdersController : ControllerBase
     {
-        private readonly Orders _orders;
-        
-        public OrdersController()
+        private readonly Orders _orderService;
+
+        public OrdersController(Orders orderService)
         {
-            _orders = new Orders();
+            _orderService = orderService;
         }
 
-        [HttpGet("orders")]
-        public List<Order> GetOrdersByUserId(int userId)
+        [HttpGet()]
+        public IActionResult GetOrders(int userId)
         {
-            try
-            {
-                List<Order> orders = _orders.GetOrdersByUserId(userId);
-                return orders;
-            }
-            catch(Exception e)
-            {
-                throw new Exception(e.Message, e.InnerException);
-            }
-        } 
+            var orders = _orderService.CheckOrderState(userId);
+            return Ok(orders);
+        }
     }
 }

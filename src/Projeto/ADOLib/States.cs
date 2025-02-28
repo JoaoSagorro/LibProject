@@ -58,7 +58,7 @@ namespace ADOLib
             {
                 using (SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"SELECT * FROM States WHERE StateId = @stateName";
+                    string query = $"SELECT * FROM States WHERE StateName = {stateName}";
                     DataTable dataTable = DB.GetSQLRead(connection, query);
 
                     if (dataTable.Rows.Count == 0) return state;
