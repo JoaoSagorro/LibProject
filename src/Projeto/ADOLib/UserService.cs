@@ -13,7 +13,8 @@ namespace ADOLib
 
         public UserService()
         {
-            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProject;Trusted_Connection=True;TrustServerCertificate=True";
+            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProject;Trusted_Connection=True;TrustServerCertificate=True";
+        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public async Task<bool> RegisterUser(User user)

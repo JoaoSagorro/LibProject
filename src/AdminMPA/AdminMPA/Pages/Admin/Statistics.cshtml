@@ -4,7 +4,7 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h1 class="text-center mb-5">Library Statistics</h1>
+<h1 class="text-center mb-5">@ViewData["Title"]</h1>
 <br />
 
 <div class="container-fluid d-flex justify-content-center">
@@ -21,11 +21,11 @@
                     </thead>
                     <tbody id="user-table">
                             @foreach(var sbjs in Model.MostRequestedSubjects){
-                                <tr>
-                                    <td>@(Model.RequestedNumber += 1)</td>
-                                    <td>@sbjs.Subjects</td>
-                                    <td>@sbjs.SubjectsCount</td>
-                                </tr>
+                        <tr>
+                                <td>@(Model.RequestedNumber += 1)</td>
+                                <td>@sbjs.Subjects</td>
+                                <td>@sbjs.SubjectsCount</td>
+                        </tr>
                             }
                     </tbody>
             </table>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="container-fluid d-flex flex-column align-items-center justify-content-center">
-        <h3 class="text-center">Libraries with Most Requests</h3>
+        <h3 class="text-center">Libraries with Less Requests</h3>
         <div class="container-fluid border border-light rounded m-2">
             <table class="table">
                 <thead>
@@ -44,14 +44,14 @@
                     </tr>
                 </thead>
                 <tbody id="user-table">
-                    <tr>
                         @foreach (var sbjs in Model.LibsByOrders)
                         {
+                    <tr>
                             <td>@(Model.OrdersNumber += 1)</td>
                             <td>@sbjs.LibraryName</td>
                             <td>@sbjs.OrdersCount</td>
-                        }
                     </tr>
+                        }
                 </tbody>
             </table>
         </div>
@@ -69,14 +69,14 @@
                     </tr>
                 </thead>
                 <tbody id="user-table">
-                    <tr>
                         @foreach (var sbjs in Model.LibsByOldestRequest)
                         {
+                    <tr>
                             <td>@(Model.OldestNumber += 1)</td>
                             <td>@sbjs.LibraryName</td>
                             <td>@sbjs.OrderDate.ToString("dd-MM-yyyy")</td>
-                        }
                     </tr>
+                        }
                 </tbody>
             </table>
         </div>

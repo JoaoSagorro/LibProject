@@ -29,6 +29,7 @@ namespace LibLibrary.Services
                         .GroupBy(group => group.subject.SubjectName)
                         .Select(sbj => new SubjectStats { Subjects = sbj.Key, SubjectsCount = sbj.Count() })
                         .OrderByDescending(count => count.SubjectsCount)
+                        .Take(5)
                         .ToList();
                 }
             }

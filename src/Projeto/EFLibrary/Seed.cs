@@ -397,10 +397,10 @@ namespace EFLibrary
             {
                 context.States.AddRange(new List<State>
             {
-                new State { StateName = "Solicitado" },
+                new State { StateName = "Requisitado" },
                 new State { StateName = "Em atraso" },
-                new State { StateName = "Devolução urgente" },
-                new State { StateName = "Devolução em breve" },
+                new State { StateName = "Devolução URGENTE" },
+                new State { StateName = "Devolver em breve" },
                 new State { StateName = "Devolvido" }
             });
                 context.SaveChanges();
@@ -466,8 +466,8 @@ namespace EFLibrary
                 var porto = context.Libraries.FirstOrDefault(l => l.LibraryName == "Biblioteca Pública do Porto");
 
                 // Obter estados
-                var solicitado = context.States.FirstOrDefault(s => s.StateName == "Solicitado");
-                var devolUrgente = context.States.FirstOrDefault(s => s.StateName == "Devolução urgente");
+                var solicitado = context.States.FirstOrDefault(s => s.StateName == "Requisitado");
+                var devolUrgente = context.States.FirstOrDefault(s => s.StateName == "Devolução URGENTE");
 
                 context.Orders.AddRange(new List<Order>
             {

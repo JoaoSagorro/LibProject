@@ -1,0 +1,66 @@
+﻿@page
+@model AdminMPA.Pages.Admin.CreateBookModel
+@{
+}
+
+<div class="d-flex justify-content-between">
+    <form class="d-flex" method="get">
+        <input class="form-control w-75 me-1" type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Search..." />
+        <button class="btn btn-primary me-2" type="submit">Search</button>
+    </form>
+</div>
+
+@if (Model.Books != null && Model.Books.Any())
+{
+        <ul>
+        @foreach (var book in Model.Books)
+        {
+                    <form asp-action="BuyBook" method="post">
+                        <li>
+                            <input type="hidden" asp-for="CreateBookDTO.Title" value="@book.VolumeInfo.Title" />
+                            <strong>@book.VolumeInfo.Title</strong><br />
+                            <input type="hidden" asp-for="CreateBookDTO.AuthorName" value="@(book.VolumeInfo.Authors != null ?  book.VolumeInfo.Authors[0] : "Unknown")" />
+                            Author: @(book.VolumeInfo.Authors != null ? string.Join(", ", book.VolumeInfo.Authors) : "Unknown")<br />
+
+                    @if (!string.IsNullOrEmpty(book.VolumeInfo.ImageLinks?.Thumbnail))
+                    {
+                            <input type="hidden" asp-for="CreateBookDTO.CoverImage" value="@book.VolumeInfo.ImageLinks.Thumbnail" />
+                                    <img src="@book.VolumeInfo.ImageLinks.Thumbnail" alt="Cover image of @book.VolumeInfo.Title" />
+
+                        <br />
+                    }
+                    else
+                    {
+                            <input type="hidden" asp-for="CreateBookDTO.CoverImage" value="null" />
+                                    <img src="/images/placeholder.png" alt="No cover image available" />
+
+                        <br />
+                    }
+
+                                    <input type="hidden" asp-for="CreateBookDTO.Categories" value='@System.Text.Json.JsonSerializer.Serialize(book.VolumeInfo.Categories)' />
+                            Categories: @(book.VolumeInfo.Categories != null ? string.Join(", ", book.VolumeInfo.Categories) : "Unknown")<br />
+                            <input type="hidden" asp-for="CreateBookDTO.Edition" value="@(!string.IsNullOrEmpty(book.VolumeInfo.Publisher) ? book.VolumeInfo.Publisher : "Unknown")" />
+                            Publisher: @(!string.IsNullOrEmpty(book.VolumeInfo.Publisher) ? book.VolumeInfo.Publisher : "Unknown")<br />
+                            <input type="hidden" asp-for="CreateBookDTO.Year" value="@(!string.IsNullOrEmpty(book.VolumeInfo.PublishedDate) ? book.VolumeInfo.PublishedDate : "Unknown")" />
+                            Published Date: @(!string.IsNullOrEmpty(book.VolumeInfo.PublishedDate) ? book.VolumeInfo.PublishedDate : "Unknown")<br />
+
+                <label for="category">Select a category:</label>
+                <select asp-for="targetLibrary" class="form-control">
+                    <option value="">-- Select a Library --</option>
+                        @foreach (var library in Model.Libraries)
+                        {
+                                            <option value="@library.LibraryId">@library.LibraryName</option>
+                        }
+                </select>
+                            <input type="number" name="quantity" min="1" value="1" />
+                            <button type="submit" class="btn btn-primary">Buy</button>
+                    @Html.AntiForgeryToken()
+                        </li>
+                    </form>
+        }
+        </ul>
+}
+else if (!string.IsNullOrEmpty(Model.SearchTerm))
+{
+        <p>No books found for "@Model.SearchTerm".</p>
+}
