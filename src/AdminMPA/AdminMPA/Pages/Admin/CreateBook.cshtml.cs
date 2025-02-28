@@ -56,7 +56,7 @@ namespace AdminMPA.Pages.Admin
             {
                 try
                 {
-                var categoriesString = JsonSerializer.Deserialize<List<string>>(Request.Form["CreateBookDTO.Categories"]);
+                var categoriesString = JsonSerializer.Deserialize<List<string>>(Request.Form["CreateBookDTO.Categories"]) ?? ["Unknown"];
                 var subjectsList = categoriesString[0].Split(", ").ToList();
                 var subjects = new List<Subject>();
                 foreach( var sub in subjectsList)
@@ -83,7 +83,7 @@ namespace AdminMPA.Pages.Admin
                 LibBooks.AddBook(newBook);
                 var book = LibBooks.BookFinder(newBook.Title);
                 LibCopies.CreateInitialCopies(book.BookId, targetLibrary, quantity);
-                    return RedirectToPage("/TransferBook", new { libraryId = targetLibrary, bookId = book.BookId });
+                    return RedirectToPage("./TransferBook", new { libraryId = targetLibrary, bookId = book.BookId });
                 }
                 catch
                 {
