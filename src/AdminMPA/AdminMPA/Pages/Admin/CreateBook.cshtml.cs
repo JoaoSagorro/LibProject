@@ -49,37 +49,48 @@ namespace AdminMPA.Pages.Admin
             return RedirectToPage("../Index");
        }
 
-        public void OnPost(int quantity)
+        public IActionResult OnPost(int quantity)
         {
-            var categoriesString = JsonSerializer.Deserialize<List<string>>(Request.Form["CreateBookDTO.Categories"]);
-            var subjectsList = categoriesString[0].Split(", ").ToList();
-            var subjects = new List<Subject>();
-            foreach( var sub in subjectsList)
-            {
-                subjects.Add(new Subject { SubjectName = sub });
-            }
-            var img = LibCover.ConvertFileToImage(CreateBookDTO.CoverImage).Result;
-            Author author = new Author { AuthorName = CreateBookDTO.AuthorName };
-            if (!LibAuthor.AuthorExists(author.AuthorName)) LibAuthor.AddAuthor(author);
-            Cover cover = new Cover { CoverImage = img};
-            var yearString = CreateBookDTO.Year.Length >= 4 ? CreateBookDTO.Year.Substring(0, 4) : CreateBookDTO.Year;
-            if (int.TryParse(yearString, out int year)) ;
-            var newBook = new Book
-            {
-                Title = CreateBookDTO.Title,
-                Quantity = quantity,
-                Edition = CreateBookDTO.Edition,
-                Year =year,
-                Cover = cover,
-                Subjects= subjects,
-                Author= author,
 
-            };
-            LibBooks.AddBook(newBook);
-            var book = LibBooks.BookFinder(newBook.Title);
-            LibCopies.CreateInitialCopies(book.BookId, targetLibrary, quantity);
-            var target = targetLibrary;
-            var test2 = quantity;
-        }
+            if(HttpContext.Session.GetString("User") != null)
+            {
+                try
+                {
+                var categoriesString = JsonSerializer.Deserialize<List<string>>(Request.Form["CreateBookDTO.Categories"]);
+                var subjectsList = categoriesString[0].Split(", ").ToList();
+                var subjects = new List<Subject>();
+                foreach( var sub in subjectsList)
+                {
+                    subjects.Add(new Subject { SubjectName = sub });
+                }
+                var img = LibCover.ConvertFileToImage(CreateBookDTO.CoverImage).Result;
+                Author author = new Author { AuthorName = CreateBookDTO.AuthorName };
+                if (!LibAuthor.AuthorExists(author.AuthorName)) LibAuthor.AddAuthor(author);
+                Cover cover = new Cover { CoverImage = img};
+                var yearString = CreateBookDTO.Year.Length >= 4 ? CreateBookDTO.Year.Substring(0, 4) : CreateBookDTO.Year;
+                if (int.TryParse(yearString, out int year)) ;
+                var newBook = new Book
+                {
+                    Title = CreateBookDTO.Title,
+                    Quantity = quantity,
+                    Edition = CreateBookDTO.Edition,
+                    Year =year,
+                    Cover = cover,
+                    Subjects= subjects,
+                    Author= author,
+
+                };
+                LibBooks.AddBook(newBook);
+                var book = LibBooks.BookFinder(newBook.Title);
+                LibCopies.CreateInitialCopies(book.BookId, targetLibrary, quantity);
+                    return RedirectToPage("/TransferBook", new { libraryId = targetLibrary, bookId = book.BookId });
+                }
+                catch
+                {
+                    return Page();
+                }
+           }
+            return RedirectToPage("../Index");
+       }
     }
 }
