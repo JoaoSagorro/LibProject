@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using ADOLib.DTOs;
 using ADOLib.ModelView;
 using LibDB;
 using Microsoft.Data.SqlClient;
@@ -22,72 +23,69 @@ namespace ADOLib
         CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
-        // Make a method called CreateBooksInfo where it gathers all the info from all the books and returns a list of it.
-
-        //private string QueryCreator(int? id = null)
-        //{
-        //    string query = "SELECT Books.BookId, " +
-        //                "Books.title, Books.Edition, Books.Year, Books.Quantity, " +
-        //                "Authors.AuthorId, Authors.AuthorName, " +
-        //                "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
-        //                "Copies.NumberOfCopies, Covers.CoverImage, " +
-        //                "STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames " +
-        //                "FROM Books " +
-        //                "INNER JOIN Copies ON Books.BookId = Copies.BookId " +
-        //                "INNER JOIN Libraries ON Copies.LibraryId = Libraries.LibraryId " +
-        //                "INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId " +
-        //                "INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId " +
-        //                "INNER JOIN Covers ON Books.BookId = Covers.BookId " +
-        //                "INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId ";
-
-        //    if(id is not null)
-        //    {
-        //        query += $"WHERE Books.BookId = {id} ";
-        //    }
-
-        //    query += "GROUP BY Books.BookId, Books.Title, Books.Edition, Books.Year, Books.Quantity, " +
-        //        "Authors.AuthorId, Authors.AuthorName, " +
-        //        "Libraries.LibraryId, Libraries.LibraryName, Libraries.LibraryAddress, Libraries.Email, Libraries.Contact, " +
-        //        "Copies.NumberOfCopies, Covers.CoverImage";
-
-        //    return query;
-        //}
-
-        public Book GetBookById(int id)
+        public BookDetailsDTO GetBookById(int id)
         {
-            Book book = null;
+            BookDetailsDTO bookDetails = null;
 
             try
             {
                 using (SqlConnection connection = DB.Open(CnString))
                 {
-                    string query = $"SELECT * FROM Books WHERE BookId = {id}";
-                    DataTable dataTable = DB.GetSQLRead(connection, query);
+                    string query = @"
+                SELECT 
+                    Books.BookId, 
+                    Books.Title, 
+                    Books.Edition, 
+                    Books.Year, 
+                    Authors.AuthorName,
+                    STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames
+                FROM Books
+                INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId 
+                INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId 
+                INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId 
+                WHERE Books.BookId = @BookId
+                GROUP BY 
+                    Books.BookId, 
+                    Books.Title, 
+                    Books.Edition, 
+                    Books.Year, 
+                    Authors.AuthorName";
 
-                    if (dataTable.Rows.Count != 1) throw new Exception("An error has occurred when trying to find the book.");
-
-                    foreach (DataRow row in dataTable.Rows)
+                    using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        book = new Book()
+                        command.Parameters.AddWithValue("@BookId", id);
+
+                        using (SqlDataReader reader = command.ExecuteReader())
                         {
-                            BookId = Convert.ToInt32(row["BookId"]),
-                            Title = row["Title"].ToString(),
-                            Edition = row["Edition"].ToString(),
-                            Year = Convert.ToInt32(row["Year"]),
-                            Quantity = Convert.ToInt32(row["Quantity"]),
-                            AuthorId = Convert.ToInt32(row["AuthorId"]),
-                        };
+                            if (reader.Read())
+                            {
+                                bookDetails = new BookDetailsDTO()
+                                {
+                                    BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
+                                    Title = reader.GetString(reader.GetOrdinal("Title")),
+                                    Edition = reader.GetString(reader.GetOrdinal("Edition")),
+                                    Year = reader.GetInt32(reader.GetOrdinal("Year")),
+                                    AuthorName = reader.GetString(reader.GetOrdinal("AuthorName")),
+                                    SubjectNames = reader.GetString(reader.GetOrdinal("SubjectNames"))
+                                        .Split(',')
+                                        .Select(subject => subject.Trim())
+                                        .ToList(),
+                                };
+                            }
+                            else
+                            {
+                                throw new Exception("Book not found.");
+                            }
+                        }
                     }
                 }
-
             }
             catch (Exception e)
-
             {
                 throw new Exception(e.Message, e.InnerException);
             }
 
-            return book;
+            return bookDetails;
         }
 
         public List<BooksInfo> GetAllBooks(int? id = null)

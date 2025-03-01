@@ -16,6 +16,7 @@ namespace WebAPI
             builder.Services.AddControllers();
             builder.Services.AddScoped<Books>();
             builder.Services.AddScoped<Orders>();
+            builder.Services.AddScoped<Libraries>();
 
             builder.Services.AddCors(options =>
             {

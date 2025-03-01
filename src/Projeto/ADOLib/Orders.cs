@@ -64,13 +64,15 @@ namespace ADOLib
 
                     using (SqlCommand cmd = new SqlCommand(updateQuery, connection))
                     {
+                        // Define os parâmetros apenas uma vez
+                        cmd.Parameters.Add("@orderId", SqlDbType.Int);
+                        cmd.Parameters.Add("@stateId", SqlDbType.Int);
+
                         foreach (DataRow order in dataTable.Rows)
                         {
                             int dayDiff = (DateTime.Now - Convert.ToDateTime(order["OrderDate"])).Days;
-
                             int id = Convert.ToInt32(order["OrderId"]);
-                            cmd.Parameters.AddWithValue("@orderId", id);
-                            int stateId = (int)StatesEnum.Solicitado;
+                            int stateId = (int)StatesEnum.Requisitado;
 
                             if (order["ReturnDate"] != DBNull.Value)
                             {
@@ -91,7 +93,7 @@ namespace ADOLib
 
                             UserOrder newOrder = new UserOrder()
                             {
-                                OrderId = Convert.ToInt32(order["OrderId"]),
+                                OrderId = id,
                                 Title = order["Title"].ToString(),
                                 AuthorName = order["AuthorName"].ToString(),
                                 LibraryName = order["LibraryName"].ToString(),
@@ -102,7 +104,9 @@ namespace ADOLib
 
                             orders.Add(newOrder);
 
-                            cmd.Parameters.AddWithValue("@stateId", stateId);
+                            // Atualiza os valores dos parâmetros em vez de adicioná-los novamente
+                            cmd.Parameters["@orderId"].Value = id;
+                            cmd.Parameters["@stateId"].Value = stateId;
                             cmd.ExecuteNonQuery();
                         }
                     }
