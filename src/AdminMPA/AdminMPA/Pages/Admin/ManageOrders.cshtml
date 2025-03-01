@@ -7,8 +7,37 @@
 <h1 class="text-center mb-5">@ViewData["Title"]</h1>
 <br />
 
-@if(Model.Orders is not null || Model.Orders.Any()) 
-{
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">User</th>
+            <th scope="col">Book title</th>
+            <th scope="col">Library</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">Order State</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Orders is not null || Model.Orders.Any())
+        {
 
-	<h1>@Model.Orders[0].Book.Title</h1>
-}
+            @foreach(var order in Model.Orders) 
+            {
+                <tr>
+                    <td>@(Model.Number += 1)</td>
+                    <td>@order.User.FirstName @order.User.LastName</td>
+                    <td>@order.Book.Title</td>
+                    <td>@order.Library.LibraryName</td>
+                    <td>@order.RequestedCopiesQTY</td>
+                    <td>@order.OrderDate.ToString("dd-MM-yyyy")</td>
+                    <td>@order.State.StateName</td>
+                </tr>
+            }
+            
+        }
+        
+    </tbody>
+</table>
+

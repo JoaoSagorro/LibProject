@@ -175,8 +175,8 @@ namespace ADOLib
                             UserId = Convert.ToInt32(row["UserId"]),
                             LibraryId = Convert.ToInt32(row["LibraryId"]),
                             StateId = Convert.ToInt32(row["StateId"]),
-                            OrderDate = Convert.ToDateTime(row["StateId"]),
-                            ReturnDate = Convert.ToDateTime(row["StateId"]),
+                            OrderDate = Convert.ToDateTime(row["OrderDate"]),
+                            ReturnDate = Convert.ToDateTime(row["ReturnDate"]),
                         };
 
                         orders.Add(order);
