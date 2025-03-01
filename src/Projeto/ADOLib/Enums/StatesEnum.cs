@@ -8,7 +8,7 @@ namespace ADOLib.Enums
 {
     enum StatesEnum
     {
-        Solicitado = 1,
+        Requisitado = 1,
         EmAtraso,
         Devolvido,
         DevolucaoUrgente,
