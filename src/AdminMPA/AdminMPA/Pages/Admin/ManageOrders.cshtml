@@ -4,11 +4,57 @@
 	ViewData["Title"] = "Manage Orders";
 }
 
-<h1 class="text-center mb-5">@ViewData["Title"]</h1>
+<div class="container-fluid d-flex flex-column align-items-center mb-5"> 
+    <h1>@ViewData["Title"]</h1>
+</div>
 <br />
 
-@if(Model.Orders is not null || Model.Orders.Any()) 
-{
+<div class="container-fluid d-flex flex-column">
 
-	<h1>@Model.Orders[0].Book.Title</h1>
-}
+    <div class="container-fluid d-flex justify-content-center">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Library</th>
+                    <th scope="col">Book Title</th>
+                    <th scope="col">Book Edition</th>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Return Date</th>
+                    <th scope="col">User Email</th>
+                    <th scope="col">Requested Copies</th>
+                    <th scope="col">State</th>
+                </tr>
+            </thead>
+            <tbody id="order-table">
+                @if (Model.Orders == null || !Model.Orders.Any())
+                {
+                        <tr>
+                            <td colspan="9" class="d-flex justify-content-center">
+                                <h4>No orders found.</h4>
+                            </td>
+                        </tr>
+                }
+                else
+                {
+                    int orderNumber = 1;
+                    foreach (var order in Model.Orders)
+                    {
+                                <tr>
+                                    <th scope="row">@orderNumber</th>
+                                    <td>@order.Library.LibraryName</td>
+                                    <td>@order.Book.Title</td>
+                                    <td>@order.Book.Edition</td>
+                                    <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@(order.ReturnDate?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                                    <td>@order.User.Email</td>
+                                    <td>@order.RequestedCopiesQTY</td>
+                                    <td>@order.State.StateName</td>
+                                </tr>
+                        orderNumber++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
