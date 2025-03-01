@@ -21,7 +21,7 @@ namespace ADOLib
         public Orders()
         {
             //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
-        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public List<UserOrder> CheckOrderState(int userId)
@@ -194,6 +194,34 @@ namespace ADOLib
             }
 
             return orders;
+        }
+
+
+        public List<Order> DeleteUserOrders(int userId)
+        {
+            List<Order> orders = null;
+
+            try
+            {
+                using(SqlConnection connection = DB.Open(CnString))
+                {
+                    orders = GetOrdersByUserId(userId);
+                    string deleteOrders = "DELETE FROM Orders WHERE Orders.UserId = @userId";
+                    SqlTransaction transaction = connection.BeginTransaction();
+                    using(SqlCommand cmd = new SqlCommand(deleteOrders, connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@userId", userId);
+                        int affectedRows = cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    return orders;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
         }
 
         private bool CanRequest(int numberOfCopies) { return numberOfCopies <= 4; }

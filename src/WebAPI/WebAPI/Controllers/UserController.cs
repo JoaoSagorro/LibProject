@@ -68,5 +68,12 @@ namespace WebAPI.Controllers
             }
         }
 
+
+        [HttpPost("delete")]
+        public IActionResult GetOrders(int userId)
+        {
+            User deletedUser = _userService.DeleteUser(userId);
+            return Ok(deletedUser);
+        }
     }
 }

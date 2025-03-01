@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EFLibrary;
 using EFLibrary.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace LibLibrary.Services
@@ -62,7 +63,13 @@ namespace LibLibrary.Services
             {
                 using (LibraryContext context = new LibraryContext())
                 {
-                    allOrders = context.Orders.Select(ord => ord).ToList();
+                    allOrders = context
+                        .Orders
+                        .Include(bk => bk.Book)
+                        .Include(user => user.User)
+                        .Include(st => st.State)
+                        .Include(lib => lib.Library)
+                        .Select(ord => ord).ToList();
                 }
             }
             catch (Exception e)
