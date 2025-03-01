@@ -35,7 +35,7 @@ namespace AdminMPA.Pages.Admin
                 if (!string.IsNullOrEmpty(SearchTerm))
                 {
                     Libraries = LibLibraries.GetLibraries();
-                    var apiUrl = $"https://www.googleapis.com/books/v1/volumes?q={SearchTerm}&langRestrict=pt";
+                    var apiUrl = $"https://www.googleapis.com/books/v1/volumes?q={SearchTerm}&langRestrict=pt&printType=books";
                     var response = await _httpClient.GetStringAsync(apiUrl);
                     var options = new JsonSerializerOptions
                     {
