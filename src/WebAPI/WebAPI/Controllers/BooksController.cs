@@ -35,12 +35,12 @@ namespace WebAPI.Controllers
         }
 
         // GET: api/books/{id}
-        [HttpGet("{id}")]
-        public IActionResult GetBookById(int id)
+        [HttpGet("{bookId}")]
+        public IActionResult GetBookById(int bookId)
         {
             try
             {
-                var book = _booksService.GetBookById(id);
+                var book = _booksService.GetBookById(bookId);
                 if (book == null)
                     return NotFound(new { message = "Book not found." });
 
@@ -51,8 +51,8 @@ namespace WebAPI.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-    
-        [HttpPost]
+
+        [HttpPost("requestBook")]
         public async Task<IActionResult> RequestBook([FromBody] RequestBookDto request)
         {
             if (request == null)

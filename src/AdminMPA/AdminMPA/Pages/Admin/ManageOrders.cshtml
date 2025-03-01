@@ -1,0 +1,14 @@
+﻿@page
+@model AdminMPA.Pages.Admin.ManageOrdersModel
+@{
+	ViewData["Title"] = "Manage Orders";
+}
+
+<h1 class="text-center mb-5">@ViewData["Title"]</h1>
+<br />
+
+@if(Model.Orders is not null || Model.Orders.Any()) 
+{
+
+	<h1>@Model.Orders[0].Book.Title</h1>
+}

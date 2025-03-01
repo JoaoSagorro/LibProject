@@ -6,7 +6,6 @@ namespace EFLibrary
     public class LibraryContext : DbContext
     {
         private string CnString { get; set; } = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-        //private string CnString { get; set; } = "Server=tcp:upskill-projeto.database.windows.net,1433;Initial Catalog=projeto;Persist Security Info=False;User ID=upskillAdminLogin;Password=Rk2NH1aL4o3fGI;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30";
 
 
         // Constructor for dependency injection (used in production)
@@ -39,7 +38,14 @@ namespace EFLibrary
                 else
                 {
                     // Use a real database for production
-                    optionsBuilder.UseSqlServer(CnString);
+                    optionsBuilder.UseSqlServer(CnString, sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(10),
+                            errorNumbersToAdd: null
+                        );
+                    });
                 }
             }
         }
