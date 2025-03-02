@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using ADOLib.Enums;
 using ADOLib.ModelView;
-using EFLibrary;
 using LibDB;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using static ADOLib.Model.Model;
+
 
 namespace ADOLib
 {
@@ -46,7 +40,7 @@ namespace ADOLib
                         INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId
                         INNER JOIN Libraries ON Orders.LibraryId = Libraries.LibraryId
                         INNER JOIN States ON Orders.StateId = States.StateId
-                        WHERE Orders.UserId = " + userId.ToString() + @"
+                        WHERE Orders.UserId = " + userId.ToString() + @" AND Orders.StateId != 5
                         GROUP BY 
                             Orders.OrderId,
                             Books.Title,
@@ -74,11 +68,7 @@ namespace ADOLib
                             int id = Convert.ToInt32(order["OrderId"]);
                             int stateId = (int)StatesEnum.Requisitado;
 
-                            if (order["ReturnDate"] != DBNull.Value)
-                            {
-                                stateId = (int)StatesEnum.Devolvido;
-                            }
-                            else if (dayDiff > 15)
+                            if (dayDiff > 15)
                             {
                                 stateId = (int)StatesEnum.EmAtraso;
                             }
@@ -99,9 +89,8 @@ namespace ADOLib
                                 LibraryName = order["LibraryName"].ToString(),
                                 OrderDate = Convert.ToDateTime(order["OrderDate"]),
                                 ReturnDate = order["ReturnDate"] != DBNull.Value ? Convert.ToDateTime(order["ReturnDate"]) : DateTime.MinValue,
-                                StateName = states.GetStateById(stateId).StateName
+                                StateName = StatesEnum.GetName(typeof(StatesEnum), stateId)
                             };
-
                             orders.Add(newOrder);
 
                             // Atualiza os valores dos parâmetros em vez de adicioná-los novamente
@@ -110,6 +99,7 @@ namespace ADOLib
                             cmd.ExecuteNonQuery();
                         }
                     }
+
                 }
 
                 return orders;
