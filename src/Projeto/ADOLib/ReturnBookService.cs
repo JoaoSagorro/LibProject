@@ -30,11 +30,13 @@ namespace ADOLib
                 string returnOrder = $"Update Orders Set ReturnDate = GETDATE() WHERE OrderId = {orderId}";
                 string returnCopies = $@"UPDATE c
                                         SET c.NumberOfCopies = c.NumberOfCopies + o.RequestedCopiesQTY
-                                        FROM Copie c
+                                        FROM Copies c
                                         INNER JOIN Orders o ON c.BookId = o.BookId AND c.LibraryId = o.LibraryId
                                         WHERE o.OrderId = {orderId};";
                 string isOverdue = $"SELECT OrderDate FROM Orders o WHERE o.OrderId = {orderId};";
-                DataTable overdue = DB.GetSQLRead(connection, isOverdue);
+                DB.CmdExecute(connection, returnCopies, transaction);
+                DB.CmdExecute(connection, returnOrder, transaction);
+                DataTable overdue = DB.GetSQLRead(connection, isOverdue,transaction);
                 DateTime date = Convert.ToDateTime(overdue.Rows[0]["OrderDate"]);
                 if ((DateTime.UtcNow - date).Days > 15)
                 {
@@ -51,6 +53,7 @@ namespace ADOLib
                             
                     }
                 }
+                transaction.Commit();
             }
             catch(Exception e)
             {
