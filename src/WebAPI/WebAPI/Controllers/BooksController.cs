@@ -12,11 +12,13 @@ namespace WebAPI.Controllers
     {
         private readonly Books _booksService;
         private readonly RequestBookService _requestBookService;
+        private readonly ReturnBookService _returnBookService;
 
         public BooksController()
         {
             _booksService = new Books();
             _requestBookService = new RequestBookService();
+            _returnBookService = new ReturnBookService();
         }
 
         // GET: api/books
@@ -74,7 +76,23 @@ namespace WebAPI.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-    
+
+
+        // POST: api/books/return/{orderId}
+        [HttpPost("return/{orderId}")]
+        public IActionResult ReturnBookByOrderId(int orderId)
+        {
+            try
+            {
+                _returnBookService.ReturnBookByOrderId(orderId);
+                return Ok(new { message = "Book returned successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
 
         // GET: api/books-search
         [HttpGet("getAll")]
