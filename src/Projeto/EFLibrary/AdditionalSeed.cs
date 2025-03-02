@@ -354,7 +354,7 @@ namespace EFLibrary
             var atraso = context.States.FirstOrDefault(s => s.StateName == "ATRASO");
             var emprestado = context.States.FirstOrDefault(s => s.StateName == "Requisitado");
             var urgente = context.States.FirstOrDefault(s => s.StateName == "Devolução URGENTE");
-            var devolucaoEmBreve = context.States.FirstOrDefault(s => s.StateName == "Devolução em breve");
+            var devolucaoEmBreve = context.States.FirstOrDefault(s => s.StateName == "Devolver em breve");
 
             // Configuração para datas
             var agora = DateTime.Now;

@@ -9,7 +9,7 @@ namespace AdminMPA.Pages.Admin
         {
             if(HttpContext.Session.GetString("User") != null)
             {
-                return Page();
+                return RedirectToPage("./Statistics");
             }
             return RedirectToPage("../Index");
         }

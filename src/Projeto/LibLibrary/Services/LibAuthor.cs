@@ -121,6 +121,15 @@ namespace LibLibrary.Services
         }
 
 
+        public static Author GetAuthorByName(string name)
+        {
+            try
+            {
+                using var context = new LibraryContext();
+                return context.Authors.FirstOrDefault(a => a.AuthorName == name);
+            }
+            catch(Exception e) { throw new Exception("Error getting author: \n", e); }
+        }
 
         public static bool AuthorExists(string name)
         {

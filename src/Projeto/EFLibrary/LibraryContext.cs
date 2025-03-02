@@ -5,10 +5,7 @@ namespace EFLibrary
 {
     public class LibraryContext : DbContext
     {
-        //private string CnString { get; set; } = "Server=host.docker.internal;Database=upskill_Projeto_EFJ;User Id = Nony; Password=1234Tukito69;Trusted_Connection=False;TrustServerCertificate=True";  
-        private string CnString { get; set; } = "Server=localhost;Database=upskill_Projeto_EFJ;Trusted_Connection=True;TrustServerCertificate=True";
-        //private string CnString { get; set; } = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-        //private string CnString { get; set; } = "Server=tcp:upskill-projeto.database.windows.net,1433;Initial Catalog=projeto;Persist Security Info=False;User ID=upskillAdminLogin;Password=Rk2NH1aL4o3fGI;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30";
+        private string CnString { get; set; } = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
 
         // Constructor for dependency injection (used in production)
@@ -41,7 +38,14 @@ namespace EFLibrary
                 else
                 {
                     // Use a real database for production
-                    optionsBuilder.UseSqlServer(CnString);
+                    optionsBuilder.UseSqlServer(CnString, sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(10),
+                            errorNumbersToAdd: null
+                        );
+                    });
                 }
             }
         }
