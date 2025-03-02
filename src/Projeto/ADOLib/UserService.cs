@@ -130,7 +130,7 @@ namespace ADOLib
             List<Order> deletedOrders = null;
             Orders ord = new Orders();
             Users usr = new Users();
-            ReturnBook returnBook = new ReturnBook();
+            ReturnBookService returnBook = new ReturnBookService();
 
             try
             {

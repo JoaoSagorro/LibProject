@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using static ADOLib.Model.Model;
 using Book = ADOLib.Model.Model.Book;
 using Library = ADOLib.Model.Model.Library;
+using ADOLib.DTOs;
 
 namespace ADOLib
 {
@@ -59,9 +60,9 @@ namespace ADOLib
         }
 
         // Get books by subjects
-        public List<Book> GetBooksBySubject(string subject)
+        public List<BookDetailsDTO> GetBooksBySubject(string subject)
         {
-            List<Book> books = new List<Book>();
+            List<BookDetailsDTO> books = new List<BookDetailsDTO>();
             Books bk = new Books();
 
             try
