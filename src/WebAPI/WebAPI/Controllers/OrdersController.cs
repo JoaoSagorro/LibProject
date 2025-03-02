@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using ADOLib;
-using static ADOLib.Model.Model;
-using Microsoft.AspNetCore.Identity.Data;
+﻿using ADOLib;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
@@ -24,5 +20,13 @@ namespace WebAPI.Controllers
             var orders = _orderService.CheckOrderState(userId);
             return Ok(orders);
         }
+
+        [HttpGet("returned")]
+        public IActionResult GetReturnedOrders(int userId, int? libraryId = null) // Make libraryId optional
+        {
+            var orders = _orderService.GetReturnedOrders(userId, libraryId); // Pass libraryId to the service
+            return Ok(orders);
+        }
     }
 }
+

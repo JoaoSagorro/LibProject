@@ -1,8 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using LibDB;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Data;
-using static ADOLib.Model.Model;
 
 namespace ADOLib
 {
@@ -12,47 +10,16 @@ namespace ADOLib
 
         public RequestBookService()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
-        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
+            //CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
-        private bool CanRequest(int userId, int numberOfCopies) 
-        {
-            bool canRequest = true;
-            int numberOfCopiesOrdered = 0;
-
-            try
-            {
-                List<Order> userOders = new Orders().GetOrdersByUserId(userId);
-
-                foreach(Order order in userOders)
-                {
-                    if (!order.ReturnDate.HasValue)
-                    {
-                        numberOfCopiesOrdered += order.RequestedCopiesQTY;
-                    }
-                }
-
-                // if the total number of copies that the user has already ordered is superior or equal to 4
-                // OR 
-                // if the numberOfCopiesOrdered plus the numberOfCopies that he wants to order is superior than 4 (if it's equal he can still order)
-                if(numberOfCopiesOrdered >= 4 || numberOfCopiesOrdered + numberOfCopies > 4)
-                {
-                    canRequest = false;
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message, e.InnerException);
-            }
-
-            return canRequest;
-        }
+        private bool CanRequest(int numberOfCopies) => numberOfCopies <= 4;
 
         public async Task<bool> RequestBook(int userId, int bookId, int libraryId, int numberOfCopies)
         {
 
-            if (!CanRequest(userId, numberOfCopies))
+            if (!CanRequest(numberOfCopies))
                 throw new Exception("Can't request more than 4 copies.");
 
             using SqlConnection connection = DB.Open(CnString);
@@ -97,22 +64,6 @@ namespace ADOLib
                 updateCopiesCmd.Parameters.AddWithValue("@bookId", bookId);
                 updateCopiesCmd.Parameters.AddWithValue("@libraryId", libraryId);
                 await updateCopiesCmd.ExecuteNonQueryAsync();
-
-                // Insert into order history
-                string orderHistoriesQuery = @"
-    INSERT INTO OrderHistories (UserName, BookName, BookYear, BookEdition, BookAuthor, LibraryName, OrderedCopies, OrderDate, ReturnDate)
-    VALUES (@userName, @bookName, @bookYear, @bookEdition, @bookAuthor, @libraryName, @orderedCopies, @orderDate, @returnDate)";
-                using SqlCommand orderHistoriesCmd = new SqlCommand(orderHistoriesQuery, connection, transaction);
-                orderHistoriesCmd.Parameters.AddWithValue("@userName", userDetails.UserName);
-                orderHistoriesCmd.Parameters.AddWithValue("@bookName", bookDetails.BookName);
-                orderHistoriesCmd.Parameters.AddWithValue("@bookYear", bookDetails.BookYear);
-                orderHistoriesCmd.Parameters.AddWithValue("@bookEdition", bookDetails.BookEdition);
-                orderHistoriesCmd.Parameters.AddWithValue("@bookAuthor", bookDetails.BookAuthor);
-                orderHistoriesCmd.Parameters.AddWithValue("@libraryName", libraryDetails.LibraryName);
-                orderHistoriesCmd.Parameters.AddWithValue("@orderedCopies", numberOfCopies);
-                orderHistoriesCmd.Parameters.AddWithValue("@orderDate", DateTime.UtcNow);
-                orderHistoriesCmd.Parameters.AddWithValue("@returnDate", DateTime.UtcNow.AddDays(14)); 
-                await orderHistoriesCmd.ExecuteNonQueryAsync();
 
                 await transaction.CommitAsync();
                 return true;
