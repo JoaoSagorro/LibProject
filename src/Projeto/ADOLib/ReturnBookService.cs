@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using LibDB;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using ADOLib.Enums;
 
 namespace ADOLib
 {
@@ -21,7 +22,7 @@ namespace ADOLib
             CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
-        public void ReturnBookByOrderId(int orderId)
+        public async void ReturnBookByOrderId(int orderId)
         {
             using var connection = DB.Open(CnString);
             using var transaction = connection.BeginTransaction();
@@ -51,7 +52,7 @@ namespace ADOLib
                 }
 
                 // Update the order return date
-                string returnOrderQuery = "UPDATE Orders SET ReturnDate = GETDATE() WHERE OrderId = @OrderId";
+                string returnOrderQuery = $"UPDATE Orders SET ReturnDate = GETDATE(), StateId = {(int)StatesEnum.Devolvido} WHERE OrderId = @OrderId";
                 using var returnOrderCmd = new SqlCommand(returnOrderQuery, connection, transaction);
                 returnOrderCmd.Parameters.AddWithValue("@OrderId", orderId);
                 returnOrderCmd.ExecuteNonQuery();
@@ -68,12 +69,12 @@ namespace ADOLib
                 returnCopiesCmd.ExecuteNonQuery();
 
                 // Commit transaction
-                transaction.Commit();
+                await transaction.CommitAsync();
             }
             catch (Exception e)
             {
                 // Rollback in case of error
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw new Exception($"Error returning book: {e.Message}", e);
             }
         }

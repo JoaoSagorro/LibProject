@@ -10,8 +10,8 @@ namespace ADOLib.Enums
     {
         Requisitado = 1,
         EmAtraso,
-        Devolvido,
         DevolucaoUrgente,
-        DevolucaoEmBreve
+        DevolucaoEmBreve,
+        Devolvido
     }
 }
