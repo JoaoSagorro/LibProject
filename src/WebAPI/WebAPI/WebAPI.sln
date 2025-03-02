@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35514.174 d17.12
+VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI.csproj", "{5319968F-BED2-4F44-87F5-50A10113309A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADOLib", "..\..\Projeto\ADOLib\ADOLib.csproj", "{906C41C8-BBE4-4810-8F6A-F1462EDE880B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFLibrary", "..\..\Projeto\EFLibrary\EFLibrary.csproj", "{829535CC-F536-48C0-9BF5-577F6F3FF439}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibLibrary", "..\..\Projeto\LibLibrary\LibLibrary.csproj", "{C64A4265-30A9-4933-B39C-D04D88227B28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{5319968F-BED2-4F44-87F5-50A10113309A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5319968F-BED2-4F44-87F5-50A10113309A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5319968F-BED2-4F44-87F5-50A10113309A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{906C41C8-BBE4-4810-8F6A-F1462EDE880B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{906C41C8-BBE4-4810-8F6A-F1462EDE880B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{906C41C8-BBE4-4810-8F6A-F1462EDE880B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{906C41C8-BBE4-4810-8F6A-F1462EDE880B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{829535CC-F536-48C0-9BF5-577F6F3FF439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{829535CC-F536-48C0-9BF5-577F6F3FF439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{829535CC-F536-48C0-9BF5-577F6F3FF439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{829535CC-F536-48C0-9BF5-577F6F3FF439}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C64A4265-30A9-4933-B39C-D04D88227B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64A4265-30A9-4933-B39C-D04D88227B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64A4265-30A9-4933-B39C-D04D88227B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64A4265-30A9-4933-B39C-D04D88227B28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

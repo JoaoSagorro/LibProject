@@ -20,7 +20,7 @@
       <HintPath>..\..\Projeto\EFLibrary\obj\Debug\net8.0\EFLibrary.dll</HintPath>
     </Reference>
     <Reference Include="LibDB">
-      <HintPath>..\..\..\..\..\LibDB.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\ProjDemo\LibDB\LibDB\obj\Debug\net8.0\LibDB.dll</HintPath>
     </Reference>
     <Reference Include="LibLibrary">
       <HintPath>..\..\Projeto\LibLibrary\obj\Debug\net8.0\LibLibrary.dll</HintPath>
