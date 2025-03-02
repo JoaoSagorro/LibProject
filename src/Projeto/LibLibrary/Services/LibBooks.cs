@@ -45,7 +45,7 @@ namespace LibLibrary.Services
             {
                 using (LibraryContext context = new LibraryContext())
                 {
-                    book = context.Books.FirstOrDefault(bk => bk.BookId == bookId);
+                    book = context.Books.Include(b => b.Author).FirstOrDefault(bk => bk.BookId == bookId);
 
                     if (book is null) throw new Exception("The book does not exist.");
                 }
@@ -58,6 +58,23 @@ namespace LibLibrary.Services
             return book;
         }
 
+        public static void EditBook(Book book)
+        {
+            //book is the book with the changes already made
+            try
+            {
+                using var context = new LibraryContext();
+                var bookToEdit = GetBookById(book.BookId);
+                bookToEdit.Author = book.Author;
+                bookToEdit.Year = book.Year;
+                bookToEdit.Title = book.Title;
+                bookToEdit.Edition = book.Edition;
+                context.Update(book);
+                context.SaveChanges();
+
+            }
+            catch(Exception e) { throw new Exception("Error Editing book: \n", e); }
+        }
         // Add book
         // Just for administrator
         // It's missing subject, cover and copies logic
@@ -136,7 +153,7 @@ namespace LibLibrary.Services
         // Deleted Book
         // Still need to delete every regist of books -> when deleting book, delete from the other tables as well
         // By default EFCore has "On delete cascade"
-        public Book DeleteBookById(int bookId)
+        public static Book DeleteBookById(int bookId)
         {
             Book bookToDel = null;
             Book deleted = null;
@@ -145,8 +162,7 @@ namespace LibLibrary.Services
             {
                 using (LibraryContext context = new LibraryContext())
                 {
-                    bookToDel = context.Books.FirstOrDefault(b => b.BookId == bookId, null);
-
+                    bookToDel = context.Books.FirstOrDefault(b => b.BookId == bookId);
                     deleted = CopieBook(bookToDel);
                     context.Remove(bookToDel);
                     context.SaveChanges();

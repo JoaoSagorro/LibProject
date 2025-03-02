@@ -24,7 +24,7 @@ public class IndexModel : PageModel
         if(HttpContext.Session.GetString("User") != null)
 
         {
-            return RedirectToPage("/Admin/Index");
+            return RedirectToPage("/Admin/Statistics");
         }
         return Page();
     }
