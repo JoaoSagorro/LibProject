@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
+﻿using System.Data;
 using ADOLib.DTOs;
 using ADOLib.ModelView;
 using LibDB;
@@ -19,8 +13,7 @@ namespace ADOLib
 
         public Books()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
-        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public BookDetailsDTO GetBookById(int id)

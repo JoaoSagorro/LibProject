@@ -4,21 +4,55 @@ using System.Threading.Tasks;
 using EFLibrary;
 using EFLibrary.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using static ADOLib.Model.Model;
 
 namespace LibLibrary.Services
 {
     public class RequestBookService
     {
-        //private readonly LibraryContext _context;
+        private readonly string CnString;
 
-        //public RequestBookService(LibraryContext context)
-        //{
-        //    _context = context;
-        //}
-
+        public RequestBookService()
+        {
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+        }
         private bool CanRequest(int numberOfCopies)
         {
             return numberOfCopies <= 4; 
+        }
+
+        private bool CanRequest(int userId, int numberOfCopies)
+        {
+            bool canRequest = true;
+            int numberOfCopiesOrdered = 0;
+
+            try
+            {
+                List<Order> userOders = new Orders().GetOrdersByUserId(userId);
+
+                foreach (Order order in userOders)
+                {
+                    if (!order.ReturnDate.HasValue)
+                    {
+                        numberOfCopiesOrdered += order.RequestedCopiesQTY;
+                    }
+                }
+
+                // if the total number of copies that the user has already ordered is superior or equal to 4
+                // OR 
+                // if the numberOfCopiesOrdered plus the numberOfCopies that he wants to order is superior than 4 (if it's equal he can still order)
+                if (numberOfCopiesOrdered >= 4 || numberOfCopiesOrdered + numberOfCopies > 4)
+                {
+                    canRequest = false;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return canRequest;
         }
 
         public async Task<bool> RequestBook(int userId, int bookId, int libraryId, int numberOfCopies)
@@ -27,7 +61,8 @@ namespace LibLibrary.Services
             {
                 using(LibraryContext context = new LibraryContext())
                 {
-                    if (!CanRequest(numberOfCopies)) throw new Exception("Can't request more than 4 copies.");
+                    if (!CanRequest(userId, numberOfCopies))
+                        throw new Exception("Can't request more than 4 copies.");
 
                     var transaction = await context.Database.BeginTransactionAsync();
                     // Load all data needed for the transaction

@@ -1,5 +1,4 @@
-﻿
-namespace ADOLib.DTOs
+﻿namespace ADOLib.DTOs
 {
     public class RequestBookDto
     {

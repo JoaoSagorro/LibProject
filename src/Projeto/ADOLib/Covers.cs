@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using LibDB;
 using Microsoft.Data.SqlClient;
-using static System.Net.Mime.MediaTypeNames;
 using static ADOLib.Model.Model;
 
 namespace ADOLib
@@ -18,8 +11,7 @@ namespace ADOLib
 
         public Covers()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
-        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public Cover GetCoverById(int id)

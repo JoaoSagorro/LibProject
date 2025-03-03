@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using ADOLib.DTOs;
 using ADOLib.Enums;
 using ADOLib.ModelView;
 using LibDB;
@@ -14,7 +15,6 @@ namespace ADOLib
 
         public Orders()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
             CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
@@ -32,6 +32,7 @@ namespace ADOLib
                             Books.Title,
                             Authors.AuthorName,
                             Libraries.LibraryName,
+                            Orders.RequestedCopiesQTY,
                             Orders.OrderDate,
                             Orders.ReturnDate,
                             States.StateName
@@ -46,6 +47,7 @@ namespace ADOLib
                             Books.Title,
                             Authors.AuthorName,
                             Libraries.LibraryName,
+                            Orders.RequestedCopiesQTY,
                             Orders.OrderDate,
                             Orders.ReturnDate,
                             States.StateName
@@ -87,6 +89,7 @@ namespace ADOLib
                                 Title = order["Title"].ToString(),
                                 AuthorName = order["AuthorName"].ToString(),
                                 LibraryName = order["LibraryName"].ToString(),
+                                RequestedCopiesQTY = Convert.ToInt32(order["RequestedCopiesQTY"]),
                                 OrderDate = Convert.ToDateTime(order["OrderDate"]),
                                 ReturnDate = order["ReturnDate"] != DBNull.Value ? Convert.ToDateTime(order["ReturnDate"]) : DateTime.MinValue,
                                 StateName = StatesEnum.GetName(typeof(StatesEnum), stateId)
@@ -109,6 +112,68 @@ namespace ADOLib
                 throw new Exception(e.Message, e.InnerException);
             }
         }
+
+        public List<UserReturnedOrdersDTO> GetReturnedOrders(int userId, int? libraryId = null)
+        {
+            List<UserReturnedOrdersDTO> orders = new List<UserReturnedOrdersDTO>();
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    string query = @"
+                SELECT 
+                    Orders.OrderId,
+                    Books.Title,
+                    Authors.AuthorName,
+                    Libraries.LibraryId,
+                    Libraries.LibraryName,
+                    Orders.RequestedCopiesQTY,
+                    Orders.OrderDate,
+                    Orders.ReturnDate,
+                    States.StateName
+                FROM Orders
+                INNER JOIN Books ON Orders.BookId = Books.BookId
+                INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId
+                INNER JOIN Libraries ON Orders.LibraryId = Libraries.LibraryId
+                INNER JOIN States ON Orders.StateId = States.StateId
+                WHERE Orders.UserId = " + userId.ToString() + @" 
+                  AND Orders.StateId = " + (int)StatesEnum.Devolvido + @" 
+                  AND (" + (libraryId == null ? "1=1" : "Orders.LibraryId = " + libraryId.ToString()) + @")
+                ORDER BY Orders.OrderDate";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        DataTable dataTable = DB.GetSQLRead(connection, query);
+
+                        foreach (DataRow order in dataTable.Rows)
+                        {
+                            UserReturnedOrdersDTO newOrder = new UserReturnedOrdersDTO()
+                            {
+                                OrderId = Convert.ToInt32(order["OrderId"]),
+                                Title = order["Title"].ToString(),
+                                AuthorName = order["AuthorName"].ToString(),
+                                LibraryId = order["LibraryId"] != DBNull.Value ? Convert.ToInt32(order["LibraryId"]) : (int?)null, // Handle NULL
+                                LibraryName = order["LibraryName"].ToString(),
+                                RequestedCopiesQTY = Convert.ToInt32(order["RequestedCopiesQTY"]),
+                                OrderDate = Convert.ToDateTime(order["OrderDate"]),
+                                ReturnDate = order["ReturnDate"] != DBNull.Value ? Convert.ToDateTime(order["ReturnDate"]) : (DateTime?)null, // Handle NULL
+                                StateName = order["StateName"].ToString()  // Should be "Devolvido"
+                            };
+                            orders.Add(newOrder);
+                        }
+                    }
+                }
+
+                return orders;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
+
 
         public Order GetOrderById(int orderId)
         {
@@ -170,7 +235,10 @@ namespace ADOLib
                             LibraryId = Convert.ToInt32(row["LibraryId"]),
                             StateId = Convert.ToInt32(row["StateId"]),
                             OrderDate = Convert.ToDateTime(row["OrderDate"]),
-                            ReturnDate = Convert.ToDateTime(row["ReturnDate"]),
+                            //ReturnDate = Convert.ToDateTime(row["ReturnDate"]),
+                            ReturnDate = row["ReturnDate"] == DBNull.Value
+                                 ? (DateTime?)null
+                                 : Convert.ToDateTime(row["ReturnDate"])
                         };
 
                         orders.Add(order);

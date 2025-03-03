@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LibDB;
+﻿using LibDB;
 using Microsoft.Data.SqlClient;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using static ADOLib.Model.Model;
 
 namespace ADOLib
@@ -16,8 +10,7 @@ namespace ADOLib
 
         public OrdersHistory()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
-        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         public static void AddHistory(string cnString, OrderHistory history)

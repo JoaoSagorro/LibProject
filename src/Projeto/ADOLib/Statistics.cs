@@ -1,10 +1,7 @@
 ﻿using System.Data;
-using System.Text.RegularExpressions;
 using ADOLib.ModelView;
-using EFLibrary.Models;
 using LibDB;
 using Microsoft.Data.SqlClient;
-using static ADOLib.Model.Model;
 using Book = ADOLib.Model.Model.Book;
 using Library = ADOLib.Model.Model.Library;
 using ADOLib.DTOs;
@@ -17,8 +14,7 @@ namespace ADOLib
 
         public Statistics()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
-        CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
         // Get most requested books
         public List<MostRequestedBooks> GetMostRequestedBooks()
@@ -79,7 +75,7 @@ namespace ADOLib
                     foreach (DataRow row in dataTable.Rows)
                     {
                         int id = Convert.ToInt32(row["BookId"]);
-                        books.Add(bk.GetBookById(id));
+                        //books.Add(bk.GetBookById(id));
                     }
                 }
 
