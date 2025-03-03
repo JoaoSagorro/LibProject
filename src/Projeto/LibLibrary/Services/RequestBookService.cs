@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EFLibrary;
-using EFLibrary.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using static ADOLib.Model.Model;
+using ADOLib;
 
 namespace LibLibrary.Services
 {
@@ -29,9 +29,9 @@ namespace LibLibrary.Services
 
             try
             {
-                List<Order> userOders = new Orders().GetOrdersByUserId(userId);
+                List<ADOLib.Model.Model.Order> userOders = new Orders().GetOrdersByUserId(userId);
 
-                foreach (Order order in userOders)
+                foreach (var order in userOders)
                 {
                     if (!order.ReturnDate.HasValue)
                     {
@@ -91,7 +91,7 @@ namespace LibLibrary.Services
                     if (remaining < 1) throw new Exception("Can't request the desired amount of copies");
 
                     // Create the order
-                    var order = new Order
+                    var order = new EFLibrary.Models.Order
                     {
                         User = user,
                         Library = library,
@@ -106,7 +106,7 @@ namespace LibLibrary.Services
 
                     await context.SaveChangesAsync();
 
-                    var orderHistory = new OrderHistory
+                    var orderHistory = new EFLibrary.Models.OrderHistory
                     {
                         UserName = user.FirstName,
                         BookName = book.Title,

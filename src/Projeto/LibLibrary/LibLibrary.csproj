@@ -22,4 +22,10 @@
     <ProjectReference Include="..\EFLibrary\EFLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="ADOLib">
+      <HintPath>..\ADOLib\bin\Debug\net8.0\ADOLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
