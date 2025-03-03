@@ -116,6 +116,68 @@ namespace ADOLib
             }
         }
 
+        public void ReturnBookByOrderId(int orderId, SqlConnection existingConnection = null, SqlTransaction existingTransaction = null)
+        {
+            bool useExistingConnection = (existingConnection != null && existingTransaction != null);
+            SqlConnection connection = useExistingConnection ? existingConnection : DB.Open(CnString);
+            SqlTransaction transaction = useExistingConnection ? existingTransaction : connection.BeginTransaction();
+
+            try
+            {
+                string returnOrder = $"Update Orders Set ReturnDate = GETDATE() , StateId = {(int)StatesEnum.Devolvido} WHERE OrderId = {orderId}";
+                string returnCopies = $@"UPDATE c
+                                SET c.NumberOfCopies = c.NumberOfCopies + o.RequestedCopiesQTY
+                                FROM Copies c
+                                INNER JOIN Orders o ON c.BookId = o.BookId AND c.LibraryId = o.LibraryId
+                                WHERE o.OrderId = {orderId};";
+                string isOverdue = $"SELECT OrderDate FROM Orders o WHERE o.OrderId = {orderId};";
+
+                DB.CmdExecute(connection, returnCopies, transaction);
+                DB.CmdExecute(connection, returnOrder, transaction);
+                DataTable overdue = DB.GetSQLRead(connection, isOverdue, transaction);
+                DateTime date = Convert.ToDateTime(overdue.Rows[0]["OrderDate"]);
+
+                if ((DateTime.UtcNow - date).Days > 15)
+                {
+                    var user = new Users();
+                    int strikes = user.StrikeUser(orderId, transaction);
+                    if (strikes > 3)
+                    {
+                        string suspendQuery = $@"UPDATE u
+                                      SET u.Suspended=1, u.Active=0
+                                      FROM Users u
+                                      INNER JOIN Orders o ON o.UserId = u.UserId
+                                      WHERE o.OrderId = {orderId};";
+                        var userId = int.Parse(DB.GetSQLRead(connection, $"SELECT UserId FROM Orders WHERE OrderId = {orderId}", transaction).Rows[0]["UserId"].ToString());
+                    }
+                }
+
+                // Only commit if we created our own transaction
+                if (!useExistingConnection)
+                {
+                    transaction.Commit();
+                }
+            }
+            catch (Exception e)
+            {
+                // Only rollback if we created our own transaction
+                if (!useExistingConnection)
+                {
+                    transaction.Rollback();
+                }
+                throw new Exception($"Error returning book: {e}");
+            }
+            finally
+            {
+                // Only dispose if we created our own connection
+                if (!useExistingConnection)
+                {
+                    connection.Dispose();
+                }
+            }
+        }
+
+
         public void ReturnBookByOrderId(int orderId, SqlTransaction transaction)
         {
             using var connection = DB.Open(CnString);

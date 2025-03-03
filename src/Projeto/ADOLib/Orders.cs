@@ -306,5 +306,27 @@ namespace ADOLib
                 throw new Exception(e.Message, e.InnerException);
             }
         }
+
+        public List<Order> DeleteUserOrders(int userId,SqlConnection connection, SqlTransaction transaction)
+        {
+            List<Order> orders = null;
+
+            try
+            {
+                    orders = GetOrdersByUserId(userId);
+                    string deleteOrders = "DELETE FROM Orders WHERE Orders.UserId = @userId";
+                    using (SqlCommand cmd = new SqlCommand(deleteOrders, connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@userId", userId);
+                        int affectedRows = cmd.ExecuteNonQuery();
+                    }
+
+                    return orders;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
     }
 }
