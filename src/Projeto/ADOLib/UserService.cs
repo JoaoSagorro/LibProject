@@ -147,8 +147,9 @@ namespace ADOLib
                         }
                     }
 
-                    SqlTransaction transaction = connection.BeginTransaction();
                     deletedOrders = ord.DeleteUserOrders(userId);
+
+                    SqlTransaction transaction = connection.BeginTransaction();
                     string deleteUser = "DELETE FROM Users WHERE Users.UserId = @userId";
 
                     using(SqlCommand cmd = new SqlCommand(deleteUser, connection, transaction))
