@@ -22,7 +22,7 @@ namespace WebAPI
             {
                 options.AddPolicy("FrontendPolicy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000") // Update this for production
+                    policy.WithOrigins("https://v0-fork-of-library.vercel.app") // Update this for production
                           .AllowAnyMethod()
                           .AllowAnyHeader();
                 });
