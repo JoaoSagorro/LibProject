@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
+﻿using System.Data;
 using LibDB;
 using Microsoft.Data.SqlClient;
 using static ADOLib.Model.Model;
@@ -14,7 +11,6 @@ namespace ADOLib
 
         public UserService()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
             CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 

@@ -1,7 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
-using LibDB;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Data;
+﻿using LibDB;
+using Microsoft.Data.SqlClient;
 using static ADOLib.Model.Model;
 
 namespace ADOLib
@@ -12,8 +10,7 @@ namespace ADOLib
 
         public RequestBookService()
         {
-            CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
-            //CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
         private bool CanRequest(int userId, int numberOfCopies)
