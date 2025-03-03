@@ -134,6 +134,7 @@ namespace ADOLib
                 {
                     user = usr.GetUserInfo(userId);
 
+                    SqlTransaction transaction = connection.BeginTransaction();
                     if(UserActiveOrders(userId))
                     {
                         List<Order> allOrders = ord.GetOrdersByUserId(userId);
@@ -146,10 +147,7 @@ namespace ADOLib
                             }
                         }
                     }
-
                     deletedOrders = ord.DeleteUserOrders(userId);
-
-                    SqlTransaction transaction = connection.BeginTransaction();
                     string deleteUser = "DELETE FROM Users WHERE Users.UserId = @userId";
 
                     using(SqlCommand cmd = new SqlCommand(deleteUser, connection, transaction))

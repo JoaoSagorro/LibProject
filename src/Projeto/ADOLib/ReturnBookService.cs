@@ -116,6 +116,46 @@ namespace ADOLib
             }
         }
 
+        public void ReturnBookByOrderId(int orderId, SqlTransaction transaction)
+        {
+            using var connection = DB.Open(CnString);
+
+            try
+            {
+                string returnOrder = $"Update Orders Set ReturnDate = GETDATE() , StateId = {(int)StatesEnum.Devolvido} WHERE OrderId = {orderId}";
+                string returnCopies = $@"UPDATE c
+                                        SET c.NumberOfCopies = c.NumberOfCopies + o.RequestedCopiesQTY
+                                        FROM Copies c
+                                        INNER JOIN Orders o ON c.BookId = o.BookId AND c.LibraryId = o.LibraryId
+                                        WHERE o.OrderId = {orderId};";
+                string isOverdue = $"SELECT OrderDate FROM Orders o WHERE o.OrderId = {orderId};";
+                DB.CmdExecute(connection, returnCopies, transaction);
+                DB.CmdExecute(connection, returnOrder, transaction);
+                DataTable overdue = DB.GetSQLRead(connection, isOverdue, transaction);
+                DateTime date = Convert.ToDateTime(overdue.Rows[0]["OrderDate"]);
+                if ((DateTime.UtcNow - date).Days > 15)
+                {
+                    var user = new Users();
+                    int strikes = user.StrikeUser(orderId, transaction);
+                    if (strikes > 3)
+                    {
+                        string suspendQuery = $@"UPDATE u
+                                                SET u.Suspended=1, u.Active=0
+                                                FROM Users u
+                                                INNER JOIN Orders o ON o.UserId = u.UserId
+                                                WHERE o.OrderId = {orderId};";
+                        var userId = int.Parse(DB.GetSQLRead(connection, suspendQuery, transaction).Rows[0]["userId"].ToString());
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                throw new Exception($"Error returning book: {e}");
+            }
+        }
+
         private async Task InsertOrderHistory(SqlConnection connection, SqlTransaction transaction, int orderId)
         {
             // Fetch order details
