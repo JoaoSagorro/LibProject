@@ -357,6 +357,7 @@ namespace ADOLib
                             Books.BookId,
                             Books.Title,
                             Books.Quantity,
+                            Covers.CoverImage,
                             Authors.AuthorId,
                             Authors.AuthorName,
                             STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames
@@ -364,12 +365,14 @@ namespace ADOLib
                         INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId
                         INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId
                         INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId
+                        INNER JOIN Covers ON Covers.BookId = Books.BookId
                         GROUP BY 
                             Books.BookId,
                             Books.Title,
                             Books.Quantity,
                             Authors.AuthorId,
-                            Authors.AuthorName
+                            Authors.AuthorName,
+                            Covers.BookId
                         Order BY
                             Books.BookId";
 
