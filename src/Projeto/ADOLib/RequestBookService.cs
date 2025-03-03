@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using LibDB;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Data;
+using static ADOLib.Model.Model;
 
 namespace ADOLib
 {
@@ -14,12 +16,43 @@ namespace ADOLib
             //CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
-        private bool CanRequest(int numberOfCopies) => numberOfCopies <= 4;
+        private bool CanRequest(int userId, int numberOfCopies)
+        {
+            bool canRequest = true;
+            int numberOfCopiesOrdered = 0;
+
+            try
+            {
+                List<Order> userOders = new Orders().GetOrdersByUserId(userId);
+
+                foreach (Order order in userOders)
+                {
+                    if (!order.ReturnDate.HasValue)
+                    {
+                        numberOfCopiesOrdered += order.RequestedCopiesQTY;
+                    }
+                }
+
+                // if the total number of copies that the user has already ordered is superior or equal to 4
+                // OR 
+                // if the numberOfCopiesOrdered plus the numberOfCopies that he wants to order is superior than 4 (if it's equal he can still order)
+                if (numberOfCopiesOrdered >= 4 || numberOfCopiesOrdered + numberOfCopies > 4)
+                {
+                    canRequest = false;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+
+            return canRequest;
+        }
 
         public async Task<bool> RequestBook(int userId, int bookId, int libraryId, int numberOfCopies)
         {
 
-            if (!CanRequest(numberOfCopies))
+            if (!CanRequest(userId, numberOfCopies))
                 throw new Exception("Can't request more than 4 copies.");
 
             using SqlConnection connection = DB.Open(CnString);
