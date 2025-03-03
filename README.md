@@ -9,7 +9,7 @@ Follow these steps to set up and use this repository:
 
 ### 1. Clone the Repository
 ```sh
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/JoaoSagorro/LibProject.git
 cd your-repository
 ```
 
