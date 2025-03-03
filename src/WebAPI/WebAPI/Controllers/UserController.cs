@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using ADOLib;
-using ADOLib.DTOs;
 using static ADOLib.Model.Model;
 using Microsoft.AspNetCore.Identity.Data;
 
@@ -71,9 +70,8 @@ namespace WebAPI.Controllers
 
 
         [HttpPost("delete")]
-        public IActionResult DeleteUser([FromBody] DeleteUserRequestDTO request)
+        public IActionResult DeleteUser([FromBody] int userId)
         {
-            int userId = request.UserId;
             User deletedUser = _userService.DeleteUser(userId);
             return Ok(deletedUser);
         }
