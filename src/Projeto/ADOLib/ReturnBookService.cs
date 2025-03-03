@@ -114,6 +114,7 @@ namespace ADOLib
                 transaction.Rollback();
                 throw new Exception($"Error returning book: {e}");
             }
+        }
 
         private async Task InsertOrderHistory(SqlConnection connection, SqlTransaction transaction, int orderId)
         {
