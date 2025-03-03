@@ -96,7 +96,7 @@ namespace ADOLib
                         Books.Edition, 
                         Books.Year, 
                         Books.Quantity, 
-                        Covers.CoverImage
+                        Covers.CoverImage,
                         Authors.AuthorId, 
                         Authors.AuthorName, 
                         Libraries.LibraryId, 
