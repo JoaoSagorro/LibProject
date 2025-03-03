@@ -1,7 +1,7 @@
 # Biblioteca XPTO
 
 ## Description
-Provide a brief description of your project here.
+The main goal of this project was to create a website for managing Libraries (e.g: users, requests and books).
 
 ## Getting Started
 
