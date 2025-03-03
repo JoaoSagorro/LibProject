@@ -372,7 +372,7 @@ namespace ADOLib
                             Books.Quantity,
                             Authors.AuthorId,
                             Authors.AuthorName,
-                            Covers.BookId
+                            Covers.CoverImage
                         Order BY
                             Books.BookId";
 
