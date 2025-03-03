@@ -140,7 +140,7 @@ namespace ADOLib
                 if ((DateTime.UtcNow - date).Days > 15)
                 {
                     var user = new Users();
-                    int strikes = user.StrikeUser(orderId, transaction);
+                    int strikes = user.StrikeUser(orderId, transaction,connection);
                     if (strikes > 3)
                     {
                         string suspendQuery = $@"UPDATE u
