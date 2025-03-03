@@ -76,7 +76,7 @@ namespace WebAPI.Controllers
             int userId = request.UserId;
             Response.Headers.Add("Access-Control-Allow-Origin", "https://v0-fork-of-library.vercel.app");
             User deletedUser = _userService.DeleteUser(userId);
-            return Ok(deletedUser).;
+            return Ok(deletedUser);
         }
     }
 }
