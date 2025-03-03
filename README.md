@@ -23,14 +23,29 @@ cd your-repository
 - Set the connection string to your database, ensuring you specify the target database name.
 - If the database does not exist, Entity Framework Core will create it for you.
 
-### 4. Add Migration on `EFLibrary`
+### 4. Add Migration on `EFLibrary` (Using Visual Studio Console)
+#### Using Package Manager Console in Visual Studio:
+1. Open **Visual Studio** and navigate to **Tools > NuGet Package Manager > Package Manager Console**.
+2. Select `EFLibrary` as the default project in the console.
+3. Run the following command to add a new migration:
+```sh
+Add-Migration InitialMigration
+```
+Replace `InitialMigration` with a suitable name if necessary.
 Run the following command to add a new migration in the `EFLibrary` project:
 ```sh
 dotnet ef migrations add InitialMigration --project EFLibrary
 ```
 Replace `InitialMigration` with a suitable name if necessary.
 
-### 5. Update Database on `EFLibrary`
+### 5. Update Database on `EFLibrary` (Using Visual Studio Console)
+#### Using Package Manager Console in Visual Studio:
+1. Open **Visual Studio** and navigate to **Tools > NuGet Package Manager > Package Manager Console**.
+2. Select `EFLibrary` as the default project in the console.
+3. Run the following command to apply the migration and update the database:
+```sh
+Update-Database
+```
 Apply the migration to update the database:
 ```sh
 dotnet ef database update --project EFLibrary
