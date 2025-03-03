@@ -96,6 +96,7 @@ namespace ADOLib
                         Books.Edition, 
                         Books.Year, 
                         Books.Quantity, 
+                        Covers.CoverImage
                         Authors.AuthorId, 
                         Authors.AuthorName, 
                         Libraries.LibraryId, 
@@ -111,6 +112,7 @@ namespace ADOLib
                     INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId 
                     INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId 
                     INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId 
+                    INNER JOIN Covers ON Covers.BookId =  Books.BookId
                     GROUP BY 
                         Books.BookId, 
                         Books.Title, 
@@ -124,7 +126,8 @@ namespace ADOLib
                         Libraries.LibraryAddress, 
                         Libraries.Email, 
                         Libraries.Contact, 
-                        Copies.NumberOfCopies";
+                        Copies.NumberOfCopies,
+                        Covers.CoverImage";
 
                     DataTable dataTable = DB.GetSQLRead(connection, query);
 
@@ -146,6 +149,7 @@ namespace ADOLib
                             NumberOfCopies = Convert.ToInt32(row["NumberOfCopies"]),
                             AuthorName = row["AuthorName"].ToString(),
                             SubjectNames = row["SubjectNames"].ToString().Split(',').Select(lst => lst.Trim()).ToList(),
+                            CoverImage = (byte[])row["CoverImage"],
                         };
 
                         books.Add(book);
