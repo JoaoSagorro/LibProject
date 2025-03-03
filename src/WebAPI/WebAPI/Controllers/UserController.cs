@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
 
 
         [HttpPost("delete")]
-        public IActionResult GetOrders(int userId)
+        public IActionResult DeleteUser([FromBody] int userId)
         {
             User deletedUser = _userService.DeleteUser(userId);
             return Ok(deletedUser);
