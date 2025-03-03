@@ -32,11 +32,6 @@ cd your-repository
 Add-Migration InitialMigration
 ```
 Replace `InitialMigration` with a suitable name if necessary.
-Run the following command to add a new migration in the `EFLibrary` project:
-```sh
-dotnet ef migrations add InitialMigration --project EFLibrary
-```
-Replace `InitialMigration` with a suitable name if necessary.
 
 ### 5. Update Database on `EFLibrary` (Using Visual Studio Console)
 #### Using Package Manager Console in Visual Studio:
@@ -45,10 +40,6 @@ Replace `InitialMigration` with a suitable name if necessary.
 3. Run the following command to apply the migration and update the database:
 ```sh
 Update-Database
-```
-Apply the migration to update the database:
-```sh
-dotnet ef database update --project EFLibrary
 ```
 
 ### 6. Configure Environment Variable in `WebAPI`
