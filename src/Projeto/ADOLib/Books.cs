@@ -365,7 +365,7 @@ namespace ADOLib
                         INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId
                         INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId
                         INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId
-                        INNER JOIN Covers ON Covers.BookId = Books.BookId
+                        LEFT JOIN Covers ON Covers.BookId = Books.BookId
                         GROUP BY 
                             Books.BookId,
                             Books.Title,
