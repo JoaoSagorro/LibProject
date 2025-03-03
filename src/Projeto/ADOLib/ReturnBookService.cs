@@ -1,6 +1,7 @@
 ﻿using ADOLib.Enums;
 using LibDB;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace ADOLib
 {
@@ -13,65 +14,106 @@ namespace ADOLib
             CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
-        public async void ReturnBookByOrderId(int orderId)
+        //public async void ReturnBookByOrderId(int orderId)
+        //{
+        //    using var connection = DB.Open(CnString);
+        //    using var transaction = connection.BeginTransaction();
+
+        //    try
+        //    {
+        //        // Check if the order exists and if it's overdue
+        //        string checkOrderQuery = "SELECT OrderDate FROM Orders WHERE OrderId = @OrderId";
+        //        using var checkOrderCmd = new SqlCommand(checkOrderQuery, connection, transaction);
+        //        checkOrderCmd.Parameters.AddWithValue("@OrderId", orderId);
+        //        var orderDate = (DateTime)checkOrderCmd.ExecuteScalar();
+
+        //        if ((DateTime.UtcNow - orderDate).Days > 15)
+        //        {
+        //            var user = new Users();
+        //            int strikes = user.StrikeUser(orderId);
+
+        //            if (strikes > 3)
+        //            {
+        //                string suspendQuery = @"
+        //            UPDATE Users SET Suspended = 1, Active = 0
+        //            WHERE UserId IN (SELECT UserId FROM Orders WHERE OrderId = @OrderId)";
+        //                using var suspendCmd = new SqlCommand(suspendQuery, connection, transaction);
+        //                suspendCmd.Parameters.AddWithValue("@OrderId", orderId);
+        //                suspendCmd.ExecuteNonQuery();
+        //            }
+        //        }
+
+        //        // Update the order return date
+        //        string returnOrderQuery = $"UPDATE Orders SET ReturnDate = GETDATE(), StateId = {(int)StatesEnum.Devolvido} WHERE OrderId = @OrderId";
+        //        using var returnOrderCmd = new SqlCommand(returnOrderQuery, connection, transaction);
+        //        returnOrderCmd.Parameters.AddWithValue("@OrderId", orderId);
+        //        returnOrderCmd.ExecuteNonQuery();
+
+        //        // Update the copies available
+        //        string returnCopiesQuery = @"
+        //        UPDATE Copies
+        //        SET NumberOfCopies = NumberOfCopies + o.RequestedCopiesQTY
+        //        FROM Copies c
+        //        INNER JOIN Orders o ON c.BookId = o.BookId AND c.LibraryId = o.LibraryId
+        //        WHERE o.OrderId = @OrderId";
+        //        using var returnCopiesCmd = new SqlCommand(returnCopiesQuery, connection, transaction);
+        //        returnCopiesCmd.Parameters.AddWithValue("@OrderId", orderId);
+        //        returnCopiesCmd.ExecuteNonQuery();
+
+        //        // Insert into order history
+        //        await InsertOrderHistory(connection, transaction, orderId);
+
+        //        // Commit transaction
+        //        await transaction.CommitAsync();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        // Rollback in case of error
+        //        await transaction.RollbackAsync();
+        //        throw new Exception($"Error returning book: {e.Message}", e);
+        //    }
+        //}
+
+        public void ReturnBookByOrderId(int orderId)
         {
             using var connection = DB.Open(CnString);
-            using var transaction = connection.BeginTransaction();
+            var transaction = connection.BeginTransaction();
 
             try
             {
-                // Check if the order exists and if it's overdue
-                string checkOrderQuery = "SELECT OrderDate FROM Orders WHERE OrderId = @OrderId";
-                using var checkOrderCmd = new SqlCommand(checkOrderQuery, connection, transaction);
-                checkOrderCmd.Parameters.AddWithValue("@OrderId", orderId);
-                var orderDate = (DateTime)checkOrderCmd.ExecuteScalar();
-
-                if ((DateTime.UtcNow - orderDate).Days > 15)
+                string returnOrder = $"Update Orders Set ReturnDate = GETDATE() , StateId = {(int)StatesEnum.Devolvido} WHERE OrderId = {orderId}";
+                string returnCopies = $@"UPDATE c
+                                        SET c.NumberOfCopies = c.NumberOfCopies + o.RequestedCopiesQTY
+                                        FROM Copies c
+                                        INNER JOIN Orders o ON c.BookId = o.BookId AND c.LibraryId = o.LibraryId
+                                        WHERE o.OrderId = {orderId};";
+                string isOverdue = $"SELECT OrderDate FROM Orders o WHERE o.OrderId = {orderId};";
+                DB.CmdExecute(connection, returnCopies, transaction);
+                DB.CmdExecute(connection, returnOrder, transaction);
+                DataTable overdue = DB.GetSQLRead(connection, isOverdue, transaction);
+                DateTime date = Convert.ToDateTime(overdue.Rows[0]["OrderDate"]);
+                if ((DateTime.UtcNow - date).Days > 15)
                 {
                     var user = new Users();
                     int strikes = user.StrikeUser(orderId);
-
                     if (strikes > 3)
                     {
-                        string suspendQuery = @"
-                    UPDATE Users SET Suspended = 1, Active = 0
-                    WHERE UserId IN (SELECT UserId FROM Orders WHERE OrderId = @OrderId)";
-                        using var suspendCmd = new SqlCommand(suspendQuery, connection, transaction);
-                        suspendCmd.Parameters.AddWithValue("@OrderId", orderId);
-                        suspendCmd.ExecuteNonQuery();
+                        string suspendQuery = $@"UPDATE u
+                                                SET u.Suspended=1, u.Active=0
+                                                FROM Users u
+                                                INNER JOIN Orders o ON o.UserId = u.UserId
+                                                WHERE o.OrderId = {orderId};";
+                        var userId = int.Parse(DB.GetSQLRead(connection, suspendQuery).Rows[0]["userId"].ToString());
+
                     }
                 }
-
-                // Update the order return date
-                string returnOrderQuery = $"UPDATE Orders SET ReturnDate = GETDATE(), StateId = {(int)StatesEnum.Devolvido} WHERE OrderId = @OrderId";
-                using var returnOrderCmd = new SqlCommand(returnOrderQuery, connection, transaction);
-                returnOrderCmd.Parameters.AddWithValue("@OrderId", orderId);
-                returnOrderCmd.ExecuteNonQuery();
-
-                // Update the copies available
-                string returnCopiesQuery = @"
-                UPDATE Copies
-                SET NumberOfCopies = NumberOfCopies + o.RequestedCopiesQTY
-                FROM Copies c
-                INNER JOIN Orders o ON c.BookId = o.BookId AND c.LibraryId = o.LibraryId
-                WHERE o.OrderId = @OrderId";
-                using var returnCopiesCmd = new SqlCommand(returnCopiesQuery, connection, transaction);
-                returnCopiesCmd.Parameters.AddWithValue("@OrderId", orderId);
-                returnCopiesCmd.ExecuteNonQuery();
-
-                // Insert into order history
-                await InsertOrderHistory(connection, transaction, orderId);
-
-                // Commit transaction
-                await transaction.CommitAsync();
+                transaction.Commit();
             }
             catch (Exception e)
             {
-                // Rollback in case of error
-                await transaction.RollbackAsync();
-                throw new Exception($"Error returning book: {e.Message}", e);
+                transaction.Rollback();
+                throw new Exception($"Error returning book: {e}");
             }
-        }
 
         private async Task InsertOrderHistory(SqlConnection connection, SqlTransaction transaction, int orderId)
         {
