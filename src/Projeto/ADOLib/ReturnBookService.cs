@@ -1,14 +1,6 @@
-﻿using EFLibrary;
-using LibLibrary.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ADOLib.Enums;
 using LibDB;
-using System.Data;
 using Microsoft.Data.SqlClient;
-using ADOLib.Enums;
 
 namespace ADOLib
 {
@@ -18,7 +10,6 @@ namespace ADOLib
 
         public ReturnBookService()
         {
-            //CnString = "Server=DESKTOP-JV2HGSK;Database=LibraryProjectV2;Trusted_Connection=True;TrustServerCertificate=True";
             CnString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         }
 
