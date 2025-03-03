@@ -12,6 +12,7 @@ namespace ADOLib.ModelView
         public string Title { get; set; }
         public string AuthorName { get; set; }
         public string LibraryName { get; set; }
+        public int RequestedCopiesQTY { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime ReturnDate { get; set; }
         public string StateName { get; set; }

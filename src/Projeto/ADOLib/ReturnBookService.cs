@@ -59,6 +59,9 @@ namespace ADOLib
                 returnCopiesCmd.Parameters.AddWithValue("@OrderId", orderId);
                 returnCopiesCmd.ExecuteNonQuery();
 
+                // Insert into order history
+                await InsertOrderHistory(connection, transaction, orderId);
+
                 // Commit transaction
                 await transaction.CommitAsync();
             }
@@ -70,6 +73,54 @@ namespace ADOLib
             }
         }
 
+        private async Task InsertOrderHistory(SqlConnection connection, SqlTransaction transaction, int orderId)
+        {
+            // Fetch order details
+            string fetchOrderQuery = @"
+        SELECT u.FirstName, u.LastName, b.Title, b.Edition, b.Year, a.AuthorName, l.LibraryName, o.OrderDate, o.RequestedCopiesQTY
+        FROM Orders o
+        JOIN Users u ON o.UserId = u.UserId
+        JOIN Books b ON o.BookId = b.BookId
+        JOIN Authors a ON b.AuthorId = a.AuthorId
+        JOIN Libraries l ON o.LibraryId = l.LibraryId
+        WHERE o.OrderId = @orderId";
+
+            using SqlCommand fetchCmd = new SqlCommand(fetchOrderQuery, connection, transaction);
+            fetchCmd.Parameters.AddWithValue("@orderId", orderId);
+
+            using SqlDataReader reader = await fetchCmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+                throw new Exception("Order not found.");
+
+            string userName = $"{reader["FirstName"]} {reader["LastName"]}";
+            string bookName = reader["Title"].ToString();
+            string bookEdition = reader["Edition"].ToString();
+            int bookYear = Convert.ToInt32(reader["Year"]);
+            string bookAuthor = reader["AuthorName"].ToString();
+            string libraryName = reader["LibraryName"].ToString();
+            DateTime orderDate = Convert.ToDateTime(reader["OrderDate"]);
+            int orderedCopies = Convert.ToInt32(reader["RequestedCopiesQTY"]);
+
+            await reader.CloseAsync();
+
+            // Insert into OrderHistories
+            string insertHistoryQuery = @"
+        INSERT INTO OrderHistories (UserName, BookName, BookYear, BookEdition, BookAuthor, LibraryName, OrderedCopies, OrderDate, ReturnDate)
+        VALUES (@userName, @bookName, @bookYear, @bookEdition, @bookAuthor, @libraryName, @orderedCopies, @orderDate, @returnDate)";
+
+            using SqlCommand insertCmd = new SqlCommand(insertHistoryQuery, connection, transaction);
+            insertCmd.Parameters.AddWithValue("@userName", userName);
+            insertCmd.Parameters.AddWithValue("@bookName", bookName);
+            insertCmd.Parameters.AddWithValue("@bookYear", bookYear);
+            insertCmd.Parameters.AddWithValue("@bookEdition", bookEdition);
+            insertCmd.Parameters.AddWithValue("@bookAuthor", bookAuthor);
+            insertCmd.Parameters.AddWithValue("@libraryName", libraryName);
+            insertCmd.Parameters.AddWithValue("@orderedCopies", orderedCopies);
+            insertCmd.Parameters.AddWithValue("@orderDate", orderDate);
+            insertCmd.Parameters.AddWithValue("@returnDate", DateTime.UtcNow);
+
+            await insertCmd.ExecuteNonQueryAsync();
+        }
     }
 }
 
