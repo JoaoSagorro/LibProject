@@ -130,14 +130,13 @@ namespace ADOLib
             List<Order> deletedOrders = null;
             Orders ord = new Orders();
             Users usr = new Users();
-            ReturnBook returnBook = new ReturnBook();
+            ReturnBookService returnBook = new ReturnBookService();
 
             try
             {
                 using (SqlConnection connection = DB.Open(CnString))
                 {
                     user = usr.GetUserInfo(userId);
-                    SqlTransaction transaction = connection.BeginTransaction();
 
                     if(UserActiveOrders(userId))
                     {
@@ -152,6 +151,7 @@ namespace ADOLib
                         }
                     }
 
+                    SqlTransaction transaction = connection.BeginTransaction();
                     deletedOrders = ord.DeleteUserOrders(userId);
                     string deleteUser = "DELETE FROM Users WHERE Users.UserId = @userId";
 
