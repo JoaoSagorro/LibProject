@@ -18,7 +18,7 @@ namespace LibLibrary.Services
             {
                 using (var context = new LibraryContext())
                 {
-                    return context.Users.ToList();
+                    return context.Users.Include(u => u.Role).ToList();
                 }
             }
             catch (Exception e) { throw new Exception($"Error getting users", e); }
@@ -197,7 +197,7 @@ namespace LibLibrary.Services
             List<User> deletedUsers = [];
             using (LibraryContext context = new())
             {
-                var users = GetUsers().Where(u => !UserHasActiveOrders(context, u) && !HasRecentOrders(context, u)).ToList();
+                var users = GetUsers().Where(u => !UserHasActiveOrders(context, u) && !HasRecentOrders(context, u) && u.Role.RoleId == 3).ToList();
                 foreach (var user in users)
                 {
                     deletedUsers.Add(DeleteUser(user.Email));
