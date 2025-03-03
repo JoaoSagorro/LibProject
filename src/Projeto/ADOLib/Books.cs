@@ -388,7 +388,7 @@ namespace ADOLib
                             AuthorId = Convert.ToInt32(row["AuthorId"]),
                             AuthorName = row["AuthorName"].ToString(),
                             SubjectNames = row["SubjectNames"].ToString().Split(',').Select(lst => lst.Trim()).ToList(),
-                            CoverImage = (byte[])row["CoverImage"]
+                            CoverImage = row["CoverImage"] == DBNull.Value ? null : (byte[])row["CoverImage"]
                         };
                         books.Add(book);
                     }
