@@ -10,7 +10,7 @@ Follow these steps to set up and use this repository:
 ### 1. Clone the Repository
 ```sh
 git clone https://github.com/JoaoSagorro/LibProject.git
-cd your-repository
+cd LibProject
 ```
 
 ### 2. Add `LibDB` Project Reference on `ADO.Lib`
