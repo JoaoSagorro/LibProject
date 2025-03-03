@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text.RegularExpressions;
+using ADOLib.DTOs;
 using ADOLib.ModelView;
 using EFLibrary.Models;
 using LibDB;
@@ -59,9 +60,9 @@ namespace ADOLib
         }
 
         // Get books by subjects
-        public List<Book> GetBooksBySubject(string subject)
+        public List<BookDetailsDTO> GetBooksBySubject(string subject)
         {
-            List<Book> books = new List<Book>();
+            List<BookDetailsDTO> books =[];
             Books bk = new Books();
 
             try
