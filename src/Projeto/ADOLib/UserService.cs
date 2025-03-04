@@ -119,53 +119,6 @@ namespace ADOLib
             }
         }
 
-
-        //public User DeleteUser(int userId)
-        //{
-        //    User user = null;
-        //    List<Order> deletedOrders = null;
-        //    Orders ord = new Orders();
-        //    Users usr = new Users();
-        //    ReturnBookService returnBook = new ReturnBookService();
-
-        //    try
-        //    {
-        //        using (SqlConnection connection = DB.Open(CnString))
-        //        {
-        //            user = usr.GetUserInfo(userId);
-
-        //            SqlTransaction transaction = connection.BeginTransaction();
-        //            if(UserActiveOrders(userId))
-        //            {
-        //                List<Order> allOrders = ord.GetOrdersByUserId(userId);
-
-        //                foreach(Order order in allOrders)
-        //                {
-        //                    if (!order.ReturnDate.HasValue)
-        //                    {
-        //                        returnBook.ReturnBookByOrderId(order.OrderId);
-        //                    }
-        //                }
-        //            }
-        //         deletedOrders = ord.DeleteUserOrders(userId);
-        //            string deleteUser = "DELETE FROM Users WHERE Users.UserId = @userId";
-
-        //            using(SqlCommand cmd = new SqlCommand(deleteUser, connection, transaction))
-        //            {
-        //                cmd.Parameters.AddWithValue("@userId", userId);
-        //                int affectedRows = cmd.ExecuteNonQuery();
-        //                transaction.Commit();
-        //            }
-
-        //            return user;
-        //        }
-        //    }
-        //    catch (Exception e) 
-        //    { 
-        //        throw new Exception("Error deleting user: ", e); 
-        //    };
-        //}
-
         public User DeleteUser(int userId)
         {
             User user = null;
