@@ -190,7 +190,8 @@ namespace ADOLib
                             if (!order.ReturnDate.HasValue)
                             {
                                 // Pass the existing connection and transaction
-                                returnBook.ReturnBookByOrderId(order.OrderId, connection, transaction);
+                                //returnBook.ReturnBookByOrderId(order.OrderId, connection, transaction);
+                                returnBook.ReturnBookByOrderId(order.OrderId);
                             }
                         }
                     }
