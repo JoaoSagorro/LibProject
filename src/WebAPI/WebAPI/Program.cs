@@ -22,7 +22,7 @@ namespace WebAPI
             {
                 options.AddPolicy("FrontendPolicy", policy =>
                 {
-                    policy.WithOrigins("https://v0-fork-of-library.vercel.app")
+                    policy.WithOrigins("https://xpto-library.vercel.app/")
                           .AllowAnyMethod()
                           .AllowAnyHeader();
                 });
