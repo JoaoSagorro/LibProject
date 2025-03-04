@@ -9,7 +9,7 @@ namespace ADOLib.DTOs
         public string Edition { get; set; }
         public int Year { get; set; }
         public string AuthorName { get; set; }
-        public byte[] CoverImage { get; set; }
+        public byte[]? CoverImage { get; set; }
         public List<string> SubjectNames { get; set; }
     }
 }
