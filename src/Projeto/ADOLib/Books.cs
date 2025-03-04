@@ -37,7 +37,7 @@ namespace ADOLib
                 INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId 
                 INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId 
                 INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId 
-                INNER JOIN Covers ON Covers.BookId = Books.BookId
+                LEFT JOIN Covers ON Covers.BookId = Books.BookId
                 WHERE Books.BookId = @BookId
                 GROUP BY 
                     Books.BookId, 
@@ -62,7 +62,7 @@ namespace ADOLib
                                     Edition = reader.GetString(reader.GetOrdinal("Edition")),
                                     Year = reader.GetInt32(reader.GetOrdinal("Year")),
                                     AuthorName = reader.GetString(reader.GetOrdinal("AuthorName")),
-                                    CoverImage =  (byte[])reader["CoverImage"],
+                                    CoverImage =reader["CoverImage"] == DBNull.Value ? null : (byte[])reader["CoverImage"],
                                     SubjectNames = reader.GetString(reader.GetOrdinal("SubjectNames"))
                                         .Split(',')
                                         .Select(subject => subject.Trim())
