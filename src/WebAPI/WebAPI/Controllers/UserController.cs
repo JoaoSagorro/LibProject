@@ -74,7 +74,7 @@ namespace WebAPI.Controllers
         public IActionResult DeleteUser([FromBody] DeleteUserDTO request)
         {
             int userId = request.UserId;
-            Response.Headers.Add("Access-Control-Allow-Origin", "https://v0-fork-of-library.vercel.app");
+            //Response.Headers.Add("Access-Control-Allow-Origin", "https://v0-fork-of-library.vercel.app");
             User deletedUser = _userService.DeleteUser(userId);
             return Ok(deletedUser);
         }
