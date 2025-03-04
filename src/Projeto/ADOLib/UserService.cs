@@ -119,7 +119,6 @@ namespace ADOLib
             }
         }
 
-
         public User DeleteUser(int userId)
         {
             User user = null;
@@ -128,30 +127,32 @@ namespace ADOLib
             Users usr = new Users();
             ReturnBookService returnBook = new ReturnBookService();
 
-            try
+            using (SqlConnection connection = DB.Open(CnString))
             {
-                using (SqlConnection connection = DB.Open(CnString))
+                SqlTransaction transaction = null;
+                try
                 {
                     user = usr.GetUserInfo(userId);
+                    transaction = connection.BeginTransaction();
 
-                    if(UserActiveOrders(userId))
+                    if (UserActiveOrders(userId))
                     {
                         List<Order> allOrders = ord.GetOrdersByUserId(userId);
-
-                        foreach(Order order in allOrders)
+                        foreach (Order order in allOrders)
                         {
                             if (!order.ReturnDate.HasValue)
                             {
+                                // Pass the existing connection and transaction
+                                //returnBook.ReturnBookByOrderId(order.OrderId, connection, transaction);
                                 returnBook.ReturnBookByOrderId(order.OrderId);
                             }
                         }
                     }
 
-                    SqlTransaction transaction = connection.BeginTransaction();
-                    deletedOrders = ord.DeleteUserOrders(userId);
-                    string deleteUser = "DELETE FROM Users WHERE Users.UserId = @userId";
+                    deletedOrders = ord.DeleteUserOrders(userId, connection, transaction);
 
-                    using(SqlCommand cmd = new SqlCommand(deleteUser, connection, transaction))
+                    string deleteUser = "DELETE FROM Users WHERE Users.UserId = @userId";
+                    using (SqlCommand cmd = new SqlCommand(deleteUser, connection, transaction))
                     {
                         cmd.Parameters.AddWithValue("@userId", userId);
                         int affectedRows = cmd.ExecuteNonQuery();
@@ -160,13 +161,16 @@ namespace ADOLib
 
                     return user;
                 }
+                catch (Exception e)
+                {
+                    if (transaction != null && transaction.Connection != null)
+                    {
+                        transaction.Rollback();
+                    }
+                    throw new Exception("Error deleting user: ", e);
+                }
             }
-            catch (Exception e) 
-            { 
-                throw new Exception("Error deleting user: ", e); 
-            };
         }
-
 
         private bool UserActiveOrders(int userId)
         {

@@ -1,0 +1,69 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\_MyPC\\_Drive\\IceDrive\\ISCTE\\UpSkills\\2024\\M3\\_Work\\ProjDemo\\LibDB\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5DFE5752-5615-4121-95D2-76E5817E5418}|LibDB\\LibDB.csproj|c:\\_mypc\\_drive\\icedrive\\iscte\\upskills\\2024\\m3\\_work\\projdemo\\libdb\\libdb\\db.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DFE5752-5615-4121-95D2-76E5817E5418}|LibDB\\LibDB.csproj|solutionrelative:libdb\\db.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 8,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{ecb7191a-597b-41f5-9843-03a4cf275dde}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{004be353-6879-467c-9d1e-9ac23cdf6d49}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0504ff91-9d61-11d0-a794-00a0c9110051}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{be4d7042-ba3f-11d2-840e-00c04f9902c1}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{605322a2-17ae-43f4-b60f-766556e46c87}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{28836128-fc2c-11d2-a433-00c04f72d18a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DB.cs",
+              "DocumentMoniker": "C:\\_MyPC\\_Drive\\IceDrive\\ISCTE\\UpSkills\\2024\\M3\\_Work\\ProjDemo\\LibDB\\LibDB\\DB.cs",
+              "RelativeDocumentMoniker": "LibDB\\DB.cs",
+              "ToolTip": "C:\\_MyPC\\_Drive\\IceDrive\\ISCTE\\UpSkills\\2024\\M3\\_Work\\ProjDemo\\LibDB\\LibDB\\DB.cs*",
+              "RelativeToolTip": "LibDB\\DB.cs*",
+              "ViewState": "AgIAAJUAAAAAAAAAAAAqwKAAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-05T10:04:38.085Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

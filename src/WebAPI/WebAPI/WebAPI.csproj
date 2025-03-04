@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,23 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ADOLib">
-      <HintPath>..\..\Projeto\ADOLib\obj\Debug\net8.0\ADOLib.dll</HintPath>
-    </Reference>
-    <Reference Include="EFLibrary">
-      <HintPath>..\..\Projeto\EFLibrary\obj\Debug\net8.0\EFLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="LibDB">
-      <HintPath>..\..\..\..\..\LibDB.dll</HintPath>
-    </Reference>
-    <Reference Include="LibLibrary">
-      <HintPath>..\..\Projeto\LibLibrary\obj\Debug\net8.0\LibLibrary.dll</HintPath>
-    </Reference>
+	  <ProjectReference Include="..\..\Projeto\LibDB\LibDB\LibDB.csproj" />
+	  <ProjectReference Include="..\..\Projeto\LibLibrary\LibLibrary.csproj" />
+	  <ProjectReference Include="..\..\Projeto\EFLibrary\EFLibrary.csproj" />
+	  <ProjectReference Include="..\..\Projeto\ADOLib\ADOLib.csproj" />
   </ItemGroup>
 
 </Project>

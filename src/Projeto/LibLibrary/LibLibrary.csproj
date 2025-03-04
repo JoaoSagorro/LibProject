@@ -19,7 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EFLibrary\EFLibrary.csproj" />
+     <ProjectReference Include="..\EFLibrary\EFLibrary.csproj" />
+<ProjectReference Include="..\ADOLib\ADOLib.csproj" />
   </ItemGroup>
+
+
 
 </Project>

@@ -14,6 +14,7 @@ namespace ADOLib.ModelView
         public int AuthorId { get; set; }
         public string AuthorName { get; set; }
         public int BooksBookId { get; set; }
+        public byte[]? CoverImage { get; set; }
         public List<string> SubjectNames { get; set; }
     }
 }

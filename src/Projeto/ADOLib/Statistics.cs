@@ -4,6 +4,7 @@ using LibDB;
 using Microsoft.Data.SqlClient;
 using Book = ADOLib.Model.Model.Book;
 using Library = ADOLib.Model.Model.Library;
+using ADOLib.DTOs;
 
 namespace ADOLib
 {
@@ -57,7 +58,7 @@ namespace ADOLib
         // Get books by subjects
         public List<BookDetailsDTO> GetBooksBySubject(string subject)
         {
-            List<BookDetailsDTO> books =[];
+            List<BookDetailsDTO> books = new List<BookDetailsDTO>();
             Books bk = new Books();
 
             try

@@ -235,6 +235,7 @@ namespace ADOLib
                             LibraryId = Convert.ToInt32(row["LibraryId"]),
                             StateId = Convert.ToInt32(row["StateId"]),
                             OrderDate = Convert.ToDateTime(row["OrderDate"]),
+                            RequestedCopiesQTY= Convert.ToInt32(row["RequestedCopiesQTy"]),
                             //ReturnDate = Convert.ToDateTime(row["ReturnDate"]),
                             ReturnDate = row["ReturnDate"] == DBNull.Value
                                  ? (DateTime?)null
@@ -277,6 +278,53 @@ namespace ADOLib
                 }
             }
             catch(Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
+        public List<Order> DeleteUserOrders(int userId, SqlTransaction transaction)
+        {
+            List<Order> orders = null;
+
+            try
+            {
+                using (SqlConnection connection = DB.Open(CnString))
+                {
+                    orders = GetOrdersByUserId(userId);
+                    string deleteOrders = "DELETE FROM Orders WHERE Orders.UserId = @userId";
+                    using (SqlCommand cmd = new SqlCommand(deleteOrders, connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@userId", userId);
+                        int affectedRows = cmd.ExecuteNonQuery();
+                    }
+
+                    return orders;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message, e.InnerException);
+            }
+        }
+
+        public List<Order> DeleteUserOrders(int userId,SqlConnection connection, SqlTransaction transaction)
+        {
+            List<Order> orders = null;
+
+            try
+            {
+                    orders = GetOrdersByUserId(userId);
+                    string deleteOrders = "DELETE FROM Orders WHERE Orders.UserId = @userId";
+                    using (SqlCommand cmd = new SqlCommand(deleteOrders, connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@userId", userId);
+                        int affectedRows = cmd.ExecuteNonQuery();
+                    }
+
+                    return orders;
+            }
+            catch (Exception e)
             {
                 throw new Exception(e.Message, e.InnerException);
             }

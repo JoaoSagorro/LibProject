@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ADOLib;
 using static ADOLib.Model.Model;
 using Microsoft.AspNetCore.Identity.Data;
+using ADOLib.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -70,8 +71,10 @@ namespace WebAPI.Controllers
 
 
         [HttpPost("delete")]
-        public IActionResult DeleteUser([FromBody] int userId)
+        public IActionResult DeleteUser([FromBody] DeleteUserDTO request)
         {
+            int userId = request.UserId;
+            //Response.Headers.Add("Access-Control-Allow-Origin", "https://v0-fork-of-library.vercel.app");
             User deletedUser = _userService.DeleteUser(userId);
             return Ok(deletedUser);
         }
