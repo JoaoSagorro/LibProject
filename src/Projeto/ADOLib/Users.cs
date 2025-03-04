@@ -123,7 +123,7 @@ namespace ADOLib
                                         FROM User u
                                         INNER JOIN Orders o ON u.UserID = o.UserId
                                         WHERE o.OrderId = {orderId}";
-                    int strikes = int.Parse(DB.GetSQLRead(connection, query).Rows[0]["Strikes"].ToString());
+                    int strikes = int.Parse(DB.GetSQLRead(connection, query,transaction).Rows[0]["Strikes"].ToString());
                     return strikes;
                 }
                 catch (Exception e)
