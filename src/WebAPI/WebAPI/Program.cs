@@ -20,26 +20,12 @@ namespace WebAPI
 
             builder.Services.AddCors(options =>
             {
-               // options.AddPolicy("FrontendPolicy", policy =>
-               //{
-               //    policy.WithOrigins("https://v0-fork-of-library.vercel.app") // Update this for production
-               //          .AllowAnyMethod()
-               //          .AllowAnyHeader();
-               //});
-
                 options.AddPolicy("FrontendPolicy", policy =>
                 {
-                    policy.AllowAnyOrigin()
+                    policy.WithOrigins("https://v0-fork-of-library.vercel.app")
                           .AllowAnyMethod()
                           .AllowAnyHeader();
                 });
-
-                //options.AddPolicy("TestePolicy", policy =>
-                //{
-                //    policy.WithOrigins("http://localhost:3000") // Update this for production
-                //          .AllowAnyMethod()
-                //          .AllowAnyHeader();
-                //});
             });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -49,7 +35,6 @@ namespace WebAPI
             var app = builder.Build();
 
             app.UseCors("FrontendPolicy");
-            //app.UseCors("TestePolicy");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
