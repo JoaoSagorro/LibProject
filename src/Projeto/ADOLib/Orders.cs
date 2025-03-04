@@ -235,6 +235,7 @@ namespace ADOLib
                             LibraryId = Convert.ToInt32(row["LibraryId"]),
                             StateId = Convert.ToInt32(row["StateId"]),
                             OrderDate = Convert.ToDateTime(row["OrderDate"]),
+                            RequestedCopiesQTY= Convert.ToInt32(row["RequestedCopiesQTy"]),
                             //ReturnDate = Convert.ToDateTime(row["ReturnDate"]),
                             ReturnDate = row["ReturnDate"] == DBNull.Value
                                  ? (DateTime?)null

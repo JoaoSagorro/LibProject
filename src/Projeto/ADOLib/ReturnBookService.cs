@@ -95,7 +95,7 @@ namespace ADOLib
                 if ((DateTime.UtcNow - date).Days > 15)
                 {
                     var user = new Users();
-                    int strikes = user.StrikeUser(orderId, transaction, connection);
+                    int strikes = user.StrikeUser(orderId,transaction, connection);
                     if (strikes > 3)
                     {
                         string suspendQuery = $@"UPDATE u
@@ -103,7 +103,7 @@ namespace ADOLib
                                                 FROM Users u
                                                 INNER JOIN Orders o ON o.UserId = u.UserId
                                                 WHERE o.OrderId = {orderId};";
-                        var userId = int.Parse(DB.GetSQLRead(connection, suspendQuery,transaction).Rows[0]["userId"].ToString());
+                        var userId = int.Parse(DB.GetSQLRead(connection, suspendQuery).Rows[0]["userId"].ToString());
 
                     }
                 }
@@ -140,7 +140,7 @@ namespace ADOLib
                 if ((DateTime.UtcNow - date).Days > 15)
                 {
                     var user = new Users();
-                    int strikes = user.StrikeUser(orderId, transaction,connection);
+                    int strikes = user.StrikeUser(orderId);
                     if (strikes > 3)
                     {
                         string suspendQuery = $@"UPDATE u
