@@ -31,18 +31,21 @@ namespace ADOLib
                     Books.Edition, 
                     Books.Year, 
                     Authors.AuthorName,
+                    Covers.CoverImage,
                     STRING_AGG(Subjects.SubjectName, ', ') AS SubjectNames
                 FROM Books
                 INNER JOIN Authors ON Books.AuthorId = Authors.AuthorId 
                 INNER JOIN BookSubject ON Books.BookId = BookSubject.BooksBookId 
                 INNER JOIN Subjects ON BookSubject.SubjectsSubjectId = Subjects.SubjectId 
+                LEFT JOIN Covers ON Covers.BookId = Books.BookId
                 WHERE Books.BookId = @BookId
                 GROUP BY 
                     Books.BookId, 
                     Books.Title, 
                     Books.Edition, 
                     Books.Year, 
-                    Authors.AuthorName";
+                    Authors.AuthorName,
+                    Covers.CoverImage";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -59,6 +62,7 @@ namespace ADOLib
                                     Edition = reader.GetString(reader.GetOrdinal("Edition")),
                                     Year = reader.GetInt32(reader.GetOrdinal("Year")),
                                     AuthorName = reader.GetString(reader.GetOrdinal("AuthorName")),
+                                    CoverImage = (byte[])reader["CoverImage"],
                                     SubjectNames = reader.GetString(reader.GetOrdinal("SubjectNames"))
                                         .Split(',')
                                         .Select(subject => subject.Trim())
